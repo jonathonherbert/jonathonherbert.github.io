@@ -1,6 +1,9 @@
 import React from "react"
 import { Link } from "gatsby"
 
+import "./layout.css"
+
+import Bio from '../components/bio'
 import { rhythm, scale } from "../utils/typography"
 
 class Layout extends React.Component {
@@ -53,6 +56,9 @@ class Layout extends React.Component {
     return (
       <div
         style={{
+          display: 'flex',
+          minHeight: '100%',
+          flexDirection: 'column',
           marginLeft: `auto`,
           marginRight: `auto`,
           maxWidth: rhythm(24),
@@ -61,8 +67,10 @@ class Layout extends React.Component {
       >
         <header>{header}</header>
         <main>{children}</main>
-        <footer>
-          © {new Date().getFullYear()}
+        <footer style={{
+          marginTop: 'auto'
+        }}>
+          <Bio />
         </footer>
       </div>
     )
