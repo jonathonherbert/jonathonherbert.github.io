@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[jsherbert's blog]]></title><description><![CDATA[jsherbert's blog]]></description><link>https://gatsby-starter-blog-demo.netlify.com</link><generator>GatsbyJS</generator><lastBuildDate>Mon, 27 Jan 2020 18:48:38 GMT</lastBuildDate><item><title><![CDATA[If it's not rubbish, why do we love to chuck it out?]]></title><description><![CDATA[This is part two of a series adapted from a talk me and Reetta gave internally at the Guardian, and then later at Continuous Lifecycle…]]></description><link>https://gatsby-starter-blog-demo.netlify.com/why-we-love-chucking-things-out/</link><guid isPermaLink="false">https://gatsby-starter-blog-demo.netlify.com/why-we-love-chucking-things-out/</guid><pubDate>Sat, 25 Jan 2020 22:12:03 GMT</pubDate><content:encoded>&lt;p&gt;&lt;em&gt;This is part two of a series adapted from a talk me and Reetta gave internally at the Guardian, and then later at Continuous Lifecycle. Thanks, Reetta, for your help with the talk!&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;As &lt;a href=&quot;/jonathonherbert.github.io/its-not-rubbish/&quot;&gt;part one of this series argued&lt;/a&gt;, it’s difficult to arrive at  insights about past work if we dismiss it as rubbish. And yet it happens all the time. If we listen closely, at this &lt;em&gt;very moment&lt;/em&gt; we can hear the faint clatter of a thousand keystrokes as the comments on Hacker News roll in. The following examples were culled, with a pleasing irony, from the comments section of &lt;a href=&quot;https://news.ycombinator.com/item?id=6333424&quot;&gt;The Code Culture Problem&lt;/a&gt;:&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[jsherbert]]></title><description><![CDATA[jsherbert]]></description><link>https://gatsby-starter-blog-demo.netlify.com</link><generator>GatsbyJS</generator><lastBuildDate>Mon, 27 Jan 2020 21:39:38 GMT</lastBuildDate><item><title><![CDATA[If it's not rubbish, why do we love to chuck it out?]]></title><description><![CDATA[This is part two of a series adapted from a talk me and Reetta gave internally at the Guardian, and then later at Continuous Lifecycle…]]></description><link>https://gatsby-starter-blog-demo.netlify.com/why-we-love-chucking-things-out/</link><guid isPermaLink="false">https://gatsby-starter-blog-demo.netlify.com/why-we-love-chucking-things-out/</guid><pubDate>Sat, 25 Jan 2020 22:12:03 GMT</pubDate><content:encoded>&lt;p&gt;&lt;em&gt;This is part two of a series adapted from a talk me and Reetta gave internally at the Guardian, and then later at Continuous Lifecycle. Thanks, Reetta, for your help with the talk!&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;As &lt;a href=&quot;/its-not-rubbish/&quot;&gt;part one of this series argued&lt;/a&gt;, it’s difficult to arrive at  insights about past work if we dismiss it as rubbish. And yet it happens all the time. If we listen closely, at this &lt;em&gt;very moment&lt;/em&gt; we can hear the faint clatter of a thousand keystrokes as the comments on Hacker News roll in. The following examples were culled, with a pleasing irony, from the comments section of &lt;a href=&quot;https://news.ycombinator.com/item?id=6333424&quot;&gt;The Code Culture Problem&lt;/a&gt;:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;writing software in PHP or Java is voluntary retardation. You’re holding back the advancement of our trade.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -52,7 +52,7 @@
     &gt;
       &lt;a
     class=&quot;gatsby-resp-image-link&quot;
-    href=&quot;/jonathonherbert.github.io/static/bc6efa689beebf1c144eb205e8335e9d/69ae9/flames.png&quot;
+    href=&quot;/static/bc6efa689beebf1c144eb205e8335e9d/69ae9/flames.png&quot;
     style=&quot;display: block&quot;
     target=&quot;_blank&quot;
     rel=&quot;noopener&quot;
@@ -65,13 +65,13 @@
         class=&quot;gatsby-resp-image-image&quot;
         alt=&quot;Artist&amp;#39;s impression.&quot;
         title=&quot;Artist&amp;#39;s impression.&quot;
-        src=&quot;/jonathonherbert.github.io/static/bc6efa689beebf1c144eb205e8335e9d/799d3/flames.png&quot;
-        srcset=&quot;/jonathonherbert.github.io/static/bc6efa689beebf1c144eb205e8335e9d/00d96/flames.png 148w,
-/jonathonherbert.github.io/static/bc6efa689beebf1c144eb205e8335e9d/0b23c/flames.png 295w,
-/jonathonherbert.github.io/static/bc6efa689beebf1c144eb205e8335e9d/799d3/flames.png 590w,
-/jonathonherbert.github.io/static/bc6efa689beebf1c144eb205e8335e9d/2a3d6/flames.png 885w,
-/jonathonherbert.github.io/static/bc6efa689beebf1c144eb205e8335e9d/ae92f/flames.png 1180w,
-/jonathonherbert.github.io/static/bc6efa689beebf1c144eb205e8335e9d/69ae9/flames.png 2260w&quot;
+        src=&quot;/static/bc6efa689beebf1c144eb205e8335e9d/799d3/flames.png&quot;
+        srcset=&quot;/static/bc6efa689beebf1c144eb205e8335e9d/00d96/flames.png 148w,
+/static/bc6efa689beebf1c144eb205e8335e9d/0b23c/flames.png 295w,
+/static/bc6efa689beebf1c144eb205e8335e9d/799d3/flames.png 590w,
+/static/bc6efa689beebf1c144eb205e8335e9d/2a3d6/flames.png 885w,
+/static/bc6efa689beebf1c144eb205e8335e9d/ae92f/flames.png 1180w,
+/static/bc6efa689beebf1c144eb205e8335e9d/69ae9/flames.png 2260w&quot;
         sizes=&quot;(max-width: 590px) 100vw, 590px&quot;
         loading=&quot;lazy&quot;
       /&gt;
@@ -92,7 +92,7 @@
     &gt;
       &lt;a
     class=&quot;gatsby-resp-image-link&quot;
-    href=&quot;/jonathonherbert.github.io/static/ed16c7abde8837a9e298a690e57e2304/d5967/win98.jpg&quot;
+    href=&quot;/static/ed16c7abde8837a9e298a690e57e2304/d5967/win98.jpg&quot;
     style=&quot;display: block&quot;
     target=&quot;_blank&quot;
     rel=&quot;noopener&quot;
@@ -105,10 +105,10 @@
         class=&quot;gatsby-resp-image-image&quot;
         alt=&quot;The past is a different, beige-r country.&quot;
         title=&quot;The past is a different, beige-r country.&quot;
-        src=&quot;/jonathonherbert.github.io/static/ed16c7abde8837a9e298a690e57e2304/d5967/win98.jpg&quot;
-        srcset=&quot;/jonathonherbert.github.io/static/ed16c7abde8837a9e298a690e57e2304/7237a/win98.jpg 148w,
-/jonathonherbert.github.io/static/ed16c7abde8837a9e298a690e57e2304/0cfdf/win98.jpg 295w,
-/jonathonherbert.github.io/static/ed16c7abde8837a9e298a690e57e2304/d5967/win98.jpg 583w&quot;
+        src=&quot;/static/ed16c7abde8837a9e298a690e57e2304/d5967/win98.jpg&quot;
+        srcset=&quot;/static/ed16c7abde8837a9e298a690e57e2304/7237a/win98.jpg 148w,
+/static/ed16c7abde8837a9e298a690e57e2304/0cfdf/win98.jpg 295w,
+/static/ed16c7abde8837a9e298a690e57e2304/d5967/win98.jpg 583w&quot;
         sizes=&quot;(max-width: 583px) 100vw, 583px&quot;
         loading=&quot;lazy&quot;
       /&gt;
@@ -130,7 +130,7 @@
     &gt;
       &lt;a
     class=&quot;gatsby-resp-image-link&quot;
-    href=&quot;/jonathonherbert.github.io/static/f569b6fb4e639cfc2dee5a08183cda3a/53025/rubbish.jpg&quot;
+    href=&quot;/static/f569b6fb4e639cfc2dee5a08183cda3a/53025/rubbish.jpg&quot;
     style=&quot;display: block&quot;
     target=&quot;_blank&quot;
     rel=&quot;noopener&quot;
@@ -143,11 +143,11 @@
         class=&quot;gatsby-resp-image-image&quot;
         alt=&quot;This _is_ rubbish.&quot;
         title=&quot;This _is_ rubbish.&quot;
-        src=&quot;/jonathonherbert.github.io/static/f569b6fb4e639cfc2dee5a08183cda3a/88218/rubbish.jpg&quot;
-        srcset=&quot;/jonathonherbert.github.io/static/f569b6fb4e639cfc2dee5a08183cda3a/7237a/rubbish.jpg 148w,
-/jonathonherbert.github.io/static/f569b6fb4e639cfc2dee5a08183cda3a/0cfdf/rubbish.jpg 295w,
-/jonathonherbert.github.io/static/f569b6fb4e639cfc2dee5a08183cda3a/88218/rubbish.jpg 590w,
-/jonathonherbert.github.io/static/f569b6fb4e639cfc2dee5a08183cda3a/53025/rubbish.jpg 650w&quot;
+        src=&quot;/static/f569b6fb4e639cfc2dee5a08183cda3a/88218/rubbish.jpg&quot;
+        srcset=&quot;/static/f569b6fb4e639cfc2dee5a08183cda3a/7237a/rubbish.jpg 148w,
+/static/f569b6fb4e639cfc2dee5a08183cda3a/0cfdf/rubbish.jpg 295w,
+/static/f569b6fb4e639cfc2dee5a08183cda3a/88218/rubbish.jpg 590w,
+/static/f569b6fb4e639cfc2dee5a08183cda3a/53025/rubbish.jpg 650w&quot;
         sizes=&quot;(max-width: 590px) 100vw, 590px&quot;
         loading=&quot;lazy&quot;
       /&gt;
@@ -174,7 +174,7 @@
     &gt;
       &lt;a
     class=&quot;gatsby-resp-image-link&quot;
-    href=&quot;/jonathonherbert.github.io/static/4544bf818123fa311ea7e497747d4986/e88ff/shark.webp&quot;
+    href=&quot;/static/4544bf818123fa311ea7e497747d4986/e88ff/shark.webp&quot;
     style=&quot;display: block&quot;
     target=&quot;_blank&quot;
     rel=&quot;noopener&quot;
@@ -187,11 +187,11 @@
         class=&quot;gatsby-resp-image-image&quot;
         alt=&quot;Beneath this glassy surface, a world of gliding monsters!&quot;
         title=&quot;Beneath this glassy surface, a world of gliding monsters!&quot;
-        src=&quot;/jonathonherbert.github.io/static/4544bf818123fa311ea7e497747d4986/5ca24/shark.webp&quot;
-        srcset=&quot;/jonathonherbert.github.io/static/4544bf818123fa311ea7e497747d4986/cbe2e/shark.webp 148w,
-/jonathonherbert.github.io/static/4544bf818123fa311ea7e497747d4986/3084c/shark.webp 295w,
-/jonathonherbert.github.io/static/4544bf818123fa311ea7e497747d4986/5ca24/shark.webp 590w,
-/jonathonherbert.github.io/static/4544bf818123fa311ea7e497747d4986/e88ff/shark.webp 600w&quot;
+        src=&quot;/static/4544bf818123fa311ea7e497747d4986/5ca24/shark.webp&quot;
+        srcset=&quot;/static/4544bf818123fa311ea7e497747d4986/cbe2e/shark.webp 148w,
+/static/4544bf818123fa311ea7e497747d4986/3084c/shark.webp 295w,
+/static/4544bf818123fa311ea7e497747d4986/5ca24/shark.webp 590w,
+/static/4544bf818123fa311ea7e497747d4986/e88ff/shark.webp 600w&quot;
         sizes=&quot;(max-width: 590px) 100vw, 590px&quot;
         loading=&quot;lazy&quot;
       /&gt;
