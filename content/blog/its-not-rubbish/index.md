@@ -2,6 +2,7 @@
 title: That language / framework / software you hate? It's not rubbish.
 date: "2020-01-24T22:12:03.284Z"
 description: "Well, probably."
+draft: false
 ---
 
 _This is part one of a series adapted from a talk me and Reetta gave internally at the Guardian, and then later at Continuous Lifecycle. Thanks, Reetta, for your help with the talk!_
