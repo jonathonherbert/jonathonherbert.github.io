@@ -5,7 +5,7 @@ module.exports = {
     description: ``,
     siteUrl: `https://gatsby-starter-blog-demo.netlify.com/`,
     social: {
-      twitter: `js-herbert`,
+      twitter: `js_herbert`,
     },
   },
   plugins: [
