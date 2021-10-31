@@ -1,7 +1,7 @@
 ---
 title: That language / framework / software you hate? It's not rubbish.
 date: "2020-01-24T22:12:03.284Z"
-description: "Well, probably."
+description: "Well, maybe."
 draft: false
 ---
 
@@ -45,7 +45,7 @@ It wasn't hard to see why. The users hated it. _We_ hated it. By trying to pleas
 
 We found ourselves testing and debugging the system in 90’s mode. It was a better time. If we’d looked beyond the Windows 98 facade, we would have understood that although the old interface looked crumby, it had spent almost 15 years being field tested in a high-stakes environment with some of the least tech literate users it’s possible to have in a workplace. It had been honed by software evolution. It was like … a shark.
 
-![Beneath this glassy surface, a world of gliding monsters!](./shark.webp)
+![Beneath this glassy surface, a world of gliding monsters!](./shark.jpg)
 
 The client were happy with the old theme, and we’d run out of time, so we parked the new one. As far as I know, it’s still gathering dust, and people using that software are still getting their playlists from a system that was built in 2017 but looks like it shipped almost two decades earlier.  
 
@@ -55,6 +55,6 @@ By dismissing the software we were working with as outmoded and clunky -- as rub
 
 We can think of that moment of dismissal without understanding as a red flag. Every utterance that registers on the spectrum of rubbishness -- from casual, aloof dismissal to righteous, four-letter-word rage -- should be a prompt for us to ask more questions. We might learn that the problem under discussion was more complex than we originally thought. We might learn that it's a different problem than the one we thought it was. We might learn that in the context in which the problem was first encountered, the solution was actually remarkably elegant. And we can extend this insight outwards to the frameworks we use, the languages we work in, and even the peers we work with.
 
-It’s difficult to arrive at these insights if we've chucked things in the mental wastebasket. So next time you notice somebody do it, it might be worth wrinkling your nose and fishing out what they've tossed in, to take a closer look.
+It’s difficult to arrive at these insights if we've chucked things in the mental wastebasket. So next time you catch yourself, or somebody else, in the act of figuratively tossing something away, consider pausing for a moment to take a second look.
 
 
