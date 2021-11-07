@@ -5,7 +5,7 @@ description: "In which a humble video game illustrates a fundamental truth of le
 draft: false
 ---
 
-Our ability to solve problems and our fear exist in inverse proportion – the more fear we experience, the less able we are to solve problems well.
+Our ability to solve problems and our sense of fear exist in inverse proportion – the more fear we experience, the less able we are to solve problems well.
 
 My initial idea was that this effect scaled with whatever stakes were involved in failure or success. But then I experienced the effect powerfully, three days ago, in an environment with no real-life stakes at all.
 
