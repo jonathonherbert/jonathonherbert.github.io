@@ -9,7 +9,7 @@ Our ability to solve problems and our fear exist in inverse proportion – the m
 
 My initial idea was that this effect scaled with whatever stakes were involved in failure or success. But then I experienced the effect powerfully, three days ago, in an environment with no real-life stakes at all.
 
-[_The Outer Wilds_](https://www.mobiusdigitalgames.com/outer-wilds.html) is a videogame, and it's an ideal place for a demonstration of the fear-is-the-mindkiller effect because it is, quite literally, a small galaxy of problems to solve. In a craft that's part NASA, part National Park chic, the player veers from planet to planet in a groundhog-day timeloop, piecing together its secrets before the sun goes supernova. Then, they do it all again, armed only with the knowledge of what came before. It's superb.
+[_The Outer Wilds_](https://www.mobiusdigitalgames.com/outer-wilds.html) is a videogame, and it's an ideal place for a demonstration of the fear-is-the-mindkiller effect because it is, quite literally, a small solar system of problems to solve. In a craft that's part NASA, part National Park chic, the player veers from planet to planet in a groundhog-day timeloop, piecing together its secrets before the sun goes supernova. Then, they do it all again, armed only with the knowledge of what came before. It's superb.
 
 Anyhow, _The Outer Wilds_ came out in 2019, and three days ago I made some time to play its recently released expansion, Echoes of the Eye. I raced through problem after problem, building up my understanding of a new world and its inhabitants. And then, the lights went out, and I saw a silhouette against a distant light, and ...
 
@@ -41,7 +41,7 @@ In a software engineering context, having a [no-blame culture](https://devops.co
 
 There are lots of strategies we can use to reduce our fear factor – many more than would be worth listing here – but the important thing is to recognise fear where it exists, understand its negative impact on our ability to think clearly, and take steps to manage it.
 
-At the end of The Outer Wilds, we discover a beautiful piece of thematic symmetry – that spooky alien we have been cowering from is scared, too. And their fear causes them to make a catastrophic error of judgement, a mistake that dooms their kind forever.
+At the end of _The Outer Wilds_, we discover a beautiful piece of thematic symmetry – the mysterious strangers we have been cowering from were scared, too. And their fear has caused them to make a catastrophic error of judgement, a mistake that has doomed their kind forever.
 
 Hey! Let's not be doomed. It's reasonable for individuals and teams to feel a few tremors when the stakes are high, or the outcome is unknown. But we can recognise this fear, and cultivate strategies to manage it. Because it's only without fear that we're best placed to solve our problems.
 
