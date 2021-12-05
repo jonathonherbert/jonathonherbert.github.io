@@ -1,8 +1,7 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
 
-import env from '../utils/env';
-import Bio from "../components/bio"
+import env from '../utils/env'
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { rhythm } from "../utils/typography"
