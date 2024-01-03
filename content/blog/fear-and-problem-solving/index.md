@@ -9,7 +9,7 @@ It feels sort of obvious – the more fear we experience, the worse we are at pr
 
 I've carried this intuition around for a while, and if pressed, I think I would have claimed that this effect scaled with whatever stakes were involved in failure or success. People are frightened by increasingly terrifying scenarios: they do correspondingly sillier things.
 
-![To be fair, the grenade would also have been a poor choice.](scream-movie.gif)
+![The grenade would also have been a poor choice.](scream-movie.gif)
 
 But then I experienced the effect powerfully, a few days ago, in an environment with no real-life stakes at all.
 
