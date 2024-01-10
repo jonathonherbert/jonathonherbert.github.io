@@ -6,6 +6,11 @@ import SEO from "../components/seo"
 import { rhythm, scale } from "../utils/typography"
 
 class BlogPostTemplate extends React.Component {
+  componentDidMount() {
+    const script = document.getElementById('page-script')?.innerHTML;
+    window.eval(script);
+  }
+
   render() {
     const post = this.props.data.markdownRemark
     const siteTitle = this.props.data.site.siteMetadata.title
@@ -44,7 +49,6 @@ class BlogPostTemplate extends React.Component {
             }}
           />
         </article>
-
         <nav>
           <ul
             style={{

@@ -1,3 +1,7 @@
 html, body, #___gatsby, #gatsby-focus-wrapper {
 	height: 100%;
 }
+
+code[class*="language-"], pre[class*="language-"] {
+  font-size: 13px;
+}
