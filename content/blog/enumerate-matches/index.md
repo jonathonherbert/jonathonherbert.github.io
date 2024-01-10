@@ -88,13 +88,13 @@ It has a few different ways of matching text. It has a spellchecker, for standar
 
 One might think that if solving a problem with a regular expression means that you have two problems,[^2] the maintainers of this giant corpus now have ~13,000 problems. But these rules have worked very well in practice, in combination with decent user telemetry and a good rule management system. The hard part is writing them: especially, helping non-technical users to write them.
 
-I had a thought: could I write a program that would enumerate every string a given regex would match? And if it did exist, could it help regex authors better understand what they are writing? 
+I had a thought: could I write a program that would enumerate every string a given regex would match? And if it did exist, could it help regex authors better understand what they are writing?
 
 Then I found [ExRex](https://github.com/asciimoo/exrex), which does precisely what I wanted. But it was written in Python, and I wanted an excuse to try to solve this myself, so…
 
 ## Parsing regular expressions
 
-Like any other programming language, regular expressions parse down to an Abstract Syntax Tree (AST), and because regexes are so ubiquitous, it wasn't hard to find a library that would do this for me – in this case, [regexp-tree](regexp-tree), as I was writing this program for a web-based app. A regular expression with a capturing group matching either 'a' or 'b', ` /(a|b)/`, parses into this:
+Like any other programming language, regular expressions parse down to an Abstract Syntax Tree (AST), and because regexes are so ubiquitous, it wasn't hard to find a library that would do this for me – in this case, the JavaScript library [regexp-tree](regexp-tree), as I was writing this program for a web-based app. As an example, a regular expression with a capturing group matching either 'a' or 'b', `/(a|b)/`, gives this AST:
 
 ```json
 {
@@ -146,46 +146,33 @@ A diagram makes the tree structure a bit clearer:
   </li>
 </ul>
 
-Faced with a tree, and the assumption that we can reasonably generate characters that match each root node in isolation, one thought might be to traverse the tree, generating combinations of characters every time we encounter 'or' choices (the Disjunction, `|`, above) or repetition (like the option `?` or zero-to-many `*` operators). We could do this by writing a handler for each node, and recursively calling handlers, passing arrays of possibilities back up the tree. 
+Faced with a tree, and the assumption that we can reasonably generate characters that match each root node in isolation, one thought might be to traverse the tree, generating combinations of characters every time we encounter 'or' choices (the Disjunction, `|`, above) or repetition (like the option `?` or zero-to-many `*` operators). We could do this by writing a handler for each node, and recursively calling handlers, passing arrays of possibilities back up the tree.
 
-```javascript
+```Typescript
 // Example code here
 ```
 
-You may have spotted the flaw: some nodes, like `*`, generate infinite sequences, and so our program cannot generate an exhaustive series of matches. A regex like `(a|b)*` gets stuck on the `Repetition` node:
+You may have spotted the flaw: some nodes, like `*`, generate infinite sequences, and so our program will attempt to generate an exhaustive series of matches and never halt. A simple regex like `a*`, a 0-infinite sequence of the character 'a', will get stuck on the `Quantifier` node:
 
 <ul class="tree">
   <li> <span>RegExp</span>
     <ul>
-      <li> <span>Repetition: '*'</span>
-        <ul>
-          <li> <span>Group</span>
-            <ul>
-              <li> <span>Disjunction</span>
-                <ul>
-                  <li> <span>Char: 'a'</span>
-                  </li>
-                  <li> <span>Char: 'b'</span>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
+      <li> <span>Quantifier: 0-Infinity</span>
+          <ul>
+            <li> <span>Char: 'a'</span>
         </ul>
       </li>
     </ul>
   </li>
 </ul>
 
-// Fancy example??
-
-Furthermore, faced with a potentially infinite set of possible matches, it'd be good if our program generated exactly as many as we wanted.
+Faced with a potentially infinite set of possible matches, we need a program that generates exactly as many as we want, and no more.
 
 ## Generators (can't you hear my motored heart)
 
-JavaScript has a language feature that makes this task easier – [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator), or functions that can yield control back to the caller until they are next called. If each node returns a generator, we can traverse the tree just once on every iteration, each generator producing a single result and then halting. This works well for leaf nodes that generate characters like `Char`, or `Repetition` nodes that yield the same output n times. But what about `Disjunction` or `Alternative` nodes (lists of expressions in sequence), that yield a different result every time?
+JavaScript has a language feature that makes this task easier – [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator). Generators are functions that, once called, can yield control back to the caller until they are next called – they can stop and start at will. If each node returns a generator that always produces a single result, we can traverse the tree just once on every iteration. This works well for leaf nodes that generate characters like `Char`, or `Repetition` nodes that yield the same output n times.
 
-Consider the regex `(a|b)(c|d)(e|f)`, which looks like:
+But what about `Disjunction` or `Alternative` nodes (lists of expressions in sequence), that yield a different result every time? Consider the regex `(a|b)(c|d)(e|f)`, which looks like:
 
 <ul class="tree">
   <li> <span>RegExp</span>
@@ -234,8 +221,7 @@ Consider the regex `(a|b)(c|d)(e|f)`, which looks like:
   </li>
 </ul>
 
-
-One way of writing out all the possible matches might be:
+Here are all the possible matches for that expression:
 
 ```
 ace
@@ -250,7 +236,7 @@ bdf
 
 I had to sit down with some pen and paper to work out an algorithm.
 
-First we consider some state. For the parent `Alternatives` node, we iterate over its child nodes to yield a value. Each child node may yield 1-many values. We store the index of a current child node, which indicates which child we'd like to next ask for a its next value.
+First we consider some state. For the parent `Alternatives` node, we iterate over its child nodes to yield a value. Each child node may yield 1-many values. We store the index of the current child node, indicating which child will next yield a new value.
 
 For each child `Expression` node, we store the index of the permutation it will next yield (which may not be the latest permutation), and the list of permutations it has already yielded, so we can backtrack as other child nodes yield new values.
 
@@ -263,7 +249,11 @@ For each child `Expression` node, we store the index of the permutation it will 
 5. Return to step 1.
 
 Here's a look at it in action:
-// Fancy diagram?
+
+
+```jsx
+<EnumerateRegexMatches regex="example">
+```
 
 The result is [regex-enumerate-matches](https://www.npmjs.com/package/regex-enumerate-matches), and it produces some fun results with our rules.
 
@@ -271,6 +261,5 @@ The result is [regex-enumerate-matches](https://www.npmjs.com/package/regex-enum
 
 I've plans to integrate this with our management tooling to give our users another way to verify the regexes they're writing are along the right lines – we'll do some testing to find out if it helps.
 
-[^1]: <sub>Minus fifty or so PhDs specialising in natural language processing</sub>
-[^2]: <sub>Oldie but goodie: ["Some people, when confronted with a problem, think 'I know, I'll use
-regular expressions.' Now they have two problems."](https://groups.google.com/g/comp.lang.python/c/-cnACi-RnCY/m/NlJs5ZNc0YUJ?hl=en#:~:text=%22Some%20people%2C%20when%20confronted%20with%20a%20problem%2C%20think%20%27I%20know%2C%20I%27ll%20use%0Aregular%20expressions.%27%20Now%20they%20have%20two%20problems.%22)</sub>
+[^1]: <sub>Minus the fifty or so PhDs specialising in natural language processing.</sub>
+[^2]: <sub>[Oldie but goodie.](https://groups.google.com/g/comp.lang.python/c/-cnACi-RnCY/m/NlJs5ZNc0YUJ?hl=en#:~:text=%22Some%20people%2C%20when%20confronted%20with%20a%20problem%2C%20think%20%27I%20know%2C%20I%27ll%20use%0Aregular%20expressions.%27%20Now%20they%20have%20two%20problems.%22)</sub>
