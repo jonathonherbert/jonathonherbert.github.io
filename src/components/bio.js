@@ -7,7 +7,7 @@
 
 import React from "react"
 import { useStaticQuery, graphql } from "gatsby"
-import Image from "gatsby-image"
+import { StaticImage } from "gatsby-plugin-image"
 
 import { rhythm } from "../utils/typography"
 
@@ -41,7 +41,7 @@ const Bio = () => {
         marginTop: rhythm(1)
       }}
     >
-      <Image
+      <StaticImage
         fixed={data.avatar.childImageSharp.fixed}
         alt={author}
         style={{
