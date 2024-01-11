@@ -5,6 +5,8 @@ description: "Like, _all_ of them"
 draft: false
 ---
 
+<div data-regex="(try|it|out)" data-allow-edit="true"></div>
+
 At The Guardian, we've got a tool called [Typerighter](https://github.com/guardian/typerighter) that's a bit like Grammarly, plus our style guide. [^1] It's a handy tool to check that copy matches our house style. The Daily Mail [love it.](https://www.dailymail.co.uk/news/article-11427737/How-war-trans-rights-killing-free-speech-worlds-sanctimonious-paper-Guardian.html#:~:text=The%20paper%20has%20a%20new%20editorial%20tool%20called%20%27Typerighter%27%20which%20does%20not%20merely%20correct%20poor%20English%20or%20bad%20punctuation%20but%20insists%20on%20politically%20correct%20terminology.%20The%20word%20%27aboriginal%27%20is%20proscribed.%20Journalists%20are%20enjoined%20to%20write%20%27pro%2Dchoice%27%20but%20never%20%27pro%2Dlife%27.)
 
 It has a few different ways of matching text. It has a spellchecker, for standard dictionary words. It has some more complicated rules written for LanguageTool, an open-source spelling and grammar checker. But the majority of the corpus that doesn't come from a dictionary is at present written in regular expressions – at the moment, about 13,000 of them.
@@ -69,7 +71,7 @@ A diagram makes the tree structure a bit clearer:
   </li>
 </ul>
 
-Faced with a tree, and the assumption that we can reasonably generate characters that match each root node in isolation, one thought might be to traverse the tree, generating combinations of characters every time we encounter 'or' choices (the Disjunction, `|`, above), or repetition (like the option `?` or zero-to-many `*` operators). A naive approach would be to write a handler for each node, which could recursively call other handlers for children, passing arrays of possibilities back up the tree to produce a final set of results – something like:
+Given this tree, and the assumption that we can reasonably generate characters that match each leaf node in isolation, one thought might be to traverse the tree, generating combinations of characters every time we encounter 'or' choices (the Disjunction, `|`, above), or repetition (like the option `?` or zero-to-many `*` operators). A naive approach would be to write a handler for each node, which could recursively call other handlers for children, passing arrays of possibilities back up the tree to produce a final set of results – something like:
 
 ```typescript
 const getMatchesForNode<T extends AstNode>(
@@ -95,7 +97,7 @@ const nodeToMatches = {
 };
 ```
 
-You may have spotted a flaw: some nodes, like `*`, generate infinite sequences, and so our program will attempt to generate an exhaustive series of matches and never halt. A simple regex like `a*`, a 0-infinite sequence of the character 'a', will get stuck on the `Quantifier` node:
+You may have spotted a flaw: some nodes, like `*`, generate infinite sequences, and so our program will attempt to generate an exhaustive series of matches and never halt.
 
 <ul class="tree">
   <li> <span>RegExp</span>
@@ -115,7 +117,7 @@ Faced with a potentially infinite set of possible matches, we need a program tha
 
 JavaScript has a language feature that makes this task easier – [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator). Generators are functions that, once called, can yield control back to the caller until they are next called – they can stop and start at will. If each node returns a generator that always produces a single result, we can traverse the tree just once on every iteration.
 
-This leads to some fun combinatorial problems. What about `Disjunction` or `Alternative` nodes (lists of expressions in sequence), that yield a different result every time? Consider the regex `(a|b)(c|d)(e|f)`, which looks like:
+This leads us to some fun combinatorial problems. What about `Disjunction` or `Alternative` nodes (lists of expressions in sequence), that yield a different result every time? Consider the regex `(a|b)(c|d)(e|f)`, which looks like:
 
 <ul class="tree">
   <li> <span>RegExp</span>
@@ -240,9 +242,7 @@ e@a
 
 A breadth-first traversal would be better, and I'll be circling back to tweak the algorithm when I've got time.
 
-Finally – it'd be interesting to integrate this with our management tooling to give Typerighter's users another way to verify the regexes they're writing are along the right lines. We'll do some testing to find out if it helps. In the mean time, have a play here!
-
-<div data-regex="(try|it|out!)" data-allow-edit="true"></div>
+Finally – it'd be interesting to integrate this with our management tooling to give Typerighter's users another way to verify the regexes they're writing are along the right lines. We'll do some testing to find out if it helps.
 
 And if you fancy using this in your own projects, it's available under a permissive license at [regex-enumerate-matches](https://www.npmjs.com/package/regex-enumerate-matches).
 
@@ -5664,7 +5664,7 @@ And if you fancy using this in your own projects, it's available under a permiss
     }
 
     button.addEventListener("click", getNewIteration);
-    resetBtn.addEventListener("click", () => applyRegex(regex));
+    resetBtn.addEventListener("click", () => applyRegex(allowEdit ? input.value : regex));
 
     outputContainer.addEventListener("click", () => {
       output.classList.toggle("regex--output__open");
