@@ -5532,7 +5532,6 @@ And if you fancy using this in your own projects, it's available under a permiss
 
   // Render code
   window.createRegexGraph = (regex, mountEl, allowEdit = false) => {
-
     function generateId() {
       var firstPart = (Math.random() * 46656) | 0;
       var secondPart = (Math.random() * 46656) | 0;
@@ -5595,7 +5594,8 @@ And if you fancy using this in your own projects, it's available under a permiss
 
     let input;
     if (allowEdit) {
-      input = addEl('input', graphEl, { attrs:{value: regex}});
+      const inputContainer = addEl('div', graphEl, { attrs: { class: 'regex--input-container' }})
+      input = addEl('input', inputContainer, { attrs: {value: regex}});
       input.addEventListener("input", e => applyRegex(e.target.value));
     }
     const transport = addEl('div', graphEl, { attrs: { class: 'regex--transport' }});
@@ -5738,6 +5738,16 @@ And if you fancy using this in your own projects, it's available under a permiss
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+  }
+
+  .regex--input-container {
+    font-family: monospace;
+  }
+
+  .regex--input-container::before,
+  .regex--input-container::after {
+    content: '/';
+    padding: 3px;
   }
 
   .tree--container {
