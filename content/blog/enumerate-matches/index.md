@@ -1,20 +1,15 @@
 ---
 title: Writing a program to enumerate every string a regular expression will match
-date: "2021-12-02T22:12:03.284Z"
+date: "2024-01-11T01:30:03.284Z"
 description: "Like, _all_ of them"
 draft: false
 ---
 
-TODO:
-
-- add examples from corpus
-- better way of displaying output
-
-At The Guardian, we've got a tool called Typerighter that's a bit like Grammarly, plus our style guide. [^1] It's a handy tool to check that copy matches our house style. The Daily Mail [love it.](https://www.dailymail.co.uk/news/article-11427737/How-war-trans-rights-killing-free-speech-worlds-sanctimonious-paper-Guardian.html#:~:text=The%20paper%20has%20a%20new%20editorial%20tool%20called%20%27Typerighter%27%20which%20does%20not%20merely%20correct%20poor%20English%20or%20bad%20punctuation%20but%20insists%20on%20politically%20correct%20terminology.%20The%20word%20%27aboriginal%27%20is%20proscribed.%20Journalists%20are%20enjoined%20to%20write%20%27pro%2Dchoice%27%20but%20never%20%27pro%2Dlife%27.)
+At The Guardian, we've got a tool called [Typerighter](https://github.com/guardian/typerighter) that's a bit like Grammarly, plus our style guide. [^1] It's a handy tool to check that copy matches our house style. The Daily Mail [love it.](https://www.dailymail.co.uk/news/article-11427737/How-war-trans-rights-killing-free-speech-worlds-sanctimonious-paper-Guardian.html#:~:text=The%20paper%20has%20a%20new%20editorial%20tool%20called%20%27Typerighter%27%20which%20does%20not%20merely%20correct%20poor%20English%20or%20bad%20punctuation%20but%20insists%20on%20politically%20correct%20terminology.%20The%20word%20%27aboriginal%27%20is%20proscribed.%20Journalists%20are%20enjoined%20to%20write%20%27pro%2Dchoice%27%20but%20never%20%27pro%2Dlife%27.)
 
 It has a few different ways of matching text. It has a spellchecker, for standard dictionary words. It has some more complicated rules written for LanguageTool, an open-source spelling and grammar checker. But the majority of the corpus that doesn't come from a dictionary is at present written in regular expressions – at the moment, about 13,000 of them.
 
-One might think that if solving a problem with a regular expression means that you have two problems,[^2] the maintainers of this giant corpus now have ~13,000 problems. But these rules have worked very well in practice, in combination with decent user telemetry and a good rule management system. The hard part is writing them: especially, helping non-technical users to write them.
+One might think that if solving a problem with a regular expression means that you now have two problems,[^2] the maintainers of this giant corpus have ~13,000 problems. But these rules have worked very well in practice, in combination with decent user telemetry and a good rule management system. The hard part is writing them: especially, helping non-technical users to write them.
 
 I had a thought: could I write a program that would enumerate every string a given regex would match? And if it did exist, could it help regex authors better understand what they are writing?
 
@@ -118,7 +113,7 @@ Faced with a potentially infinite set of possible matches, we need a program tha
 
 ## Generators (can't you hear my motored heart)
 
-JavaScript has a language feature that makes this task easier – [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator). Generators are functions that, once called, can yield control back to the caller until they are next called – they can stop and start at will. If each node returns a generator that always produces a single result, we can traverse the tree just once on every iteration. 
+JavaScript has a language feature that makes this task easier – [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator). Generators are functions that, once called, can yield control back to the caller until they are next called – they can stop and start at will. If each node returns a generator that always produces a single result, we can traverse the tree just once on every iteration.
 
 This leads to some fun combinatorial problems. What about `Disjunction` or `Alternative` nodes (lists of expressions in sequence), that yield a different result every time? Consider the regex `(a|b)(c|d)(e|f)`, which looks like:
 
@@ -217,24 +212,45 @@ This is more straightforward to solve, as we can increment our child node genera
 
 <div data-regex="(a|b){3}"></div>
 
+It's been fun running some of our rules through this program. Some are simple – imagine the shame having been caught mangling the hyphenation in:
 
+<div data-regex="The Fresh Prince of Bel-? ?Air"></div>
 
-// Give examples
+It looks like 'fill the bill' is a common enough malapropism to warrant:
 
-Who doesn't enjoy the MDN e-mail validation regex:
+<div data-regex="\bfill(s|ed|ing)? the bill"></div>
+
+And for our entry on 'mother-of-three' ('family details and marital status are only relevant in stories about families or marriage'), we have:
+
+<div data-regex="\b(mother|father) ?-?of ?-?(one|two|three|four)"></div>
+
+Finally, for a fun test beyond our style guide, who doesn't enjoy the [MDN e-mail validation regex](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#basic_validation):
 
 <div data-regex="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"></div>
 
-I've plans to integrate this with our management tooling to give our users another way to verify the regexes they're writing are along the right lines – we'll do some testing to find out if it helps. Have a play here!
+The MDN example also reveals a possible improvement – the algorithm above runs depth-first, exhausting one node before moving to another. That means that we get fewer email-like examples when running the above:
+
+```
+a@a
+b@a
+c@a
+d@a
+e@a
+```
+
+A breadth-first traversal would be better, and I'll be circling back to tweak the algorithm when I've got time.
+
+Finally – it'd be interesting to integrate this with our management tooling to give Typerighter's users another way to verify the regexes they're writing are along the right lines. We'll do some testing to find out if it helps. In the mean time, have a play here!
 
 <div data-regex="(try|it|out!)" data-allow-edit="true"></div>
 
-And if you fancy using this in your own projects, it's available under a permissive license: [regex-enumerate-matches](https://www.npmjs.com/package/regex-enumerate-matches).
+And if you fancy using this in your own projects, it's available under a permissive license at [regex-enumerate-matches](https://www.npmjs.com/package/regex-enumerate-matches).
 
 [^1]: <sub>Minus the fifty or so PhDs specialising in natural language processing.</sub>
 [^2]: <sub>[Oldie but goodie.](https://groups.google.com/g/comp.lang.python/c/-cnACi-RnCY/m/NlJs5ZNc0YUJ?hl=en#:~:text=%22Some%20people%2C%20when%20confronted%20with%20a%20problem%2C%20think%20%27I%20know%2C%20I%27ll%20use%0Aregular%20expressions.%27%20Now%20they%20have%20two%20problems.%22)</sub>
 
 <script id="page-script" type="module">
+  // Module code
   var __create = Object.create;
   var __defProp = Object.defineProperty;
     var __getProtoOf = Object.getPrototypeOf;
@@ -5516,6 +5532,7 @@ And if you fancy using this in your own projects, it's available under a permiss
 
   // Render code
   window.createRegexGraph = (regex, mountEl, allowEdit = false) => {
+
     function generateId() {
       var firstPart = (Math.random() * 46656) | 0;
       var secondPart = (Math.random() * 46656) | 0;
@@ -5533,16 +5550,16 @@ And if you fancy using this in your own projects, it's available under a permiss
       return `<li> <span id="${uid}" class="node-description">${description ? description : node.type}</span> ${content ? `<ul>${content}</ul>` : ''}</li>`
     };
 
-    const appendEl = (tagName, node, { attrs = {}, innerHTML } = {}) => {
-      const input = document.createElement(tagName);
+    const addEl = (tagName, node, { attrs = {}, innerHTML } = {}, prepend = false) => {
+      const el = document.createElement(tagName);
       if (innerHTML) {
-        input.innerHTML = innerHTML;
+        el.innerHTML = innerHTML;
       }
       Object.entries(attrs).forEach(([attr, val]) => {
-        input.setAttribute(attr, val);
+        el.setAttribute(attr, val);
       })
-      node.appendChild(input);
-      return input;
+      prepend ? node.prepend(el) : node.appendChild(el);
+      return el;
     }
 
     const nodeToHTML = {
@@ -5574,28 +5591,39 @@ And if you fancy using this in your own projects, it's available under a permiss
       // Quantifier: (node, _) => noopIter(node),
     };
 
-    const applyRegex = (regex) => {
-      button.disabled = false;
-      const ast = parse(`/${regex}/`);
-      generator = generateMatchesViz(ast);
-      const html = renderNode(ast);
-      tree.innerHTML = html;
-      getNewIteration();
-    }
+    const graphEl = addEl('div', mountEl, { attrs: { class: 'regex--container' }})
 
     if (allowEdit) {
-      const input = appendEl('input', mountEl, { attrs:{value: regex}});
+      const input = addEl('input', graphEl, { attrs:{value: regex}});
       input.addEventListener("input", e => applyRegex(e.target.value));
     }
-    const button = appendEl('button', mountEl, { innerHTML: 'Next value'});
-    const resetBtn = appendEl('button', mountEl, { innerHTML: 'Reset'});
-    const tree = appendEl('ul', mountEl, { attrs: { class: 'tree'}});
-    const output = appendEl('div', mountEl);
+    const transport = addEl('div', graphEl, { attrs: { class: 'regex--transport' }});
+    const outputContainer = addEl('div', graphEl, { attrs: { class: 'regex--output-container' }});
+    const output = addEl('div', outputContainer, { attrs: { class: 'regex--output' }});
+    const outputExpand = addEl('div', outputContainer, { attrs: { class: 'arrow arrow-down' }});
+    const button = addEl('button', transport, { innerHTML: 'Next value'});
+    const resetBtn = addEl('button', transport, { innerHTML: 'Reset'});
+    const treeContainer = addEl('div', graphEl, { attrs: { class: 'tree--container' }})
+    const tree = addEl('ul', treeContainer, { attrs: { class: 'tree' }});
 
     let generator = null;
 
+    const applyRegex = (regex) => {
+      try {
+        output.innerHTML = "";
+        button.disabled = false;
+        const ast = parse(`/${regex}/`);
+        generator = generateMatchesViz(ast);
+        const html = renderNode(ast);
+        tree.innerHTML = html;
+        getNewIteration();
+      } catch(e) {
+        tree.innerHTML = `Error: ${e.message}`;
+      }
+    }
+
     const resetNodes = () =>
-      mountEl.querySelectorAll('li > .node-description').forEach(node => {
+      graphEl.querySelectorAll('li > .node-description').forEach(node => {
         node.setAttribute("style", "");
         node.querySelectorAll(".node-content").forEach(child => node.removeChild(child));
       });
@@ -5606,7 +5634,12 @@ And if you fancy using this in your own projects, it's available under a permiss
       if (value) {
         resetNodes();
         applySelectionToDom(value);
-        output.innerText = value.value;
+        addEl('div', output, { innerHTML: value.value }, true);
+        if (output.children.length > 1) {
+          outputExpand.classList.add("arrow__visible");
+        } else {
+          outputExpand.classList.remove("arrow__visible");
+        }
       }
 
       if (done) {
@@ -5633,6 +5666,12 @@ And if you fancy using this in your own projects, it's available under a permiss
     button.addEventListener("click", getNewIteration);
     resetBtn.addEventListener("click", () => applyRegex(regex));
 
+    outputContainer.addEventListener("click", () => {
+      output.classList.toggle("regex--output__open");
+      outputExpand.classList.toggle("arrow-down");
+      outputExpand.classList.toggle("arrow-up");
+    });
+
     applyRegex(regex);
   }
 
@@ -5641,114 +5680,188 @@ And if you fancy using this in your own projects, it's available under a permiss
   })
 </script>
 
-  <style>
+<style>
+  input + button {
+    margin-left: 5px;
+  }
 
-    input + button {
-      margin-left: 5px;
-    }
+  button + button {
+    margin-left: 5px;
+  }
 
-    button + button {
-      margin-left: 5px;
-    }
+  [data-regex] {
+    position: relative;
+    width: 100vw;
+    /* Hack center: the internal column width is 33.75em. */
+    left: calc((-100vw + 33.75rem) / 2);
+    padding: 5px;
+  }
 
-    [data-regex] .tree {
-      display: block;
-      max-width: 100%;
-      margin-top: 5px;
-      overflow-y: scroll;
-    }
+  [data-regex] .tree {
+    display: block;
+    max-width: 100%;
+    margin-top: 5px;
+    overflow-y: scroll;
+  }
 
-    /*https://www.cssscript.com/clean-tree-diagram/*/
-    .tree,
-    .tree ul,
-    .tree li {
-      font-family: monospace;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      position: relative;
-    }
+  .regex--container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
 
-    .tree {
-      margin: 0 0 1em;
-      text-align: center;
-    }
+  .regex--container input {
+    margin-bottom: 5px;
+  }
 
-    .tree,
-    .tree ul {
-      display: table;
-    }
+  .regex--transport {
+    margin-bottom: 20px;
+  }
 
-    .tree ul {
-      width: 100%;
-    }
+  .regex--output {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: monospace;
+    height: 1rem;
+    overflow: hidden;
+  }
 
-    .tree li {
-      display: table-cell;
-      padding: .5em 0;
-      vertical-align: top;
-    }
+  .regex--output.regex--output__open {
+    height: auto;
+  }
 
-    .tree li:before {
-      outline: solid 0.5px #666;
-      content: "";
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: -1px;
-    }
+  .regex--output-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
 
-    .tree li:first-child:before {
-      left: 50%;
-    }
+  .tree--container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+  }
 
-    .tree li:last-child:before {
-      right: 50%;
-    }
+  .arrow {
+    margin: 5px 0;
+    width: 0;
+    height: 0;
+    display: none;
+    visibility: hidden;
+  }
 
-    .tree code,
-    .tree li > span {
-      background-color: #ddd;
-      border-radius: .2em;
-      display: inline-block;
-      margin: 0 .2em .5em;
-      padding: .2em .5em;
-      position: relative;
-    }
+  .arrow__visible {
+    display: block;
+    visibility: visible;
+  }
 
-    .node-content {
-      background-color: white;
-      margin-left: 5px;
-      padding: 1px 5px;
-    }
+  .arrow-down {
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #333;
+  }
 
-    .tree ul:before,
-    .tree code:before,
-    .tree li > span:before {
-      outline: solid 0.5px #666;
-      content: "";
-      height: .5em;
-      left: 50%;
-      position: absolute;
-    }
+  .arrow-up {
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #333;
+  }
 
-    .tree ul:before {
-      top: -.5em;
-    }
+  /*https://www.cssscript.com/clean-tree-diagram/*/
+  .tree,
+  .tree ul,
+  .tree li {
+    font-family: monospace;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
 
-    .tree code:before,
-    .tree li > span:before {
-      top: -.55em;
-    }
+  .tree {
+    margin: 0 0 1em;
+    text-align: center;
+  }
 
-    .tree>li {
-      margin-top: 0;
-    }
+  .tree,
+  .tree ul {
+    display: table;
+  }
 
-    .tree>li:before,
-    .tree>li:after,
-    .tree>li>code:before,
-    .tree>li>.span:before {
-      outline: none;
-    }
+  .tree ul {
+    width: 100%;
+  }
+
+  .tree li {
+    display: table-cell;
+    padding: .5em 0;
+    vertical-align: top;
+  }
+
+  .tree li:before {
+    outline: solid 0.5px #666;
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: -1px;
+  }
+
+  .tree li:first-child:before {
+    left: 50%;
+  }
+
+  .tree li:last-child:before {
+    right: 50%;
+  }
+
+  .tree code,
+  .tree li > span {
+    background-color: #ddd;
+    border-radius: .2em;
+    display: inline-block;
+    margin: 0 .2em .5em;
+    padding: .2em .5em;
+    position: relative;
+  }
+
+  .node-content {
+    background-color: white;
+    margin-left: 5px;
+    padding: 1px 5px;
+  }
+
+  .tree ul:before,
+  .tree code:before,
+  .tree li > span:before {
+    outline: solid 0.5px #666;
+    content: "";
+    height: .5em;
+    left: 50%;
+    position: absolute;
+  }
+
+  .tree ul:before {
+    top: -.5em;
+  }
+
+  .tree code:before,
+  .tree li > span:before {
+    top: -.55em;
+  }
+
+  .tree>li {
+    margin-top: 0;
+  }
+
+  .tree>li:before,
+  .tree>li:after,
+  .tree>li>code:before,
+  .tree>li>.span:before {
+    outline: none;
+  }
 </style>
