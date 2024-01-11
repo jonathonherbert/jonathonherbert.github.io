@@ -37,12 +37,12 @@ const Bio = () => {
     <div
       style={{
         display: `flex`,
-        alignItems: 'center',
-        marginTop: rhythm(1)
+        alignItems: "center",
+        marginTop: rhythm(1),
       }}
     >
       <StaticImage
-        fixed={data.avatar.childImageSharp.fixed}
+        src={data.avatar.childImageSharp.fixed.src}
         alt={author}
         style={{
           marginRight: rhythm(1 / 2),
@@ -54,12 +54,12 @@ const Bio = () => {
           borderRadius: `50%`,
         }}
       />
-      <p style={{ marginBottom: 0, fontSize: '0.8em' }}>
+      <p style={{ marginBottom: 0, fontSize: "0.8em" }}>
         Written by <strong>{author}</strong>.{` `}
-        You can{` `}
-        <a href={`https://twitter.com/${social.twitter}`}>
-          follow him on Twitter, or look upon his works on [Github.](https://github.com/jonathonherbert)
-        </a>
+        You can follow him on{" "}
+        <a href={`https://twitter.com/${social.twitter}`}>Twitter</a>, or look
+        upon his works on{" "}
+        <a href="https://github.com/jonathonherbert">Github</a>.
       </p>
     </div>
   )

@@ -1,8 +1,8 @@
 ---
 title: If it's not rubbish, why do we love to chuck it out?
-date: "2020-01-25T22:12:03.284Z"
+date: "2020-02-13T22:12:03.284Z"
 description: "An attempt to spark joy."
-draft: true
+draft: false
 ---
 
 _This is part two of a series adapted from a talk me and Reetta gave internally at the Guardian, and then later at Continuous Lifecycle. Thanks, Reetta, for your help with the talk!_

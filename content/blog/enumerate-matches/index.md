@@ -5593,8 +5593,9 @@ And if you fancy using this in your own projects, it's available under a permiss
 
     const graphEl = addEl('div', mountEl, { attrs: { class: 'regex--container' }})
 
+    let input;
     if (allowEdit) {
-      const input = addEl('input', graphEl, { attrs:{value: regex}});
+      input = addEl('input', graphEl, { attrs:{value: regex}});
       input.addEventListener("input", e => applyRegex(e.target.value));
     }
     const transport = addEl('div', graphEl, { attrs: { class: 'regex--transport' }});
