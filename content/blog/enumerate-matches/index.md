@@ -5678,7 +5678,10 @@ And if you fancy using this in your own projects, it's available under a permiss
 
   document.querySelectorAll("[data-regex]").forEach(el => {
     createRegexGraph(el.getAttribute('data-regex'), el, el.getAttribute('data-allow-edit'))
-  })
+  });
+
+  const scriptEl = document.getElementById('page-script');
+  scriptEl.setAttribute('data-has-run', true);
 </script>
 
 <style>

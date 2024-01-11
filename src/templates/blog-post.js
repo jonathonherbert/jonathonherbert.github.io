@@ -7,7 +7,12 @@ import { rhythm, scale } from "../utils/typography"
 
 class BlogPostTemplate extends React.Component {
   componentDidMount() {
-    const script = document.getElementById('page-script')?.innerHTML;
+    const scriptEl = document.getElementById('page-script');
+
+    // Avoid running if the script has already run
+    if (!scriptEl || scriptEl.getAttribute('data-has-run')) return;
+    const script = scriptEl.innerHTML;
+    document.getElementById('page-script')
     window.eval(script);
   }
 
