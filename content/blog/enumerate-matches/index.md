@@ -179,6 +179,10 @@ bde
 bdf
 ```
 
+A few things to note:
+- The results are ordered!
+- We do not know in advance whether a node will yield additional results.
+
 I had to sit down with some pen and paper to work out an algorithm.
 
 First we consider some state. For the parent `Alternatives` node, we iterate over its child nodes to yield a value. Each child node may yield 1-many values. We store the index of the current child node, indicating which child will next yield a new value.
@@ -228,9 +232,9 @@ And for our entry on 'mother-of-three' ('family details and marital status are o
 
 Finally, for a fun test beyond our style guide, who doesn't enjoy the [MDN e-mail validation regex](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#basic_validation):
 
-<div data-regex="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"></div>
+<div data-regex="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"></div>
 
-The MDN example also reveals a possible improvement – the algorithm above runs depth-first, exhausting one node before moving to another. That means that we get fewer email-like examples when running the above:
+The MDN example also reveals a possible improvement – the algorithm above runs depth-first, exhausting one node before moving to another. That means that we get fewer email-like examples when running the above – a single iteration of the `(?:\.[a-zA-Z0-9-]+)*` would give us a `a@a.a`, but there's an infinity of alphabet in the two quantifier nodes before we get there.
 
 ```
 a@a
@@ -238,11 +242,12 @@ b@a
 c@a
 d@a
 e@a
+// ... for ever
 ```
 
-A breadth-first traversal would be better, and I'll be circling back to tweak the algorithm when I've got time.
+How could we avoid getting stuck on nodes yielding infinite results, thus revealing more of the tree sooner? Traversing the tree breadth first might be one way. Adding a configurable limit to the number of values a node capable of generating infinite series could yield might be another.
 
-Finally – it'd be interesting to integrate this with our management tooling to give Typerighter's users another way to verify the regexes they're writing are along the right lines. We'll do some testing to find out if it helps.
+It'd be interesting to integrate this with our management tooling to give Typerighter's users another way to verify the regexes they're writing are along the right lines. We'll do some testing to find out if it helps.
 
 And if you fancy using this in your own projects, it's available under a permissive license at [regex-enumerate-matches](https://www.npmjs.com/package/regex-enumerate-matches).
 
