@@ -218,19 +218,11 @@ This is more straightforward to solve, as we can increment our child node genera
 
 <div data-regex="(a|b){3}"></div>
 
-It's been fun running some of our rules through this program. Some are simple – imagine the shame having been caught mangling the hyphenation in:
+It's been fun running some of our rules through this program. The (now-outdated!) rule `Camilla,? (Parker ?-?Bowles|(the)? Queen Consort)` -> `Camilla, the Queen Consort` gives an idea of the sort of mistakes that happen in the wild:
 
-<div data-regex="The Fresh Prince of Bel-? ?Air"></div>
+<div data-regex="Camilla,? (Parker ?-?Bowles|(the)? Queen Consort)"></div>
 
-It looks like 'fill the bill' is a common enough malapropism to warrant:
-
-<div data-regex="\bfill(s|ed|ing)? the bill"></div>
-
-And for our entry on 'mother-of-three' ('family details and marital status are only relevant in stories about families or marriage'), we have:
-
-<div data-regex="\b(mother|father) ?-?of ?-?(one|two|three|four)"></div>
-
-Finally, for a fun test beyond our style guide, who doesn't enjoy the [MDN e-mail validation regex](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#basic_validation):
+For a fun test beyond our style guide, who doesn't enjoy the [MDN e-mail validation regex](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/email#basic_validation):
 
 <div data-regex="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"></div>
 
