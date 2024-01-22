@@ -76,7 +76,7 @@ Given this tree, and the assumption that we can reasonably generate characters t
 ```typescript
 const getMatchesForNode<T extends AstNode>(
   node: T | null
-): string[] => generators[node.type](node as any, context, negative);
+): string[] => nodeToMatches[node.type](node as any, context, negative);
 
 const nodeToMatches = {
   // Root node
@@ -111,7 +111,7 @@ You may have spotted a flaw: some nodes, like `*`, generate infinite sequences, 
   </li>
 </ul>
 
-Faced with a potentially infinite set of possible matches, we need a program that generates exactly as many as we want, and no more.
+Faced with a potentially infinite set of possible matches, we need a program that generates as many as we want, and no more.
 
 ## Generators (can't you hear my motored heart)
 
@@ -180,7 +180,7 @@ bdf
 ```
 
 A few things to note:
-- The results are ordered!
+- The results are ordered by node.
 - We do not know in advance whether a node will yield additional results.
 
 I had to sit down with some pen and paper to work out an algorithm.
@@ -188,6 +188,8 @@ I had to sit down with some pen and paper to work out an algorithm.
 First we consider some state. For the parent `Alternatives` node, we iterate over its child nodes to yield a value. Each child node may yield 1-many values. We store the index of the current child node, indicating which child will next yield a new value.
 
 For each child `Expression` node, we store the index of the permutation it will next yield (which may not be the latest permutation), and the list of permutations it has already yielded, so we can backtrack as other child nodes yield new values.
+
+With that in mind:
 
 1. Take a result from all the child nodes, and concatenate them. Yield the output string.
 2. Increment the current child's permutation index.
