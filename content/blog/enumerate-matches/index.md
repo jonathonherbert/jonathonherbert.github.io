@@ -9,7 +9,7 @@ draft: false
 
 At The Guardian, we've got a tool called [Typerighter](https://github.com/guardian/typerighter) that's a bit like Grammarly, plus our style guide. [^1] It's a handy tool to check that copy matches our house style. The Daily Mail [love it.](https://www.dailymail.co.uk/news/article-11427737/How-war-trans-rights-killing-free-speech-worlds-sanctimonious-paper-Guardian.html#:~:text=The%20paper%20has%20a%20new%20editorial%20tool%20called%20%27Typerighter%27%20which%20does%20not%20merely%20correct%20poor%20English%20or%20bad%20punctuation%20but%20insists%20on%20politically%20correct%20terminology.%20The%20word%20%27aboriginal%27%20is%20proscribed.%20Journalists%20are%20enjoined%20to%20write%20%27pro%2Dchoice%27%20but%20never%20%27pro%2Dlife%27.)
 
-It has a few different ways of matching text. It has a spellchecker, for standard dictionary words. It has some more complicated rules written for LanguageTool, an open-source spelling and grammar checker. But the majority of the corpus that doesn't come from a dictionary is at present written in regular expressions – at the moment, about 13,000 of them.
+It has a few different ways of matching text. It has a spellchecker, for standard dictionary words. It has some more complicated rules written for LanguageTool, an open-source spelling and grammar checker. But the majority of the corpus that doesn't come from a dictionary is at present written in regular expressions. At the moment, there are about 13,000 of them, the vast majority written by our in-house regex genius and product manager, [Max Walker.](https://www.theguardian.com/profile/maxtonwalker)
 
 One might think that if solving a problem with a regular expression means that you now have two problems,[^2] the maintainers of this giant corpus have ~13,000 problems. But these rules have worked very well in practice, in combination with decent user telemetry and a good rule management system. The hard part is writing them: especially, helping non-technical users to write them.
 
@@ -241,7 +241,7 @@ e@a
 
 How could we avoid getting stuck on nodes yielding infinite results, thus revealing more of the tree sooner? Traversing the tree breadth first might be one way. Adding a configurable limit to the number of values a node capable of generating infinite series could yield might be another.
 
-It'd be interesting to integrate this with our management tooling to give Typerighter's users another way to verify the regexes they're writing are along the right lines. We'll do some testing to find out if it helps.
+It'd be interesting to integrate this with our management tooling to give Typerighter's users another way to verify the regexes they're writing are along the right lines. I'll chat to the team to see what they think.
 
 And if you fancy using this in your own projects, it's available under a permissive license at [regex-enumerate-matches](https://www.npmjs.com/package/regex-enumerate-matches).
 
