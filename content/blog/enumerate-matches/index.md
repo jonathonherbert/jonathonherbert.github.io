@@ -1,5 +1,5 @@
 ---
-title: Writing a program to enumerate every string a regular expression will match
+title: Writing a program to generate every string a regular expression will match
 date: "2024-01-11T01:30:03.284Z"
 description: "Like, _all_ of them"
 draft: false
