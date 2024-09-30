@@ -71,7 +71,7 @@ But there's no syntax highlighting, and if you get something wrong, despite bein
 
 ## When the chips are down
 
-So chips are out there – but they're a bit janky, or they're not as expressive or fully-featured as we'd like them to be. But we've got a decent feature list for what chips _could_ be, right there:
+So chips are out there – and they're a bit janky, or they're not as expressive or fully-featured as we'd like them to be. But we've got a decent feature list for what chips _could_ be, right there:
 
 |Chip-based search requirements||
 |-|-|
