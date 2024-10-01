@@ -7,13 +7,13 @@ import { rhythm, scale } from "../utils/typography"
 
 class BlogPostTemplate extends React.Component {
   componentDidMount() {
-    const scriptEl = document.getElementById('page-script');
+    const scriptEl = document.getElementById("page-script")
 
     // Avoid running if the script has already run
-    if (!scriptEl || scriptEl.getAttribute('data-has-run')) return;
-    const script = scriptEl.innerHTML;
-    document.getElementById('page-script')
-    window.eval(script);
+    if (!scriptEl || scriptEl.getAttribute("data-has-run")) return
+    const script = scriptEl.innerHTML
+    document.getElementById("page-script")
+    window.eval(script)
   }
 
   render() {
@@ -44,7 +44,7 @@ class BlogPostTemplate extends React.Component {
                 marginBottom: rhythm(1),
               }}
             >
-              {post.frontmatter.date}
+              <i>{post.frontmatter.date}</i>
             </p>
           </header>
           <section dangerouslySetInnerHTML={{ __html: post.html }} />
