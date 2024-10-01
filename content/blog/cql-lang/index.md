@@ -54,7 +54,7 @@ So chips are out there – and they're a bit janky, or they're not as expressive
 |🔍 Discoverability|✅|✅|✅|❌|⚖️|
 |⌨️ Keyboard-only input|❌|✅|✅|✅|✅|
 |📄 Query as single document|❌|❌|⚖️|✅|✅|
-|💻 Search terms in boolean operators and groups|❌|❌|✅|✅|✅|
+|💻 Boolean operators and groups|❌|❌|✅|✅|✅|
 |🧳 Portability (copy and paste)|❌|❌|❌|✅|✅|
 |✨ Syntax highlighting|❌|❌|❌|❌|✅|
 |🚨 Error reporting|❌|❌|❌|❌|❌|
