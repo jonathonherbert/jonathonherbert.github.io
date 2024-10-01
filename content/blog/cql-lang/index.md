@@ -1,7 +1,7 @@
 ---
-title: "Structured search queries for power users, part 1: the problem"
+title: "Structured search queries for power users, part 1: the dream"
 date: "2024-09-30T01:30:03.284Z"
-description: "How structured search UIs fall short, and what good might look like"
+description: "The state of the art for structured search, and how we might do better"
 draft: false
 ---
 
