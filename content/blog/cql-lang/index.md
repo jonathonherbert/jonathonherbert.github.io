@@ -7,7 +7,7 @@ draft: false
 
 There's a UI pattern for search that I've seen implemented in a few places. In line with the convention at the Guardian, I'm going to call that pattern 'chips' – a way of adding field-specific search terms to search queries as you type, with typeahead to aid discoverability.
 
-This sounds like a lovely thing to have at an organisation that catalogues tens of thousands of images and publishes around 300 pieces a day – in short, an organisation awash with content of every sort to discover.
+This sounds like a lovely thing to have at an organisation that catalogues tens of thousands of images and publishes around three hundred pieces a day – in short, an organisation awash with content of every sort to discover.
 
 But! Every implementation of a chip-based (or chip-ish) search interface that I am aware of, either at the Guardian, or elsewhere, falls a bit short. By looking at a few examples, let's build up a feature list for the sort of thing we'd _like_ to have.
 
