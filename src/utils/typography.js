@@ -3,8 +3,8 @@ import Typography from "typography"
 const typography = new Typography({
   baseFontSize: '16px',
   baseLineHeight: 1.5,
-  headerFontFamily: ['Times New Roman', 'serif'],
-  bodyFontFamily: ['Times New Roman', 'serif'],
+  headerFontFamily: ['Lora', 'serif'],
+  bodyFontFamily: ['Lora', 'serif'],
   // See below for the full list of options.
 })
 
