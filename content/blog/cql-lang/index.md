@@ -11,6 +11,8 @@ This sounds like a lovely thing to have at an organisation that catalogues tens 
 
 But! Every implementation of a chip-based (or chip-ish) search interface that I am aware of, either at the Guardian, or elsewhere, falls a bit short. By looking at a few examples, let's build up a feature list for the sort of thing we'd _like_ to have.
 
+Before we begin: lots of credit here to [paperboyo](https://github.com/paperboyo), a product manager at the Guardian whose chip-related thoughts inspire a lot of the below 🍟
+
 ## All that and a bag of chips
 
 Here are chips in the Guardian (and now the BBC's) open source image management tool, [**the Grid**](https://github.com/guardian/grid):
@@ -27,7 +29,7 @@ In [**Giant**](https://github.com/guardian/giant), the Guardian's open-source do
 
 ![giant-chips](giant-chips.gif)
 
-In fact, order _is_ an important feature! Giant supports boolean operators and groups (e.g. `this AND (that OR those)`) for both general search terms and chip fields. But! There's nothing to signify that this is possible, or that it's working when you have used it, something syntax highlighting might make clearer.
+In fact, order _is_ an important feature! Giant supports boolean operators and groups (e.g. `this AND (that OR those)`) for both general search terms and chip fields. But there's nothing to signify that this is possible, or that it's working when you have used it, something syntax highlighting might make clearer.
 
 It's worth comparing these UIs to the query languages in tools like [**Kibana**](https://www.elastic.co/kibana) (which is powered by Lucene, or another query language similar to Lucene, KQL, which has a few features that are useful for Elasticsearch.) Here's Kibana's Discover mode in action:
 
@@ -60,9 +62,9 @@ So chips are out there – and they're a bit janky, or they're not as expressive
 |🚨 Error reporting|❌|❌|❌|❌|❌|
 
 
-How hard can it be to make a tool that gives us all of the above? We'll need three things:
-1. A query language that lets us express key value pairs, boolean operators, grouping, etc., with discoverability at the forefront
-2. A parser for that language, to provide underlying support for syntax highlighting and error reporting, and to open the door for consumers to interpret the language into their own query DSLs
+How hard can it be to make a tool that gives us all of the above? There's only one way to find out! We'll need three things:
+1. A query language that lets us express key value pairs, boolean operators, grouping, etc., with discoverability in mind.
+2. A parser for that language, to provide underlying support for syntax highlighting and error reporting, and to open the door for consumers to interpret the language into their own query DSLs.
 3. A UI that can use the output of the parser to power the features we list above!
 
 The query language comes first, and so we'll tackle that in the next post.
