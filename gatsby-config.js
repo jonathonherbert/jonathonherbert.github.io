@@ -31,9 +31,9 @@ module.exports = {
           {
             resolve: `gatsby-remark-images`,
             options: {
-              maxWidth: 590,
+              maxWidth: 1024,
               showCaptions: true,
-              // markdownCaptions: true, -- cannot use until bugfix
+              markdownCaptions: true,
               wrapperStyle: `
                 text-align: center;
                 color: #b1afaf;

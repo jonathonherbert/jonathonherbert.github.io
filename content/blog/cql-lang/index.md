@@ -13,19 +13,19 @@ But! Every implementation of a chip-based (or chip-ish) search interface that I 
 
 Before we begin: lots of credit here to [paperboyo](https://github.com/paperboyo), a product manager at the Guardian whose chip-related thoughts inspire a lot of the below 🍟
 
-## All that and a bag of chips
+## All that and a bag of chips [^1]
 
 Here are chips in the Guardian (and now the BBC's) open source image management tool, [**the Grid**](https://github.com/guardian/grid):
 
 ![grid-chips](grid-chips.gif)
 
-This is a neat feature. The tool's comprehensive search indicies are discoverable from the keyboard, as you're writing the search query. There a few drawbacks to the Grid's implementation, though. Chips can only be added at the front of the search. They're added _from_ the text input, but they're not a part of its value, and so you cannot navigate back to them with the caret to edit or remove them.
+This is a neat feature. The tool's comprehensive search indicies are discoverable from the keyboard, as you're writing the search query. There a few drawbacks to the Grid's implementation, though. Chips can only be added at the front of the search. They're added _from_ the text input, but they're not a part of its value, and so you cannot navigate back to them with the caret to edit or remove them. Because of this, the way the caret moves between chips and the search input is unpredictable, and sometimes buggy.
 
 A similar pattern is used in **AWS EC2 instance search** (and elsewhere in the AWS dashboard), and although you cannot navigate between chips with the caret, it _is_ possible to navigate to them with the keyboard via the tab key, making keyboard-only input possible.
 
 ![aws-chips](aws-chips.gif)
 
-In [**Giant**](https://github.com/guardian/giant), the Guardian's open-source document ingestion and search platform, there's a more current implementation. Alongside correct caret behaviour (but not selection behaviour – each chip is its own input, and selection cannot cut across chips or search terms), the chips are inline with the query, an affordance which implies that their order might be important.
+[**Giant**](https://github.com/guardian/giant), the Guardian's open-source document ingestion and search platform, goes further. Alongside correct caret behaviour (but not selection behaviour – each chip is its own input, and selection cannot cut across chips or search terms), the chips are inline with the query, an affordance which implies that their order might be important.
 
 ![giant-chips](giant-chips.gif)
 
@@ -35,17 +35,21 @@ It's worth comparing these UIs to the query languages in tools like [**Kibana**]
 
 ![elk-chips](elk-chips.gif)
 
-Interestingly (ironically?), discoverability in this input is limited: I cannot discover an index (Elasticsearch would call it a field) without beginning to type, and so browsing indices is impossible. I also cannot discover a subset of values for an index once I have specified it – where, for example, typing `stage:` might offer `CODE|PROD|TEST`. This is possible in the menu on the right hand side here, but it'd be nice to do it within the input itself for the purposes of our specification.
+A text query language offers the ultimate in editability. As a single document, editing and copy-and-pasting values just works.
 
-A text query language offers the ultimate in editability, though – as a single document, editing and copy-and-pasting values just works.
+Interestingly (ironically?), discoverability in this input is limited: I cannot discover an index (Elasticsearch would call it a field) without beginning to type, and so browsing indices via the query prompt is impossible. I also cannot discover a subset of values for an index once I have specified it – where, for example, typing `stage:` might offer `CODE|PROD|TEST`. This is possible in the menu on the right hand side on the Discover page, but it'd be nice to do it within the input itself for the purposes of our specification.
 
-But there's no syntax highlighting, and if you get something wrong, the failure mode is a binary 'search failed', repeated across the `n` shards you were searching – despite there being a query grammar! What a shame.
+But there's no syntax highlighting, and if you get something wrong, the failure mode is a binary 'search failed', repeated across the `n` shards you were searching – despite there being a query grammar! A missed opportunity.
 
-![But ... _why_ did they fail? :(((](https://github.com/user-attachments/assets/5668f225-43de-4a4f-8313-107c35741ead)
+![But – _why_ did they fail? :(((](elk-fail.png)
 
-Finally, **Github's** search comes the closest to ticking all the boxes we've added, with more comprehensive autocomplete – although its syntax precludes discovering all available search terms. And it has syntax highlighting! Nice:
+Finally, **Github's** search comes the closest to ticking all the boxes we've alluded to above, with more comprehensive autocomplete – although its syntax precludes browsing search terms, as in Kibana. It even has syntax highlighting! Nice:
 
 ![github-chips](github-chips.gif)
+
+Error reporting is also present, if you format your query in a particular way (An error for `( term` are reported, but not `(term`, which is treated as a single token, although `(term OR another)` is treated as the boolean query `term OR another`), but you must hit search to discover that you've made a mistake:
+
+![It'd be nice to see this as we typed.](github-error.png)
 
 ## When the chips are down
 
@@ -59,7 +63,7 @@ So chips are out there – and they're a bit janky, or they're not as expressive
 |💻 Boolean operators and groups|❌|❌|✅|✅|✅|
 |🧳 Portability (copy and paste)|❌|❌|❌|✅|✅|
 |✨ Syntax highlighting|❌|❌|❌|❌|✅|
-|🚨 Error reporting|❌|❌|❌|❌|❌|
+|🚨 Real-time error reporting|❌|❌|❌|❌|❌|
 
 
 How hard can it be to make a tool that gives us all of the above? There's only one way to find out! We'll need three things:
@@ -68,3 +72,5 @@ How hard can it be to make a tool that gives us all of the above? There's only o
 3. A UI that can use the output of the parser to power the features we list above!
 
 The query language comes first, and so we'll tackle that in the next post.
+
+[^1]: This will probably get worse.
