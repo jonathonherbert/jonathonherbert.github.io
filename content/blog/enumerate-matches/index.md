@@ -5695,8 +5695,8 @@ And if you fancy using this in your own projects, it's available under a permiss
   [data-regex] {
     position: relative;
     width: 100vw;
-    /* Hack center: the internal column width is 33.75em. */
-    left: calc((-100vw + 33.75rem) / 2);
+    /* Hack center: the internal column width is 54em. */
+    left: calc((-100vw + 54rem) / 2);
     padding: 5px;
   }
 
