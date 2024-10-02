@@ -1,7 +1,7 @@
 ---
 title: That language / framework / software you hate? It's not rubbish.
 date: "2020-01-24T22:12:03.284Z"
-description: "Well, maybe."
+description: "Well, maybe"
 draft: false
 ---
 
@@ -30,7 +30,7 @@ It was written in Visual Basic 6. It communicated with an API built out of email
 ![This _is_ rubbish.](rubbish.jpg)
 
 But we weren't completely naive -- we knew there was real complexity here. We did a decent job reverse engineering the interfaces, modelling the system, and building something new. That went OK. Then, we made a mistake.
- 
+
 The client hated the old interface. This was 2015! And they had this Windows 98-looking thing. They wanted us to come up with something new, something exciting. They knew their users weren’t very tech literate, but they were confident that, their old system being such a relic, it wouldn’t be too hard to figure something out.
 
 We made our plans. There would be two themes -- a legacy theme that would recreate the old interface in all its orthogonal glory as a drop-in replacement, and a new theme, that would take the legacy theme and spin its rough, 90’s era edges into contemporary gold.
@@ -47,7 +47,7 @@ We found ourselves testing and debugging the system in 90’s mode. It was a bet
 
 ![Beneath this glassy surface, a world of gliding monsters!](./shark.jpg)
 
-The client were happy with the old theme, and we’d run out of time, so we parked the new one. As far as I know, it’s still gathering dust, and people using that software are still getting their playlists from a system that was built in 2017 but looks like it shipped almost two decades earlier.  
+The client were happy with the old theme, and we’d run out of time, so we parked the new one. As far as I know, it’s still gathering dust, and people using that software are still getting their playlists from a system that was built in 2017 but looks like it shipped almost two decades earlier.
 
 By dismissing the software we were working with as outmoded and clunky -- as rubbish -- we missed what it was doing well. And as a result, we underestimated the complexity of the problem we were trying to solve.
 

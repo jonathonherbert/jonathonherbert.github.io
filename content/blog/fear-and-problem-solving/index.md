@@ -1,7 +1,7 @@
 ---
 title: Fear and good problem solving are mutually exclusive
 date: "2021-12-02T22:12:03.284Z"
-description: "In which a humble video game illustrates a fundamental truth of learning, but sadly a little bit late for Halloween"
+description: "In which a scary video game illustrates a fundamental truth of learning, but sadly a little bit late for Halloween"
 draft: false
 ---
 

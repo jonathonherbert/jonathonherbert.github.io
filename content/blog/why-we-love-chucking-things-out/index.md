@@ -1,7 +1,7 @@
 ---
 title: If it's not rubbish, why do we love to chuck it out?
 date: "2020-02-13T22:12:03.284Z"
-description: "An attempt to spark joy."
+description: "An attempt to spark joy"
 draft: false
 ---
 
