@@ -47,7 +47,7 @@ Finally, **Github's** search comes the closest to ticking all the boxes we've al
 
 ![github-chips](github-chips.gif)
 
-Error reporting is also present, if you format your query in a particular way (An error for `( term` are reported, but not `(term`, which is treated as a single token, although `(term OR another)` is treated as the boolean query `term OR another`), but you must hit search to discover that you've made a mistake:
+Error reporting is also present, but you must hit search to discover that you've made a mistake:
 
 ![It'd be nice to see this as we typed.](github-error.png)
 
