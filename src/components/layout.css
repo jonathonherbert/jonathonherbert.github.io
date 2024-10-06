@@ -5,3 +5,10 @@ html, body, #___gatsby, #gatsby-focus-wrapper {
 code[class*="language-"], pre[class*="language-"] {
   font-size: 13px;
 }
+
+blockquote {
+  font-style: italic;
+  border-left: 3px solid #ddd;
+  margin-left: 0;
+  padding-left: 1rem;
+}
