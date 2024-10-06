@@ -13,7 +13,7 @@ But ... how does one write a query language? Where do we even _begin?_
 
 Well, I had the good fortune to stumble across _[Crafting Interpreters](https://craftinginterpreters.com/)_ by Bob Nystrom, pedagogical genius and S-rank [twitter follow](https://x.com/munificentbob?lang=en), which is a brilliant introduction to the world of grammars, parsers and interpreters.[^1] It gave me a good enough understanding of the moving parts to hack out something that worked.
 
-## A query language like grammar used to make
+## A query language just like grammar used to make
 
 Why do we need something new? Surely something like [Lucene syntax](https://lucene.apache.org/core/2_9_4/queryparsersyntax.html) will do for our purposes?
 
@@ -73,9 +73,9 @@ group             -> '(' boolean ')'
 chip              -> '+' str ':' str
 ```
 
-##
-
 That's it! We might find that this grammar needs a few tweaks for useability purposes when we come to implement our UI, but the above is a great place to start.
+
+## Let's take grammar for a drive
 
 To test the grammar, we can "play" it — beginning from the top, expand our symbols until we're left with a set of tokens. For example, if we start with `query`, always expand the leftmost symbol first, and make a few arbitrary choices, we can produce something like:
 
