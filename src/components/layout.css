@@ -12,3 +12,7 @@ blockquote {
   margin-left: 0;
   padding-left: 1rem;
 }
+
+.gatsby-highlight {
+  margin-bottom: 1.5rem;
+}

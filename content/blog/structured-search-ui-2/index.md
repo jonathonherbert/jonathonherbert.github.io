@@ -23,13 +23,13 @@ One solution, borrowed from the Grid and Giant chip implementations, is to add a
 
 The rest of the query language will be heavily inspired by Lucene, for now ignoring some of the more domain-specific parts (fuzzy or proximity searches, ranges etc.) to sidestep complexity that isn't chip- or boolean- related. We'll build up a grammar using a simple notation similar to [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form), again borrowed from Crafting Interpreters — [here's the chapter](https://craftinginterpreters.com/representing-code.html) if you'd like to understand how grammars might be represented in more detail.
 
-The first thing we can be sure of is that our query language is a list of expressions. We can write that as the rule:
+The first thing we can be sure of is that a query in our language is a list of expressions. We can write that as the rule:
 
 ```
 query             -> expr+
 ```
 
-where, as in regular expressions, the postfix `+` denotes one-or-more of the previous symbol. In plain English, this rule states, "a `query` symbol is made up of one or more `expr` symbols."
+As in regular expressions, the postfix `+` denotes one-or-more of the previous symbol. In plain English, this rule states, "a `query` symbol is made up of one or more `expr` symbols."
 
 There are three sorts of `expr`: a plain `str` (quoted and unquoted, to permit characters that would otherwise be reserved), a `chip` (`+key:value`), and a `group` (parentheses around an `expr`.) Following the convention of borrowing from regular expressions, we can use the pipe character to denote an "or" relationship, and express that as:
 
@@ -45,7 +45,7 @@ boolean           -> expr ('AND' | 'OR' | 'NOT' expr)*
 expr              -> str | group | chip
 ```
 
-where the postfix `*` denotes zero-or-more of the previous symbol, and the brackets group a collection of symbols. With this rule, `str`, `str AND group`, `str AND (group OR chip)` etc. are all valid.
+The postfix `*` denotes zero-or-more of the previous symbol, and the brackets group a collection of symbols. With this rule, `str`, `str AND group`, `str AND (group OR chip)` etc. are all valid.
 
 How do we unpack `str | group | chip`? Well, `str` is what we call a "terminal" — a symbol that represents a token. Tokens form the alphabet that makes up a grammar. So there's no need to define `str` in our notation.
 
@@ -93,7 +93,7 @@ str 'AND' ('+' str ':' str 'OR' str)
 
 which, were we to fill in the strings, might look like `pets AND (+tag:cats OR feline)`, a valid sentence in this grammar.
 
-Of course, this grammar can't really do any work — yet. We'll next need to parse it into a machine-readable form, and in the next post we'll write a program that does just that, using two techniques — _scanning_ and _parsing._
+Of course, this grammar isn't doing any work for us — yet. We'll next need to parse it into a machine-readable form, and in the next post we'll write a program that does just that, using two techniques — _scanning_, to produce the tokens that comprise our grammar, and _parsing_, to apply the grammar to those tokens, and give us a useful structure (or an error message!) as a result.
 
 [^1]: I'll lean heavily on what I learned from _Crafting Interpreters_ for the parsing/interpreting parts of this series, and if you'd like to learn more on these topics, or indeed write your very own programming language, I can't recommend it highly enough.
 [^2]: There's another cost here — although our grammar might look a lot like Lucene, using `+` to start our chips clashes with [Lucene's 'must' operator](https://lucene.apache.org/core/2_9_4/queryparsersyntax.html#:~:text=The%20%22%2B%22%20or%20required%20operator%20requires%20that%20the%20term%20after%20the%20%22%2B%22%20symbol%20exist%20somewhere%20in%20a%20the%20field%20of%20a%20single%20document.). So, were we to want to have our query language be a superset of Lucene's, we'd need to have some other character for our typeahead.
