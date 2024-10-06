@@ -19,7 +19,7 @@ Then I found [ExRex](https://github.com/asciimoo/exrex), which does precisely wh
 
 ## Parsing regular expressions
 
-Like any other programming language, regular expressions parse down to an Abstract Syntax Tree (AST), and because regexes are so ubiquitous, it wasn't hard to find a parser library – in this case, the JavaScript library [regexp-tree](regexp-tree), as I was writing this program for a web-based app. As an example of what an AST looks like, a regular expression with a capturing group matching either 'a' or 'b', `/(a|b)/`, gives this output:
+Like any other programming language, regular expressions parse down to an Abstract Syntax Tree (AST), and because regexes are so ubiquitous, it wasn't hard to find a parser library — in this case, the JavaScript library [regexp-tree](regexp-tree), as I was writing this program for a web-based app. As an example of what an AST looks like, a regular expression with a capturing group matching either 'a' or 'b', `/(a|b)/`, gives this output:
 
 ```json
 {
@@ -71,7 +71,7 @@ A diagram makes the tree structure a bit clearer:
   </li>
 </ul>
 
-Given this tree, and the assumption that we can reasonably generate characters that match each leaf node in isolation, one thought might be to traverse the tree, generating combinations of characters every time we encounter 'or' choices (the Disjunction, `|`, above), or repetition (like the option `?` or zero-to-many `*` operators). A naive approach would be to write a handler for each node, which could recursively call other handlers for children, passing arrays of possibilities back up the tree to produce a final set of results – something like:
+Given this tree, and the assumption that we can reasonably generate characters that match each leaf node in isolation, one thought might be to traverse the tree, generating combinations of characters every time we encounter 'or' choices (the Disjunction, `|`, above), or repetition (like the option `?` or zero-to-many `*` operators). A naive approach would be to write a handler for each node, which could recursively call other handlers for children, passing arrays of possibilities back up the tree to produce a final set of results — something like:
 
 ```typescript
 const getMatchesForNode<T extends AstNode>(
@@ -115,7 +115,7 @@ Faced with a potentially infinite set of possible matches, we need a program tha
 
 ## Generators (can't you hear my motored heart)
 
-JavaScript has a language feature that makes this task easier – [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator). Generators are functions that, once called, can yield control back to the caller until they are next called – they can stop and start at will. If each node returns a generator that always produces a single result, we can traverse the tree just once on every iteration.
+JavaScript has a language feature that makes this task easier — [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator). Generators are functions that, once called, can yield control back to the caller until they are next called — they can stop and start at will. If each node returns a generator that always produces a single result, we can traverse the tree just once on every iteration.
 
 This leads us to some fun combinatorial problems. What about `Disjunction` or `Alternative` nodes (lists of expressions in sequence), that yield a different result every time? Consider the regex `(a|b)(c|d)(e|f)`, which looks like:
 
@@ -228,7 +228,7 @@ For a fun test beyond our style guide, who doesn't enjoy the [MDN e-mail validat
 
 <div data-regex="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"></div>
 
-The MDN example also reveals a possible improvement – the algorithm above runs depth-first, exhausting one node before moving to another. That means that we get fewer email-like examples when running the above – a single iteration of the `(?:\.[a-zA-Z0-9-]+)*` would give us a `a@a.a`, but there's an infinity of alphabet in the two quantifier nodes before we get there.
+The MDN example also reveals a possible improvement — the algorithm above runs depth-first, exhausting one node before moving to another. That means that we get fewer email-like examples when running the above — a single iteration of the `(?:\.[a-zA-Z0-9-]+)*` would give us a `a@a.a`, but there's an infinity of alphabet in the two quantifier nodes before we get there.
 
 ```
 a@a

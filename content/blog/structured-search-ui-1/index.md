@@ -1,13 +1,13 @@
 ---
-title: "Structured search queries for power users, part 1: the dream"
+title: "Structured search queries for web UIs, part 1: the dream"
 date: "2024-09-30T01:30:03.284Z"
 description: "The state of the art for structured search, and how we might do better"
 draft: false
 ---
 
-There's a UI pattern for search that I've seen implemented in a few places. In line with the convention at the Guardian, I'm going to call that pattern 'chips' – a way of adding field-specific search terms to search queries as you type, with typeahead to aid discoverability.
+There's a UI pattern for search that I've seen implemented in a few places. In line with the convention at the Guardian, I'm going to call that pattern 'chips' — a way of adding field-specific search terms to search queries as you type, with typeahead to aid discoverability.
 
-This sounds like a lovely thing to have at an organisation that catalogues tens of thousands of images and publishes around three hundred pieces a day – in short, an organisation awash with content of every sort to discover.
+This sounds like a lovely thing to have at an organisation that catalogues tens of thousands of images and publishes around three hundred pieces a day — in short, an organisation awash with content of every sort to discover.
 
 But! Every implementation of a chip-based (or chip-ish) search interface that I am aware of, either at the Guardian, or elsewhere, falls a bit short. By looking at a few examples, let's build up a feature list for the sort of thing we'd _like_ to have.
 
@@ -25,7 +25,7 @@ A similar pattern is used in **AWS EC2 instance search** (and elsewhere in the A
 
 ![aws-chips](aws-chips.gif)
 
-[**Giant**](https://github.com/guardian/giant), the Guardian's open-source document ingestion and search platform, goes further. Alongside correct caret behaviour (but not selection behaviour – each chip is its own input, and selection cannot cut across chips or search terms), the chips are inline with the query, an affordance which implies that their order might be important.
+[**Giant**](https://github.com/guardian/giant), the Guardian's open-source document ingestion and search platform, goes further. Alongside correct caret behaviour (but not selection behaviour — each chip is its own input, and selection cannot cut across chips or search terms), the chips are inline with the query, an affordance which implies that their order might be important.
 
 ![giant-chips](giant-chips.gif)
 
@@ -37,13 +37,13 @@ It's worth comparing these UIs to the query languages in tools like [**Kibana**]
 
 A text query language offers the ultimate in editability. As a single document, editing and copy-and-pasting values just works.
 
-Interestingly (ironically?), discoverability in this input is limited: I cannot discover an index (Elasticsearch would call it a field) without beginning to type, and so browsing indices via the query prompt is impossible. I also cannot discover a subset of values for an index once I have specified it – where, for example, typing `stage:` might offer `CODE|PROD|TEST`. This is possible in the menu on the right hand side on the Discover page, but it'd be nice to do it within the input itself for the purposes of our specification.
+Interestingly (ironically?), discoverability in this input is limited: I cannot discover an index (Elasticsearch would call it a field) without beginning to type, and so browsing indices via the query prompt is impossible. I also cannot discover a subset of values for an index once I have specified it — where, for example, typing `stage:` might offer `CODE|PROD|TEST`. This is possible in the menu on the right hand side on the Discover page, but it'd be nice to do it within the input itself for the purposes of our specification.
 
-But there's no syntax highlighting, and if you get something wrong, the failure mode is a binary 'search failed', repeated across the `n` shards you were searching – despite there being a query grammar! A missed opportunity.
+But there's no syntax highlighting, and if you get something wrong, the failure mode is a binary 'search failed', repeated across the `n` shards you were searching — despite there being a query grammar! A missed opportunity.
 
-![But – _why_ did they fail? :(((](elk-fail.png)
+![But — _why_ did they fail? :(((](elk-fail.png)
 
-Finally, **Github's** search comes the closest to ticking all the boxes we've alluded to above, with more comprehensive autocomplete – although its syntax precludes browsing search terms, as in Kibana. It even has syntax highlighting! Nice:
+Finally, **Github's** search comes the closest to ticking all the boxes we've alluded to above, with more comprehensive autocomplete — although its syntax precludes browsing search terms, as in Kibana. It even has syntax highlighting! Nice:
 
 ![github-chips](github-chips.gif)
 
@@ -53,7 +53,7 @@ Error reporting is also present, but you must hit search to discover that you've
 
 ## When the chips are down
 
-So chips are out there – and they're a bit janky, or they're not as expressive or fully-featured as we'd like them to be. But we've got a decent feature list for what chips _could_ be, right there:
+So chips are out there — and they're a bit janky, or they're not as expressive or fully-featured as we'd like them to be. But we've got a decent feature list for what chips _could_ be, right there:
 
 |Feature|Grid|AWS EC2 search|Giant|Kibana Discover|Github|
 |-|-|-|-|-|-|
