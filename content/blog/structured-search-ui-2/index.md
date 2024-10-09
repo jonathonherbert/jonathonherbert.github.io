@@ -11,7 +11,7 @@ This is what we promised to do in part 1:
 
 But ... how does one write a query language? Where do we even _begin?_
 
-Well, a while back I had the good fortune to stumble across _[Crafting Interpreters](https://craftinginterpreters.com/)_ by Bob Nystrom, pedagogical genius and S-rank [twitter/mastodon follow](https://x.com/munificentbob?lang=en), which is a brilliant introduction to the world of grammars, parsers and interpreters.[^1] It gave me a good enough understanding of the moving parts to hack out something that worked.
+Well, a while back I had the good fortune to stumble across _[Crafting Interpreters](https://craftinginterpreters.com/)_ by Bob Nystrom, which is a brilliant introduction to the world of grammars, parsers, and interpreters — some of the many moving parts that comprise a programming language.[^1] This gave me enough to hack something together that worked.
 
 ## A query language like grammar used to make
 
@@ -81,7 +81,7 @@ group             -> '(' boolean ')'
 chip              -> '+' str ':' str
 ```
 
-That's it! We might find that this grammar needs a few tweaks for useability purposes when we come to implement our UI, but the above is a great place to start.[^3]
+That's it! We might find that this grammar needs a few tweaks for useability purposes when we come to implement our UI, but the above is a great place to start.
 
 ## Grammar in action
 
@@ -103,5 +103,5 @@ which, were we to fill in the strings, might look like `pets AND (+tag:cats OR f
 
 Of course, this grammar isn't doing any work for us — yet. We'll need to parse it into a machine-readable form. In the next post we'll write a program that does just that, using two techniques: _scanning_, to produce the tokens that comprise our grammar, and _parsing_, to apply the grammar to those tokens, and give us a useful structure (or an error message!) as a result.
 
-[^1]: I'll lean heavily on what I learned from _Crafting Interpreters_ for the parsing/interpreting parts of this series, and if you'd like to learn more on these topics, or indeed write your very own programming language, I can't recommend it highly enough.
+[^1]: Bob Nystrom is a serial language designer, pedagogical genius, and S-rank [twitter/mastodon](https://x.com/munificentbob?lang=en) follow. I'll lean heavily on what I learned from _Crafting Interpreters_ for the parsing/interpreting parts of this series, and if you'd like to learn more on these topics, or indeed write your very own programming language, I can't recommend that book highly enough.
 [^2]: There's another cost here — although our grammar might look a lot like Lucene, using `+` to start our chips clashes with [Lucene's 'must' operator](https://lucene.apache.org/core/2_9_4/queryparsersyntax.html#:~:text=The%20%22%2B%22%20or%20required%20operator%20requires%20that%20the%20term%20after%20the%20%22%2B%22%20symbol%20exist%20somewhere%20in%20a%20the%20field%20of%20a%20single%20document.). So, were we to want to have our query language be a superset of Lucene's, we'd need to have some other character for our typeahead.

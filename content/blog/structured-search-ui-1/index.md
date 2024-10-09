@@ -43,7 +43,7 @@ But there's no syntax highlighting, and if you get something wrong, the failure 
 
 ![But — _why_ did they fail? :(((](elk-fail.png)
 
-Finally, **Github's** search comes the closest to ticking all the boxes we've alluded to above, with more comprehensive autocomplete — although its syntax precludes browsing search terms, as in Kibana. It even has syntax highlighting! Nice:
+**Github's** search comes the closest to ticking all the boxes we've alluded to above, with more comprehensive autocomplete — although its syntax precludes browsing search terms, as in Kibana. It even has syntax highlighting! Nice:
 
 ![github-chips](github-chips.gif)
 
@@ -51,26 +51,31 @@ Error reporting is also present, but you must hit search to discover that you've
 
 ![It'd be nice to see this as we typed.](github-error.png)
 
+Finally, loathe as I am to [call anything rubbish](./its-not-rubbish), a (dis)honourable mention to Gmail's search input, which offers a similarly powerful query language, and then hides its affordances behind some odd UI choices. Boolean operators and field-specific search are both present, with keys and values separated by `:`, but the user must … [google, I guess?](https://support.google.com/mail/answer/7190?hl=en&co=GENIE.Platform%3DAndroid) to discover what's possible – I can't see a link to the documentation anywhere in the UI.
+
+![gmail-chips](gmail-chips.gif)
+
+Note also the additional filter UI. What if those filters added to the query, revealing both the fields available and their syntax? This feels like it misses a point of discovery for users new to the syntax — but there may be good reasons to use two modes of input here, and I'd be interested to see what Google's telemetry reveals about usage patterns. We'll return to those thoughts later in this series, when we're implementing our UI.
+
 ## When the chips are down
 
 So chips are out there — and they're a bit janky, or they're not as expressive or fully-featured as we'd like them to be. But we've got a decent feature list for what chips _could_ be, right there:
 
-|Feature|Grid|AWS EC2 search|Giant|Kibana Discover|Github|
-|-|-|-|-|-|-|
-|🔍 Discoverability|✅|✅|✅|❌|⚖️|
-|⌨️ Keyboard-only input|❌|✅|✅|✅|✅|
-|📄 Query as single document|❌|❌|⚖️|✅|✅|
-|💻 Boolean operators and groups|❌|❌|✅|✅|✅|
-|🧳 Portability (copy and paste)|❌|❌|❌|✅|✅|
-|✨ Syntax highlighting|❌|❌|❌|❌|✅|
-|🚨 Real-time error reporting|❌|❌|❌|❌|❌|
+|Feature|Grid|EC2|Giant|Kibana|Github|Gmail|
+|-|-|-|-|-|-|-|
+|🔍 Discoverability|✅|✅|✅|❌|⚖️|❌|
+|⌨️ Keyboard-only input|❌|✅|✅|✅|✅|✅|
+|📄 Query as single document|❌|❌|⚖️|✅|✅|❌|
+|💻 Boolean operators and groups|❌|❌|✅|✅|✅|✅|
+|🧳 Portability (copy and paste)|❌|❌|❌|✅|✅|❌|
+|✨ Syntax highlighting|❌|❌|❌|❌|✅|❌|
+|🚨 Real-time error reporting|❌|❌|❌|❌|❌|❌|
 
-
-How hard can it be to make a tool that gives us all of the above? There's only one way to find out! We'll need three things:
+How hard can it be to make a UI component that gives us all of the above? There's only one way to find out! We'll need three things:
 1. A query language that lets us express key value pairs, boolean operators, grouping, etc., with discoverability in mind.
 2. A parser for that language, to provide underlying support for syntax highlighting and error reporting, and to open the door for consumers to interpret the language into their own query DSLs.
 3. A UI that can use the output of the parser to power the features we list above!
 
-The query language comes first, and so we'll tackle that in the next post.
+The query language comes first, and so we'll tackle that in the [next post.](/structured-search-ui-2)
 
 [^1]: This will probably get worse.
