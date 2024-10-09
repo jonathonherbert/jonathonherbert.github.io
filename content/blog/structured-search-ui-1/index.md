@@ -29,7 +29,7 @@ A similar pattern is used in **AWS EC2 instance search** (and elsewhere in the A
 
 ![giant-chips](giant-chips.gif)
 
-In fact, order _is_ an important feature! Giant supports boolean operators and groups (e.g. `this AND (that OR those)`) for both general search terms and chip fields. But there's nothing to signify that this is possible, or that it's working when you have used it, something syntax highlighting might make clearer.
+In fact, order _is_ an important feature! Giant supports binary operators and groups (e.g. `this AND (that OR those)`) for both general search terms and chip fields. But there's nothing to signify that this is possible, or that it's working when you have used it, something syntax highlighting might make clearer.
 
 It's worth comparing these UIs to the query languages in tools like [**Kibana**](https://www.elastic.co/kibana) (which is powered by Lucene, or another query language similar to Lucene, KQL, which has a few features that are useful for Elasticsearch.) Here's Kibana's Discover mode in action:
 
@@ -51,7 +51,7 @@ Error reporting is also present, but you must hit search to discover that you've
 
 ![It'd be nice to see this as we typed.](github-error.png)
 
-Finally, loathe as I am to [call anything rubbish](./its-not-rubbish), a (dis)honourable mention to Gmail's search input, which offers a similarly powerful query language, and then hides its affordances behind some odd UI choices. Boolean operators and field-specific search are both present, with keys and values separated by `:`, but the user must … [google, I guess?](https://support.google.com/mail/answer/7190?hl=en&co=GENIE.Platform%3DAndroid) to discover what's possible – I can't see a link to the documentation anywhere in the UI.
+Finally, loathe as I am to [call anything rubbish](./its-not-rubbish), a (dis)honourable mention to Gmail's search input, which offers a similarly powerful query language, and then hides its affordances behind some odd UI choices. Binary operators and field-specific search are both present, with keys and values separated by `:`, but the user must … [google, I guess?](https://support.google.com/mail/answer/7190?hl=en&co=GENIE.Platform%3DAndroid) to discover what's possible – I can't see a link to the documentation anywhere in the UI.
 
 ![gmail-chips](gmail-chips.gif)
 
@@ -66,13 +66,13 @@ So chips are out there — and they're a bit janky, or they're not as expressive
 |🔍 Discoverability|✅|✅|✅|❌|⚖️|❌|
 |⌨️ Keyboard-only input|❌|✅|✅|✅|✅|✅|
 |📄 Query as single document|❌|❌|⚖️|✅|✅|❌|
-|💻 Boolean operators and groups|❌|❌|✅|✅|✅|✅|
+|💻 Binary operators and groups|❌|❌|✅|✅|✅|✅|
 |🧳 Portability (copy and paste)|❌|❌|❌|✅|✅|❌|
 |✨ Syntax highlighting|❌|❌|❌|❌|✅|❌|
 |🚨 Real-time error reporting|❌|❌|❌|❌|❌|❌|
 
 How hard can it be to make a UI component that gives us all of the above? There's only one way to find out! We'll need three things:
-1. A query language that lets us express key value pairs, boolean operators, grouping, etc., with discoverability in mind.
+1. A query language that lets us express key value pairs, binary expressions, grouping, etc., with discoverability in mind.
 2. A parser for that language, to provide underlying support for syntax highlighting and error reporting, and to open the door for consumers to interpret the language into their own query DSLs.
 3. A UI that can use the output of the parser to power the features we list above!
 
