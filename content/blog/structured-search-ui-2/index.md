@@ -31,6 +31,10 @@ pets AND (cats OR dogs)        // Binary expressions
 +tag:pets AND (cats OR dogs)   // Combinations of the above
 ```
 
+All that's left to do is give it a cheeky name. For now, I've taken to calling it chips query language 🍟, or CQL for short.[^3]
+
+## A grammar for CQL
+
 The first thing we can be sure of is that a query in our language is a list of expressions. We can write that as the rule:
 
 ```
@@ -105,3 +109,4 @@ Of course, this grammar isn't doing any work for us — yet. We'll need to parse
 
 [^1]: Bob Nystrom is a serial language designer, pedagogical genius, and S-rank [twitter/mastodon](https://x.com/munificentbob?lang=en) follow. I'll lean heavily on what I learned from _Crafting Interpreters_ for the parsing/interpreting parts of this series, and if you'd like to learn more on these topics, or indeed write your very own programming language, I can't recommend that book highly enough.
 [^2]: There's another cost here — although our grammar might look a lot like Lucene, using `+` to start our chips clashes with [Lucene's 'must' operator](https://lucene.apache.org/core/2_9_4/queryparsersyntax.html#:~:text=The%20%22%2B%22%20or%20required%20operator%20requires%20that%20the%20term%20after%20the%20%22%2B%22%20symbol%20exist%20somewhere%20in%20a%20the%20field%20of%20a%20single%20document.). So, were we to want to have our query language be a superset of Lucene's, we'd need to have some other character for our typeahead.
+[^3]: Hm, there are a fair few things [already called CQL](https://en.wikipedia.org/wiki/CQL). Don't worry, we can rename it when it gets big.
