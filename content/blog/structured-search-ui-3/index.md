@@ -16,7 +16,7 @@ There are two parts to this process:
 
 <div data-scanner>why not +edit:me?</div>
 
-Of the two, going from utf-8 to the CQL lexicon is the easier task. That's because for most programming languages, and certainly for CQL, their lexical grammar is a [regular grammar](https://en.wikipedia.org/wiki/Regular_language). This means the output of our scanner is a list of tokens created in the same order as they are consumed from our input — we don't have to worry about the more complicated tree structure that's necessary for [context-free grammars](https://en.wikipedia.org/wiki/Context-free_grammar) like CQL.
+Of the two, going from utf-8 to the CQL lexicon is the easier task. That's because for most programming languages, and certainly for CQL, their lexical grammar is a [regular grammar](https://en.wikipedia.org/wiki/Regular_language) — the sort of grammar that can be encoded by a regular expression.[^1] This means the output of our scanner is a list of tokens created in the same order as they are consumed from our input — we don't have to worry about the more complicated tree structure that's necessary for [context-free grammars](https://en.wikipedia.org/wiki/Context-free_grammar) like CQL.
 
 This means we can describe the scanning process as a loop that continually ingests our input, and a switch statement that inspects the next few characters, consumes them, and (optionally) outputs a token. What data should a `Token` contain? Well, we'll need:
 
@@ -49,11 +49,11 @@ interface Token {
     public end: number
     public tokenType: TokenType,
     public lexeme: string,
-    public literal: string | undefined
+    public literal?: string
 }
 ```
 
-Writing a scanner is then fairly straightforward. First, we'll introduce our `Scanner` class, which encapsulates the mutable state we need to keep track of the beginning of the current lexeme, and how far we've scanned forward.
+Writing a scanner is then fairly straightforward. First, we'll introduce our `Scanner` class, which encapsulates the mutable state we need to keep track of the beginning of the current lexeme, and how far we've scanned forward.[^1]
 
 ```typescript
 export class Scanner {
@@ -124,7 +124,7 @@ export class Scanner {
 
 ... or, in plain English, "scan forward until we hit a `:` character, whitespace, or the end of the string. Then add a `CHIP_KEY` token, optionally adding its literal value if it exists."
 
-This is largely straightforward, but there are a few wrinkles worth mentioning. The first is that, in some cases, we do not know what token we have until we are  mid-way through a scan. This is the case when we are dealing with unquoted strings and boolean operators – if our token starts with `OR`, we've no way of knowing whether we're looking at the keyword `OR` or the unquoted string `ORTHOGONAL` until we encounter whitespace. In this case, we're after a [maximal munch](https://en.wiktionary.org/wiki/maximal_munch), matching the longest possible section of our input before declaring the token type:
+This is largely straightforward, so we won't go through every token here, but there are a few wrinkles worth mentioning. The first is that, in some cases, we do not know what token we have until we are  mid-way through a scan. This is the case when we are dealing with unquoted strings and boolean operators – if our token starts with `OR`, we've no way of knowing whether we're looking at the keyword `OR` or the unquoted string `ORTHOGONAL` until we encounter whitespace. In this case, we're after a [maximal munch](https://en.wiktionary.org/wiki/maximal_munch), matching the longest possible section of our input before declaring the token type:
 
 ```typescript
   private addIdentifierOrUnquotedString = () => {
@@ -142,7 +142,7 @@ This is largely straightforward, but there are a few wrinkles worth mentioning. 
   };
 ```
 
-The second thing to note: it's possible for our input to contain lexical errors. For example, a quoted string must end in a closing double quote — if we run out of input before we encounter one, we should throw an error:
+The second thing to note: it's possible for our input to contain lexical errors. For example, a quoted string must end in a closing double quote. If we run out of input before we encounter one, we should throw an error:
 
 ```typescript
   private addString = () => {
@@ -174,14 +174,12 @@ Incidentally, quoted strings give us a good illustration of the difference betwe
 
 <div data-scanner>unquoted "quoted"</div>
 
-You get the idea — here's the [code](https://github.com/guardian/cql/blob/f89645f4d8079198e0a8d648f37c1d1810b71354/prosemirror-client/src/lang/scanner.ts) if you'd like to see the entire implementation.
+Here's the [code](https://github.com/guardian/cql/blob/f89645f4d8079198e0a8d648f37c1d1810b71354/prosemirror-client/src/lang/scanner.ts) if you'd like to see the entire implementation as it stands in the CQL project.
 
 And that's the scanner done! From a string input, we've now got a tool that can produce an ordered list of tokens. This is enough to power some of the features of our yet-to-be-implemented UI — syntax highlighting, for one — but to ensure our query is correctly formed, report errors, and power our typeahead, we'll need to transform these tokens into a data structure that represents our CQL grammar. In the next post, we'll write a parser that does just that.
 
 [^1]: Strictly, a regular expression that does not include [non-regular features](https://en.wikipedia.org/wiki/Regular_expression#Patterns_for_non-regular_languages), like backreferences.
-
-[^2]: Crafting Interpreters has a [great chapter](https://craftinginterpreters.com/scanning.html#top) on writing a scanner if you'd like some guidance.
-
+[^2]: There are of course many ways to write a scanner, including leaning more heavily on regular expressions, and consuming the input in a more functional style, but I figured this way might be the easiest for a wide audience to read.
 [^3]: I originally wrote the language server for CQL in Scala ([code](https://github.com/guardian/cql/tree/scala/src/main/scala)), and rewrote it in Typescript once it became clear that introducing a network call for language features ... didn't serve the product well!  More on that in a future post.
 
 <style>
@@ -500,14 +498,14 @@ And that's the scanner done! From a string input, we've now got a tool that can 
         </div>
         <div class="CqlDebug__queryDiagramContent">`;
         tokens.forEach((token, index) => {
-            var _a;
+            var _b, _c;
             html += `${Array(Math.max(1, token.lexeme.length))
                 .fill(undefined)
                 .map((_, index) => {
-                var _a, _b;
+                var _b, _c;
                 const lexemeChar = token.lexeme[index];
-                const literalOffset = ((_a = token.literal) === null || _a === void 0 ? void 0 : _a.length) === token.lexeme.length ? 0 : 1;
-                const literalChar = (_b = token.literal) === null || _b === void 0 ? void 0 : _b[index - literalOffset];
+                const literalOffset = ((_b = token.literal) === null || _b === void 0 ? void 0 : _b.length) === token.lexeme.length ? 0 : 1;
+                const literalChar = (_c = token.literal) === null || _c === void 0 ? void 0 : _c[index - literalOffset];
                 return `
             <div class="CqlDebug__queryBox">
             <div class="CqlDebug__queryIndex">${token.start + index}</div>
@@ -523,13 +521,13 @@ And that's the scanner done! From a string input, we've now got a tool that can 
             </div>`;
             })
                 .join("")}
-        ${((_a = tokens[index + 1]) === null || _a === void 0 ? void 0 : _a.tokenType) !== "EOF" && token.tokenType !== "EOF"
+        ${((_b = tokens[index + 1]) === null || _b === void 0 ? void 0 : _b.start) > token.end + 1 && ((_c = tokens[index + 1]) === null || _c === void 0 ? void 0 : _c.tokenType) !== "EOF" && token.tokenType !== "EOF"
                 ? `<div class="CqlDebug__queryBox"><div class="CqlDebug__queryIndex">${token.end + 1}</div></div>`
                 : ""}`;
         });
         html += "</div></div>";
         return html;
-    };
+    }
 
     // Userland
 
