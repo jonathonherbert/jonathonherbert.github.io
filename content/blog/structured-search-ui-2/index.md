@@ -11,7 +11,7 @@ This is what we promised to do in part 1:
 
 But ... how does one write a query language? Where do we even _begin?_
 
-Well, a while back I had the good fortune to stumble across _[Crafting Interpreters](https://craftinginterpreters.com/)_ by Bob Nystrom, which is a brilliant introduction to the world of grammars, parsers and interpreters.[^1] It gave me a good enough understanding of the moving parts to hack out something that worked.
+Well, a while back I had the good fortune to stumble across _[Crafting Interpreters](https://craftinginterpreters.com/)_ by Bob Nystrom, which is a brilliant introduction to the world of grammars, parsers and winterpreters.[^1] It gave me a good enough understanding of the moving parts to hack out something that worked.
 
 ## A query language like grammar used to make
 
@@ -19,7 +19,7 @@ But — why write _another_ query language? Surely something like [Lucene syntax
 
 The problem with Lucene is discoverability, which we'd like for both the key and value part of our chips. Imagine we're trying to discover which structured search fields are available — for example, the values logged in the namespace `lambdaStats` when we're grepping logs ingested via [cloudwatch-log-management.](https://github.com/guardian/cloudwatch-logs-management) Lucene (and KQL) would have us type, for example, `lambdaStats.memorySizeMax` for the key portion, but there's no way of distinguishing between a query for the string `lambdaStats.lambdaVersion` and the key-value pair `lambdaStats.lambdaVersion:<version>` until you type the `:` — and that ambiguity prevents a UI from confidently presenting a typeahead to the user until it's too late.
 
-One solution, borrowed from the Grid and Giant chip implementations, is to add a leading `+` to our chip grammar: `+lambdaStats.lambdaVersion:<version>`. This allows us to present typeahead suggestions as early as possible. The cost is an extra character in the query, and any associated time/clarity/usability penalty. That feels trivial to me for now, so let's take this approach and see how we fare.[^2]
+One solution, borrowed from the Grid and Giant chip implementations, is to add a leading `+` to our chip grammar: `+lambdaStats.lambdaVersion:<version>`. We can then present typeahead suggestions for keys as soon as we see `+`, and values once we see a following `:`. The cost is an extra character in the query, and any associated time/clarity/usability penalty. That feels trivial to me for now, so let's take this approach and see how we fare.[^2]
 
 The rest of the query language will be heavily inspired by Lucene, for now ignoring some of the more domain-specific parts (fuzzy or proximity searches, ranges etc.) to sidestep complexity that isn't chip- or binary- related. We'll build up a grammar using a simple notation similar to [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form), again borrowed from Crafting Interpreters — [here's the chapter](https://craftinginterpreters.com/representing-code.html) if you'd like to understand how grammars might be represented in more detail. Example queries in our language might look like:
 
@@ -69,10 +69,10 @@ group             -> '(' binary ')'
 
 where the open and close brackets here are also terminal symbols, this time representing the literal characters `(` and `)`.
 
-Finally, the `chip` needs contain a key and a value:
+Finally, the `chip` needs contain a key and a value, where both chip_key and chip_value are tokens, and chip_value is optional, to permit parsing our grammar when our query is not yet fully-formed:
 
 ```
-chip              -> '+' str ':' str
+chip              -> chip_key chip_value?
 ```
 
 Which leaves us with a simple grammar:
@@ -82,7 +82,7 @@ query             -> binary+
 binary            -> expr ('AND' | 'OR' | 'NOT' expr)*
 expr              -> str | group | chip
 group             -> '(' binary ')'
-chip              -> '+' str ':' str
+chip              -> chip_key chip_value?
 ```
 
 That's it! We might find that this grammar needs a few tweaks for useability purposes when we come to implement our UI, but the above is a great place to start.

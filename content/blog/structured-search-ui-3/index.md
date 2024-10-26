@@ -1,8 +1,8 @@
 ---
-title: "Structured search queries for web UIs, part 3: scanning and parsing"
-date: "2024-10-06T01:30:03.284Z"
+title: "Structured search queries for web UIs, part 3: scanning"
+date: "2024-10-24T01:30:03.284Z"
 description: "Let's teach our computer to CQL"
-draft: true
+draft: false
 ---
 
 We finished [part 2](./structured-search-part-2) by writing a grammar that described our query language, CQL. Now it's time to write the code we need to parse it — to resolve CQL expressions into the structure and the symbols we described in our grammar, or throw an error trying.
@@ -14,15 +14,54 @@ There are two parts to this process:
 
 ## Scanning
 
+<div data-scanner>why not +edit:me?</div>
+
 Of the two, going from utf-8 to the CQL lexicon is the easier task. That's because for most programming languages, and certainly for CQL, their lexical grammar is a [regular grammar](https://en.wikipedia.org/wiki/Regular_language). This means the output of our scanner is a list of tokens created in the same order as they are consumed from our input — we don't have to worry about the more complicated tree structure that's necessary for [context-free grammars](https://en.wikipedia.org/wiki/Context-free_grammar) like CQL.
 
-This means we can describe the scanning process as a loop that continually ingests our input, and a switch statement that inspects the next few characters, consumes them, and (optionally) outputs a token. Here's an example in Typescript:[^3]
+This means we can describe the scanning process as a loop that continually ingests our input, and a switch statement that inspects the next few characters, consumes them, and (optionally) outputs a token. What data should a `Token` contain? Well, we'll need:
 
+- A pair of numbers to define where the token begins and ends.
+- Something to represent the token's type. Because we know all of these types upfront, this can be an enumeration.
+- A string value to capture the token "lexeme" — the range of the string that maps to the token, in its entirety.
+- Optionally, a string value to capture the token "literal" – the token value, if it's needed. For example, tokens of type `string` must have a literal value that contains their content, but tokens like `OR` or `AND` do not; they are entirely represented by their token types.
+
+Writing in Typescript, [^3] here's some code to enumerate our token types, and define our data type:
+
+```typescript
+const TokenType = {
+  // Single-character tokens.
+  LEFT_BRACKET: "LEFT_BRACKET",
+  RIGHT_BRACKET: "RIGHT_BRACKET",
+
+  // Literals.
+  STRING: "STRING",
+  CHIP_KEY: "CHIP_KEY",
+  CHIP_VALUE: "CHIP_VALUE",
+
+  // Keywords.
+  AND: "AND",
+  OR: "OR",
+  EOF: "EOF",
+} as const; // This tells Typescript to make this object read-only, and narrow its literal type.
+
+interface Token {
+    public start: number,
+    public end: number
+    public tokenType: TokenType,
+    public lexeme: string,
+    public literal: string | undefined
+}
 ```
+
+Writing a scanner is then fairly straightforward. First, we'll introduce our `Scanner` class, which encapsulates the mutable state we need to keep track of the beginning of the current lexeme, and how far we've scanned forward.
+
+```typescript
 export class Scanner {
   private tokens: Token[] = [];
   private start = 0;
   private current = 0;
+
+  constructor (private query: string) {}
 
   public scanTokens = (): Token[] => {
     while (!this.isAtEnd()) {
@@ -36,7 +75,7 @@ export class Scanner {
   private scanToken = (): void => {
     switch (this.advance()) {
       case "+":
-        return this.addKey(TokenType.QUERY_FIELD_KEY);
+        return this.addKey(TokenType.CHIP_KEY);
       case ":":
         return this.addValue();
       case "(":
@@ -52,13 +91,98 @@ export class Scanner {
 }
 ```
 
-<div data-scanner>why not +edit:me?</div>
+`advance()` passes back the current character, which we can then inspect to decide which sort of token we'd like to construct. Because our query language is very small, there aren't too many options! We can then continue to scan through the string until our token is complete, and add it to our array. Here's an example for `addKey()`:
+
+```typescript
+  private addKey = () => {
+    while (this.peek() != ":" && !isWhitespace(this.peek()) && !this.isAtEnd())
+      this.advance();
+
+    if (this.current - this.start == 1) this.addToken(tokenType);
+    else {
+      const key = this.program.substring(this.start + 1, this.current);
+
+      this.addToken(TokenType.CHIP_KEY, key);
+    }
+  };
+
+  private peek = (offset: number = 0) =>
+    this.program[this.current + offset] === undefined
+      ? "\u0000"
+      : this.program[this.current + offset];
+
+  private isAtEnd = (offset: number = 0) =>
+    this.current + offset === this.program.length;
+
+  private addToken = (tokenType: TokenType, literal?: string) => {
+    const text = this.program.substring(this.start, this.current);
+    this.tokens = this.tokens.concat(
+      new Token(tokenType, text, literal, this.start, this.current - 1)
+    );
+  };
+```
+
+... or, in plain English, "scan forward until we hit a `:` character, whitespace, or the end of the string. Then add a `CHIP_KEY` token, optionally adding its literal value if it exists."
+
+This is largely straightforward, but there are a few wrinkles worth mentioning. The first is that, in some cases, we do not know what token we have until we are  mid-way through a scan. This is the case when we are dealing with unquoted strings and boolean operators – if our token starts with `OR`, we've no way of knowing whether we're looking at the keyword `OR` or the unquoted string `ORTHOGONAL` until we encounter whitespace. In this case, we're after a [maximal munch](https://en.wiktionary.org/wiki/maximal_munch), matching the longest possible section of our input before declaring the token type:
+
+```typescript
+  private addIdentifierOrUnquotedString = () => {
+    while (isLetterOrDigit(this.peek())) {
+      this.advance();
+    }
+
+    const text = this.program.substring(this.start, this.current);
+    const maybeReservedWord =
+      Token.reservedWordMap[text as keyof typeof Token.reservedWordMap];
+
+    return maybeReservedWord
+      ? this.addToken(maybeReservedWord)
+      : this.addUnquotedString();
+  };
+```
+
+The second thing to note: it's possible for our input to contain lexical errors. For example, a quoted string must end in a closing double quote — if we run out of input before we encounter one, we should throw an error:
+
+```typescript
+  private addString = () => {
+    while (this.peek() != '"' && !this.isAtEnd()) {
+      this.advance();
+    }
+
+    if (this.isAtEnd()) {
+      this.error("Unterminated string at end of file");
+    } else {
+      this.advance();
+    }
+
+    this.addToken(
+      TokenType.STRING,
+      this.program.substring(this.start + 1, this.current - 1)
+    );
+  };
+
+  private error = (message: String) => {
+    // For now, we'll just log errors. Production code would
+    // care where this error occurred, and provide the caller
+    // with a means of discovering what went wrong.
+    console.log(`Error: ${message}`);
+  };
+```
+
+Incidentally, quoted strings give us a good illustration of the difference between a lexeme and a literal. Note that the literal, which is the data that the token represents, does not include the quotes:
+
+<div data-scanner>unquoted "quoted"</div>
+
+You get the idea — here's the [code](https://github.com/guardian/cql/blob/f89645f4d8079198e0a8d648f37c1d1810b71354/prosemirror-client/src/lang/scanner.ts) if you'd like to see the entire implementation.
+
+And that's the scanner done! From a string input, we've now got a tool that can produce an ordered list of tokens. This is enough to power some of the features of our yet-to-be-implemented UI — syntax highlighting, for one — but to ensure our query is correctly formed, report errors, and power our typeahead, we'll need to transform these tokens into a data structure that represents our CQL grammar. In the next post, we'll write a parser that does just that.
 
 [^1]: Strictly, a regular expression that does not include [non-regular features](https://en.wikipedia.org/wiki/Regular_expression#Patterns_for_non-regular_languages), like backreferences.
 
 [^2]: Crafting Interpreters has a [great chapter](https://craftinginterpreters.com/scanning.html#top) on writing a scanner if you'd like some guidance.
 
-[^3]: I originally wrote the language server for CQL in Scala ([code](https://github.com/guardian/cql/tree/scala/src/main/scala)), and rewrote it in Typescript once it became clear that introducing a network call for language features didn't serve the product well. More on that in a future post.
+[^3]: I originally wrote the language server for CQL in Scala ([code](https://github.com/guardian/cql/tree/scala/src/main/scala)), and rewrote it in Typescript once it became clear that introducing a network call for language features ... didn't serve the product well!  More on that in a future post.
 
 <style>
 
@@ -222,8 +346,8 @@ export class Scanner {
         STRING: "STRING",
         NUMBER: "NUMBER",
         QUERY_OUTPUT_MODIFIER_KEY: "QUERY_OUTPUT_MODIFIER_KEY",
-        QUERY_FIELD_KEY: "QUERY_FIELD_KEY",
-        QUERY_VALUE: "QUERY_VALUE",
+        CHIP_KEY: "CHIP_KEY",
+        CHIP_VALUE: "CHIP_VALUE",
         // Keywords.
         AND: "AND",
         OR: "OR",
@@ -270,7 +394,7 @@ export class Scanner {
             this.scanToken = () => {
                 switch (this.advance()) {
                     case "+":
-                        this.addKey(TokenType.QUERY_FIELD_KEY);
+                        this.addKey(TokenType.CHIP_KEY);
                         return;
                     case ":":
                         this.addValue();
@@ -307,11 +431,11 @@ export class Scanner {
                 while (!isWhitespace(this.peek()) && !this.isAtEnd())
                     this.advance();
                 if (this.current - this.start == 1) {
-                    this.addToken(TokenType.QUERY_VALUE);
+                    this.addToken(TokenType.CHIP_VALUE);
                 }
                 else {
                     const value = this.program.substring(this.start + 1, this.current);
-                    this.addToken(TokenType.QUERY_VALUE, value);
+                    this.addToken(TokenType.CHIP_VALUE, value);
                 }
             };
             this.addIdentifierOrUnquotedString = () => {
