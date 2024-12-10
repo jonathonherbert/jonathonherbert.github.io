@@ -1,13 +1,143 @@
 ---
 title: "Structured search queries for web UIs, part 4: parsing"
 date: "2024-10-29T01:30:03.284Z"
-description: "Grammar time"
+description: "Grammar (parsin') time"
 draft: true
 ---
 
-Content goes here.
-
 <div data-parser>why not +edit:me? OR not</div>
+
+In [part 3](./structured-search-part-3), we implemented a scanner that could turn a CQL query string into a list of tokens — the alphabet that is used by the CQL grammar. In this post, we'll write a parser that accepts a list of tokens, and outputs an Abstract Syntax Tree (AST) that represents the query as it's structured by the syntax of our grammar.
+
+"Syntax" is a word to describe the rules for correct arrangement of symbols (in our case, tokens) in a language. Of course, there are many ways for that arrangement to be incorrect, and so it's also the parser's job to give a sensible error message when our list of tokens doesn't make sense.
+
+A reasonable person might ask at this point: what's an AST? Our definition of "syntax" above gives us a clue — it's a tree structure that represents an expression that is correctly formed in a particular language's grammar.
+
+That covers the "Syntax Tree" part; the tree is "Abstract" because it will gloss over many details of the syntax in favour of representing its structure. This will become clearer as we examine the structure the parser creates, and the top of this post gives us a visualisation of what that tree looks like, so we have a sense of what we're building before we begin.
+
+<h2>The (recursive) descent 🕳️</h2>
+
+There are many ways to write a parser, but I'm only qualified to write one sort at the time of writing — a recursive descent parser. Luckily, though, I'm reliably informed that recursive descent parsers are [great.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=use%20recursive%20descent.-,It%20rocks.,-Recursive%20descent%20is) Specifically:
+
+- They're fast.
+- They're a great at giving comprehensible error messages.
+- They're easy to write.
+
+The latter point is important. If you're new to this subject and the idea of writing a parser is as daunting as spelunking into [an actual cave](https://en.wikipedia.org/wiki/The_Descent), don't worry. We'll spelunk together, and I suspect you'll be pleasantly surprised at how straightforward this part of the task is.
+
+Recursive descent parsers are easy to write because their different parts correspond to the structure of the grammar we've already written. Bob Nystrom has a neat summary of this mapping in Crafting Interpreters that I'll reproduce here:[^1]
+
+|Grammar notation|Code representation|
+|-|-|
+| Terminal	| Code to match and consume a token |
+| Nonterminal	 | Call to that rule’s function |
+| \|	| `if` or `switch` statement |
+| * or +	| `while` or `for` loop |
+| ?	| `if` statement |
+
+As we parse our CQL expression, we're going to use these rules as we _descend_ through the grammar, _recursing_ through our rules until we've consumed all our tokens (or thrown an error in the process.) And that's why it's called recursive descent! As a reminder, our grammar looks like:
+
+```
+query             -> binary?
+binary            -> expr ('AND' | 'OR' | 'NOT' expr)*
+expr              -> str | group | chip
+group             -> '(' binary ')'
+chip              -> chip_key chip_value?
+```
+
+We'll start with the scaffolding — writing a class to hold our logic.
+
+```typescript
+class Parser {
+    // Keep track of the current token.
+    private current: number = 0;
+
+    constructor(private tokens: Token[]) {}
+
+    public parse(): Query {
+        // ???
+    }
+}
+```
+
+You can see that we've a constructor that gives us our list of tokens, and a `parse` method that returns a `Query` to its caller: the first nonterminal in our grammar. Our `Query` can be a plain type here, for simplicity: it will contain a discriminator field, `type`, and another field to hold its optional `Binary`, which we'll come to define shortly:
+
+```typescript
+export type Query = {
+  type: "Query";
+  binary?: Binary;
+};
+```
+
+Back in our class, and our nonterminal `Query` maps to a call to that rule's function, so we'll update our method:
+
+```typescript
+class Parser {
+    // ...
+
+    public parse(): Query {
+        return this.query();
+    }
+
+    private query(): Query {
+        // ...
+    }
+}
+```
+
+A `query` nonterminal is nice and simple: it can contain a single `Binary` — or be completely empty!
+
+```
+query             -> binary?
+```
+
+If our statement is completely empty, the next token we parse will be an `EOF`. We'll check to see if we should stop parsing and return an empty `Query` object, or continue recursing through our grammar by descending into our next nonterminal with `binary()`.
+
+```typescript
+class Parser {
+    // ...
+
+    private query(): Query {
+        const content = this.peek().tokenType === TokenType.EOF
+            ? undefined
+            : this.binary();
+
+        return createQuery(content);
+    }
+
+    private peek(): Token {
+        return this.tokens[this.current];
+    }
+}
+```
+
+In `binary()`, things start to get more interesting. First, we'll need to define our `Binary` type. Let's have a look at the grammar rule:
+
+```
+binary            -> expr ('AND' | 'OR' binary)
+```
+
+We'll need to store the left hand side of the binary expression, and, optionally, the operator and binary of its right hand side, too:
+
+```typescript
+type CqlBinary = {
+  type: "CqlBinary";
+  left: QueryContent;
+  right?: {
+    operator: "OR" | "AND"
+    binary: CqlBinary
+  };
+};
+```
+
+
+
+[^1]: https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A
+
+Todo:
+
+- check grammar is correct in pt 2, it's changed a bit.
+- names: is expr right? What's the word for this?
 
 <style>
 
@@ -426,10 +556,11 @@ Token.reservedWordStrs = Object.keys(_a.reservedWordMap);
         }
     }
 
-const createQueryList = (content) => ({
-    type: "QueryList",
-    content,
+const createQuery = (content) => ({
+  type: "Query",
+  content,
 });
+
 const createQueryBinary = (left, right) => ({
     type: "QueryBinary",
     left,
@@ -463,6 +594,7 @@ class ParseError extends Error {
         this.message = message;
     }
 }
+
 class Parser {
     constructor(tokens) {
         this.tokens = tokens;
@@ -489,7 +621,7 @@ class Parser {
                 return this.peek().tokenType == tokenType;
             }
         };
-        this.isAtEnd = () => this.peek().tokenType == TokenType.EOF;
+        this.isAtEnd = () => { var _a; return ((_a = this.peek()) === null || _a === void 0 ? void 0 : _a.tokenType) === TokenType.EOF; };
         this.peek = () => this.tokens[this.current];
         this.advance = () => {
             if (!this.isAtEnd()) {
@@ -522,10 +654,14 @@ class Parser {
         };
         this.previous = () => this.tokens[this.current - 1];
         this.error = (message) => new ParseError(this.peek().start, message);
+        this.unexpectedTokenError = () => {
+            var _a;
+            throw this.error(`I didn't expect to find a '${this.peek().lexeme}' ${!this.previous() ? "here." : `after '${(_a = this.previous()) === null || _a === void 0 ? void 0 : _a.lexeme}'`}`);
+        };
     }
     parse() {
         try {
-            return ok(this.queryList());
+            return ok(this.query());
         }
         catch (e) {
             if (e instanceof ParseError) {
@@ -534,24 +670,20 @@ class Parser {
             throw e;
         }
     }
-    /**
-     * @param isRoot is this list nested within a group?
-     */
-    queryList(isNested = false) {
-        const queries = [];
-        while (this.peek().tokenType !== TokenType.EOF &&
-            this.peek().tokenType !== TokenType.RIGHT_BRACKET) {
-            if (isNested) {
-                this.guardAgainstQueryField("within a group");
-            }
-            queries.push(this.queryBinary());
+    query() {
+        const content = this.peek().tokenType === TokenType.EOF ? undefined : this.queryBinary();
+        if (this.peek().tokenType !== TokenType.EOF) {
+            throw this.unexpectedTokenError();
         }
-        return createQueryList(queries);
+        return createQuery(content);
     }
-    queryBinary() {
+    queryBinary(isNested = false) {
         if (this.peek().tokenType === TokenType.CHIP_VALUE)
-            throw new ParseError(this.peek().start, "I found an unexpected ':'. Did you numberend to search for a tag, section or similar, e.g. tag:news? If you would like to add a search phrase containing a ':' character, please surround it in double quotes.");
+            throw new ParseError(this.peek().start, "I found an unexpected ':'. Did you intend to search for a tag, section or similar, e.g. tag:news? If you would like to add a search phrase containing a ':' character, please surround it in double quotes.");
         const left = this.queryContent();
+        if (isNested) {
+            this.guardAgainstQueryField("within a group");
+        }
         switch (this.peek().tokenType) {
             case TokenType.AND: {
                 const andToken = this.consume(TokenType.AND);
@@ -559,7 +691,7 @@ class Parser {
                 if (this.isAtEnd()) {
                     throw this.error("There must be a query following 'AND', e.g. this AND that.");
                 }
-                return createQueryBinary(left, [andToken, this.queryBinary()]);
+                return createQueryBinary(left, [andToken, this.queryBinary(isNested)]);
             }
             case TokenType.OR: {
                 const orToken = this.consume(TokenType.OR);
@@ -567,15 +699,21 @@ class Parser {
                 if (this.isAtEnd()) {
                     throw this.error("There must be a query following 'OR', e.g. this OR that.");
                 }
-                return createQueryBinary(left, [orToken, this.queryBinary()]);
+                return createQueryBinary(left, [orToken, this.queryBinary(isNested)]);
+            }
+            case TokenType.RIGHT_BRACKET:
+            case TokenType.EOF: {
+                return createQueryBinary(left);
             }
             default: {
-                return createQueryBinary(left);
+                return createQueryBinary(left, [
+                    new Token(TokenType.OR, "", undefined, 0, 0),
+                    this.queryBinary(isNested),
+                ]);
             }
         }
     }
     queryContent() {
-        var _b;
         switch (this.peek().tokenType) {
             case TokenType.LEFT_BRACKET:
                 return createQueryContent(this.queryGroup());
@@ -586,11 +724,13 @@ class Parser {
                 if ([TokenType.AND, TokenType.OR].some((i) => i === tokenType)) {
                     throw this.error(`An ${tokenType.toString()} keyword must have a search term before and after it, e.g. this ${tokenType.toString()} that.`);
                 }
-                else if (this.peek().tokenType === TokenType.CHIP_KEY) {
-                    return createQueryContent(this.queryField());
-                }
-                else {
-                    throw this.error(`I didn't expect what I found after '${(_b = this.previous()) === null || _b === void 0 ? void 0 : _b.lexeme}'`);
+                switch (this.peek().tokenType) {
+                    case TokenType.CHIP_KEY: {
+                        return createQueryContent(this.queryField());
+                    }
+                    default: {
+                        throw this.unexpectedTokenError();
+                    }
                 }
             }
         }
@@ -601,9 +741,9 @@ class Parser {
             throw this.error("Groups can't be empty. Put a search term between the brackets!");
         }
         this.guardAgainstQueryField("within a group. Try putting this search term outside of the brackets!");
-        const list = this.queryList(true);
+        const binary = this.queryBinary(true);
         this.consume(TokenType.RIGHT_BRACKET, "Groups must end with a right bracket.");
-        return createQueryGroup(list);
+        return createQueryGroup(binary);
     }
     queryStr() {
         const token = this.consume(TokenType.STRING, "Expected a string");
@@ -615,7 +755,6 @@ class Parser {
         return either(maybeValue)(() => createQueryField(key, undefined), (value) => createQueryField(key, value));
     }
 }
-
 
     const getDebugTokenHTML = (tokens) => {
         let html = `
@@ -659,21 +798,18 @@ class Parser {
 
 const getDebugASTHTML = (query) => {
     return `<div class="tree--container">
-    ${getQueryListHTML(query)}
+    ${getQueryHTML(query)}
   </div>`;
 };
-const getQueryListHTML = (list) => {
-    const listHTML = list.content.length > 1 ? `
+const getQueryHTML = (query) => {
+    const queryHTML = query.content ? `
     <ul>
-      ${list.content
-        .map((binary) => `<li>${getBinaryHTML(binary)}</li>`)
-        .join("")}
-    </ul>
-  ` : list.content.map(getBinaryHTML).join("");
+      <li>${getBinaryHTML(query.content)}</li>
+    </ul>` : ""
     return `<ul class="tree">
     <li>
-      ${getNodeHTML(list)}
-      ${listHTML}
+      ${getNodeHTML(query)}
+      ${queryHTML}
     </li>
   </ul>`;
 };
@@ -740,7 +876,7 @@ const getGroupHTML = (group) => {
     <ul>
       <li>
         ${getNodeHTML(group)}
-        ${getQueryListHTML(group.content)}
+        ${getQueryHTML(group.content)}
       </li>
     </ul>
   `;

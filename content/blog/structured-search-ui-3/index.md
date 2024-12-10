@@ -25,7 +25,7 @@ This means we can describe the scanning process as a loop that continually inges
 - A string value to capture the token "lexeme" — the range of the string that maps to the token, in its entirety.
 - Optionally, a string value to capture the token "literal" – the token value, if it's needed. For example, tokens of type `string` must have a literal value that contains their content, but tokens like `OR` or `AND` do not; they are entirely represented by their token types.
 
-Writing in Typescript, [^3] here's some code to enumerate our token types, and define our data type:
+Writing in Typescript, [^2] here's some code to enumerate our token types, and define our data type:
 
 ```typescript
 const TokenType = {
@@ -53,7 +53,7 @@ interface Token {
 }
 ```
 
-Writing a scanner is then fairly straightforward. First, we'll introduce our `Scanner` class, which encapsulates the mutable state we need to keep track of the beginning of the current lexeme, and how far we've scanned forward.[^1]
+Writing a scanner is then fairly straightforward. First, we'll introduce our `Scanner` class, which encapsulates the mutable state we need to keep track of the beginning of the current lexeme, and how far we've scanned forward.[^3]
 
 ```typescript
 export class Scanner {
@@ -179,8 +179,8 @@ Here's the [code](https://github.com/guardian/cql/blob/f89645f4d8079198e0a8d648f
 And that's the scanner done! From a string input, we've now got a tool that can produce an ordered list of tokens. This is enough to power some of the features of our yet-to-be-implemented UI — syntax highlighting, for one — but to ensure our query is correctly formed, report errors, and power our typeahead, we'll need to transform these tokens into a data structure that represents our CQL grammar. In the next post, we'll write a parser that does just that.
 
 [^1]: Strictly, a regular expression that does not include [non-regular features](https://en.wikipedia.org/wiki/Regular_expression#Patterns_for_non-regular_languages), like backreferences.
-[^2]: There are of course many ways to write a scanner, including leaning more heavily on regular expressions, and consuming the input in a more functional style, but I figured this way might be the easiest for a wide audience to read.
-[^3]: I originally wrote the language server for CQL in Scala ([code](https://github.com/guardian/cql/tree/scala/src/main/scala)), and rewrote it in Typescript once it became clear that introducing a network call for language features ... didn't serve the product well!  More on that in a future post.
+[^2]: I originally wrote the language server for CQL in Scala ([code](https://github.com/guardian/cql/tree/scala/src/main/scala)), and rewrote it in Typescript once it became clear that introducing a network call for language features ... didn't serve the product well!  More on that in a future post.
+[^3]: There are lots of ways to write a scanner, including leaning more heavily on regular expressions, and consuming the input in a more functional style, but I thought writing straightforward, imperative code would be best for a wide audience to read.
 
 <style>
 
