@@ -49,17 +49,19 @@ There are three sorts of `expr`: a plain `str` (unquoted and quoted, the latter 
 expr              -> str | group | chip
 ```
 
-Hold on, though — all of the members of `expr` can be combined with binary expressions. So our rule for binary expressions comes first, where a binary can be a single expression, or two expressions joined with an operator:
+Hold on, though — all of the members of `expr` can be combined with binary expressions. So our rule for binary expressions comes first, where a binary can be a single expression, or an expression and another binary, optionally joined with an operator:
 
 ```
 query             -> binary+
-binary            -> expr ('AND' | 'OR' | 'NOT' expr)*
+binary            -> expr (('AND' | 'OR')? binary)*
 expr              -> str | group | chip
 ```
 
-The postfix `*` denotes zero-or-more of the previous symbol, and the brackets group a collection of symbols. With this rule, `str`, `str AND group`, `str AND (group OR chip)` etc. are all valid.
+There's some new symbols to add to our notation here. The postfix `*` denotes zero-or-more of the previous symbol. The brackets group a collection of symbols. Finally, the postfix `?` denotes that the preceding rule is optional.
 
-How do we unpack `str | group | chip`? Well, `str` is what we call a "terminal" — a symbol that represents a token. Tokens form the alphabet that makes up a grammar. So there's no need to define `str` in our notation.
+With this rule, `str`, `str AND group`, `str AND (group OR chip)`, and `str str str` etc. are all valid. As with Lucene, when there's no explicit operator between expressions, we default to `OR` — so `str str` is interpreted as `str OR str`.
+
+For our next line, how do we unpack `str | group | chip`? Well, `str` is what we call a "terminal" — a symbol that represents a token. Tokens form the alphabet that makes up a grammar. So there's no need to define `str` in our notation.
 
 Groups are simple to define — they're any possible binary, wrapped in parenthesis:
 
@@ -79,7 +81,7 @@ Which leaves us with a simple grammar:
 
 ```
 query             -> binary+
-binary            -> expr ('AND' | 'OR' | 'NOT' expr)*
+binary            -> expr ('AND' | 'OR' expr)*
 expr              -> str | group | chip
 group             -> '(' binary ')'
 chip              -> chip_key chip_value?

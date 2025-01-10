@@ -11,19 +11,19 @@ In [part 3](./structured-search-part-3), we implemented a scanner that could tur
 
 "Syntax" is a word to describe the rules for correct arrangement of symbols (in our case, tokens) in a language. Of course, there are many ways for that arrangement to be incorrect, and so it's also the parser's job to give a sensible error message when our list of tokens doesn't make sense.
 
-A reasonable person might ask at this point: what's an AST? Our definition of "syntax" above gives us a clue — it's a tree structure that represents an expression that is correctly formed in a particular language's grammar.
+A reasonable person might ask at this point: what's an AST? Our definition of "syntax" above gives us a clue — it's a tree structure that represents an expression that in a particular language's grammar.
 
 That covers the "Syntax Tree" part; the tree is "Abstract" because it will gloss over many details of the syntax in favour of representing its structure. This will become clearer as we examine the structure the parser creates, and the top of this post gives us a visualisation of what that tree looks like, so we have a sense of what we're building before we begin.
 
 <h2>The (recursive) descent 🕳️</h2>
 
-There are many ways to write a parser, but I'm only qualified to write one sort at the time of writing — a recursive descent parser. Luckily, though, I'm reliably informed that recursive descent parsers are [great.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=use%20recursive%20descent.-,It%20rocks.,-Recursive%20descent%20is) Specifically:
+There are many ways to write a parser, but I'm only qualified to write one sort at the time of writing — a recursive descent parser. Luckily, I'm reliably informed that recursive descent is [great.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=use%20recursive%20descent.-,It%20rocks.,-Recursive%20descent%20is) Specifically, recursive descent parsers tend to be:
 
-- They're fast.
-- They're a great at giving comprehensible error messages.
-- They're easy to write.
+- Fast.
+- Great at giving comprehensible error messages.
+- Easy to write.
 
-The latter point is important. If you're new to this subject and the idea of writing a parser is as daunting as spelunking into [an actual cave](https://en.wikipedia.org/wiki/The_Descent), don't worry. We'll spelunk together, and I suspect you'll be pleasantly surprised at how straightforward this part of the task is.
+In the context of this post, the latter point is important. If you're new to this subject and the idea of writing a parser is as daunting as spelunking into [an actual cave](https://en.wikipedia.org/wiki/The_Descent), don't worry. We'll spelunk together, and I suspect you'll be pleasantly surprised at how straightforward this part of the task is.
 
 Recursive descent parsers are easy to write because their different parts correspond to the structure of the grammar we've already written. Bob Nystrom has a neat summary of this mapping in Crafting Interpreters that I'll reproduce here:[^1]
 
@@ -35,17 +35,17 @@ Recursive descent parsers are easy to write because their different parts corres
 | * or +	| `while` or `for` loop |
 | ?	| `if` statement |
 
-As we parse our CQL expression, we're going to use these rules as we _descend_ through the grammar, _recursing_ through our rules until we've consumed all our tokens (or thrown an error in the process.) And that's why it's called recursive descent! As a reminder, our grammar looks like:
+As we parse a given CQL expression, we're going to use these rules as we _descend_ through the grammar, _recursing_ through our rules until we've consumed all our tokens (or thrown an error in the process.) And that's why it's called recursive descent! As a reminder, our grammar looks like:
 
 ```
 query             -> binary?
-binary            -> expr ('AND' | 'OR' | 'NOT' expr)*
+binary            -> expr (('AND' | 'OR')? binary)*
 expr              -> str | group | chip
 group             -> '(' binary ')'
 chip              -> chip_key chip_value?
 ```
 
-We'll start with the scaffolding — writing a class to hold our logic.
+We'll start with the scaffolding — writing a class (again, in Typescript) to hold our logic and state.
 
 ```typescript
 class Parser {
@@ -60,7 +60,7 @@ class Parser {
 }
 ```
 
-You can see that we've a constructor that gives us our list of tokens, and a `parse` method that returns a `Query` to its caller: the first nonterminal in our grammar. Our `Query` can be a plain type here, for simplicity: it will contain a discriminator field, `type`, and another field to hold its optional `Binary`, which we'll come to define shortly:
+You can see that we've a constructor that gives us our list of tokens, and a `parse` method that returns a `Query` to its caller: the first nonterminal in our grammar. Our `Query` can be a plain type here, for simplicity. Its first property will be a discriminator field, `type`, to allow us to identify it. Another field will hold its optional content, `Binary`, which we'll come to define shortly:
 
 ```typescript
 export type Query = {
@@ -69,7 +69,7 @@ export type Query = {
 };
 ```
 
-Back in our class, and our nonterminal `Query` maps to a call to that rule's function, so we'll update our method:
+Back in our class, our nonterminal `Query` maps to a call to that rule's function, so we'll update our method:
 
 ```typescript
 class Parser {
@@ -91,7 +91,7 @@ A `query` nonterminal is nice and simple: it can contain a single `Binary` — o
 query             -> binary?
 ```
 
-If our statement is completely empty, the next token we parse will be an `EOF`. We'll check to see if we should stop parsing and return an empty `Query` object, or continue recursing through our grammar by descending into our next nonterminal with `binary()`.
+If our statement is completely empty, the next token we parse will be an `EOF`. We'll check to see if we should stop parsing and return an empty `Query` object, or continue recursing through our grammar by descending into our next nonterminal. We know that will be a `Binary`, so our next method will be `binary()`.
 
 ```typescript
 class Parser {
@@ -114,7 +114,7 @@ class Parser {
 In `binary()`, things start to get more interesting. First, we'll need to define our `Binary` type. Let's have a look at the grammar rule:
 
 ```
-binary            -> expr ('AND' | 'OR' binary)
+binary            -> expr (('AND' | 'OR')? binary)
 ```
 
 We'll need to store the left hand side of the binary expression, and, optionally, the operator and binary of its right hand side, too:
@@ -130,7 +130,86 @@ type CqlBinary = {
 };
 ```
 
+Writing `binary()`, we can express `expr (('AND' | 'OR')? binary)` clearly in the code, too.
 
+```typescript
+class Parser {
+    // ...
+  private binary(isNested: boolean = false): CqlBinary {
+    const left = this.expr();
+
+    const tokenType = this.peek().tokenType;
+
+    switch (tokenType) {
+      // If we have an explicit binary operator, use it ...
+      case TokenType.OR:
+      case TokenType.AND: {
+        this.consume(tokenType);
+        return createCqlBinary(left, {
+          operator: tokenType,
+          binary: this.binary(isNested),
+        });
+      }
+      case TokenType.EOF: {
+        return createCqlBinary(left);
+      }
+      // ... or default to OR.
+      default: {
+        return createCqlBinary(left, {
+          operator: TokenType.OR,
+          binary: this.binary(isNested),
+        });
+      }
+    }
+  }
+}
+```
+
+Hopefully the logic here is clear enough — we acquire our binary's left hand side with the yet-to-be-defined `this.expr()`. We then optionally fill out its right hand side with either an explicit binary operator (`AND|OR`) or another expression — unless we've come to the end of our list of tokens.
+
+But woah! We've also introduced four important methods here: `consume`, `check`, `isAtEnd` and `advance`. Here's what they look like:
+
+```typescript
+  private consume = (tokenType: TokenType, message: string = ""): Token => {
+    if (this.check(tokenType)) {
+      return this.advance();
+    } else {
+      throw this.error(message);
+    }
+  };
+
+  private check = (tokenType: TokenType) => {
+    if (this.isAtEnd()) {
+      return false;
+    } else {
+      return this.peek().tokenType === tokenType;
+    }
+  };
+
+  private advance = () => {
+    if (!this.isAtEnd()) {
+      const currentToken = this.tokens[this.current];
+      this.current = this.current + 1;
+      return currentToken;
+    } else {
+      return this.previous();
+    }
+  };
+
+  private isAtEnd = () => this.peek()?.tokenType === TokenType.EOF;
+```
+
+These methods are here because parsing our binary nonterminal has introduced us to our first terminals — `AND` and `OR`. When we encounter terminals, we must `consume` the tokens that represent them to point our parser at the next current token, or throw an error indicating that we found something we did not expect.`check` checks that the passed token matches the current token — and that we're not at the end of our list of tokens, via `isAtEnd`. And `advance` moves us on one once we're ready.
+
+If these look familiar to the methods we wrote for our scanner in the previous post, that's a good spot! Our scanner was parsing a list of characters for a lexical grammar. Our parser parses a list of tokens for a context-free grammar. But both tasks involve inspecting a list of symbols, and consuming them until there aren't any more, or we encounter an error in the grammar.
+
+
+
+Expr
+Group
+Chip
+ChipKey
+ChipValue
 
 [^1]: https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A
 
