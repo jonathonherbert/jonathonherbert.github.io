@@ -170,6 +170,8 @@ Hopefully the logic here is clear enough — we acquire our binary's left hand s
 But woah! We've also introduced four important methods here: `consume`, `check`, `isAtEnd` and `advance`. Here's what they look like:
 
 ```typescript
+class Parser {
+    // ...
   private consume = (tokenType: TokenType, message: string = ""): Token => {
     if (this.check(tokenType)) {
       return this.advance();
@@ -197,19 +199,116 @@ But woah! We've also introduced four important methods here: `consume`, `check`,
   };
 
   private isAtEnd = () => this.peek()?.tokenType === TokenType.EOF;
+}
 ```
 
-These methods are here because parsing our binary nonterminal has introduced us to our first terminals — `AND` and `OR`. When we encounter terminals, we must `consume` the tokens that represent them to point our parser at the next current token, or throw an error indicating that we found something we did not expect.`check` checks that the passed token matches the current token — and that we're not at the end of our list of tokens, via `isAtEnd`. And `advance` moves us on one once we're ready.
+These methods are here because parsing our binary nonterminal has introduced us to our first terminals — `AND` and `OR`. When we encounter terminals, we must `consume` the tokens that represent them to point our parser at the next current token, or throw an error indicating that we found something we did not expect. `check` checks that the passed token matches the current token — and that we're not at the end of our list of tokens, via `isAtEnd`. And `advance` moves us on one once we're ready.
 
 If these look familiar to the methods we wrote for our scanner in the previous post, that's a good spot! Our scanner was parsing a list of characters for a lexical grammar. Our parser parses a list of tokens for a context-free grammar. But both tasks involve inspecting a list of symbols, and consuming them until there aren't any more, or we encounter an error in the grammar.
 
+Writing our `expr()` method for the next rule in our grammar, `str | group | chip`, will take us no time — a simple switch statement is enough to pick a method to call:
+
+```typescript
+class Parser {
+    // ...
+  private queryContent(): CqlExpr {
+    const tokenType = this.peek().tokenType
+    switch (tokenType) {
+      case TokenType.LEFT_BRACKET:
+        return createExpr(this.group());
+      case TokenType.STRING:
+        return createExpr(this.str());
+    case TokenType.CHIP_KEY:
+        return createExpr(this.chip());
+    default:
+        throw this.unexpectedTokenError();
+    }
+  }
+}
+```
+
+We're almost there! In `group()`, expressing `'(' binary ')'` also fairly straightforward:
+
+```typescript
+class Parser {
+    // ...
+  private group(): CqlGroup {
+    this.consume(
+      TokenType.LEFT_BRACKET,
+      "Groups should start with a left bracket"
+    );
+
+    const binary = this.binary(true);
+
+    this.consume(
+      TokenType.RIGHT_BRACKET,
+      "Groups must end with a right bracket."
+    );
+
+    return createGroup(binary);
+  }
+}
+```
+
+This also marks the first recursion in our recursive descent — the call to binary sends us back up our list of rules for us to descend again.
+
+`str()` is a terminal, so we can simply consume the token and move on:
+
+```typescript
+class Parser {
+    // ...
+  private str(): CqlStr {
+    const token = this.consume(TokenType.STRING, "Expected a string");
+
+    return createCqlStr(token);
+  }
+}
+```
+
+Finally, `chip()` consumes up to two terminals representing the chip key and value, completing our last rule, `chip -> chip_key chip_value?`:
+
+```typescript
+class Parser {
+    // ...
+  private field(): CqlField {
+    const key = this.consume(
+      TokenType.CHIP_KEY,
+      "Expected a search key, e.g. +tag"
+    );
+
+    const maybeValue = this.peek().tokenType === TokenType.CHIP_VALUE
+        ? this.consume(TokenType.CHIP_VALUE);
+        : undefined
+
+    return createCqlField(key, maybeValue);
+  }
+}
+```
+
+That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse any valid CQL statement into an AST that represents its underlying structure. Nice work. But ...
+
+## What if our input isn't valid?
+
+Good question! A lot of the time, the expression we're parsing is going to be incorrect — and not necessarily because its author has done something wrong. Most often, it will be because the statement is incomplete. For example, imagine typing `+type:interactive (Greta OR Climate)`. We're going to see:
+
+- a chip with an empty key (`+`)
+- a chip with no value token at all (`+type`)
+- a chip with an empty value (`+type:`)
+- a group with open parenthesis (`+type:interactive (`)
+- a binary expression with no right hand expression (`+type:interactive (Greta OR`)
+
+If our parser will be spending most of its time failing to parse its input, at a minimum, it needs to  errors in ways that we as programmers expect. But really, it should throw errors that our _users_ can understand.
+
+To demonstrate the difference, here are some example error messages for the above states, generated with the well-known parser generator, Bison:
+
+Todo:
+
+// Automated error messages: bad
+// Example of a few better messages
+// Go to code for proper examples
+// Missing from the above: code, or an explanation, for the constructor fns above
 
 
-Expr
-Group
-Chip
-ChipKey
-ChipValue
 
 [^1]: https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A
 
