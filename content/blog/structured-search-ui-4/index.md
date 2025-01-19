@@ -63,10 +63,10 @@ class Parser {
 You can see that we've a constructor that gives us our list of tokens, and a `parse` method that returns a `Query` to its caller: the first nonterminal in our grammar. Our `Query` can be a plain type here, for simplicity. Its first property will be a discriminator field, `type`, to allow us to identify it. Another field will hold its optional content, `Binary`, which we'll come to define shortly:
 
 ```typescript
-export type Query = {
-  type: "Query";
-  binary?: Binary;
-};
+export class Query {
+  public readonly type = "Query";
+  constructor(public readonly content?: Binary) {}
+}
 ```
 
 Back in our class, our nonterminal `Query` maps to a call to that rule's function, so we'll update our method:
@@ -94,6 +94,7 @@ query             -> binary?
 If our statement is completely empty, the next token we parse will be an `EOF`. We'll check to see if we should stop parsing and return an empty `Query` object, or continue recursing through our grammar by descending into our next nonterminal. We know that will be a `Binary`, so our next method will be `binary()`.
 
 ```typescript
+
 class Parser {
     // ...
 
@@ -102,7 +103,7 @@ class Parser {
             ? undefined
             : this.binary();
 
-        return createQuery(content);
+        return new Query(content);
     }
 
     private peek(): Token {
@@ -120,14 +121,16 @@ binary            -> expr (('AND' | 'OR')? binary)
 We'll need to store the left hand side of the binary expression, and, optionally, the operator and binary of its right hand side, too:
 
 ```typescript
-type CqlBinary = {
-  type: "CqlBinary";
-  left: QueryContent;
-  right?: {
-    operator: "OR" | "AND"
-    binary: CqlBinary
-  };
-};
+export class Binary {
+  public readonly type = "Binary";
+  constructor(
+    public readonly left: Expr,
+    public readonly right?: {
+      operator: "OR" | "AND";
+      binary: Binary;
+    }
+  ) {}
+}
 ```
 
 Writing `binary()`, we can express `expr (('AND' | 'OR')? binary)` clearly in the code, too.
@@ -135,7 +138,7 @@ Writing `binary()`, we can express `expr (('AND' | 'OR')? binary)` clearly in th
 ```typescript
 class Parser {
     // ...
-  private binary(isNested: boolean = false): CqlBinary {
+  private binary(isNested: boolean = false): Binary {
     const left = this.expr();
 
     const tokenType = this.peek().tokenType;
@@ -145,17 +148,17 @@ class Parser {
       case TokenType.OR:
       case TokenType.AND: {
         this.consume(tokenType);
-        return createCqlBinary(left, {
+        return new Binary(left, {
           operator: tokenType,
           binary: this.binary(isNested),
         });
       }
       case TokenType.EOF: {
-        return createCqlBinary(left);
+        return new Binary(left);
       }
       // ... or default to OR.
       default: {
-        return createCqlBinary(left, {
+        return new Binary(left, {
           operator: TokenType.OR,
           binary: this.binary(isNested),
         });
@@ -172,11 +175,11 @@ But woah! We've also introduced four important methods here: `consume`, `check`,
 ```typescript
 class Parser {
     // ...
-  private consume = (tokenType: TokenType, message: string = ""): Token => {
+  private consume = (tokenType: TokenType): Token => {
     if (this.check(tokenType)) {
       return this.advance();
     } else {
-      throw this.error(message);
+      this.error(`Unexpected token of type ${tokenType}`);
     }
   };
 
@@ -199,40 +202,114 @@ class Parser {
   };
 
   private isAtEnd = () => this.peek()?.tokenType === TokenType.EOF;
+
+  private error = (message: string) =>
+    new ParseError(this.peek().start, message);
+}
+
+class ParseError extends Error {
+  constructor(
+    public position: number,
+    public message: string
+  ) {
+    super(message);
+  }
 }
 ```
 
 These methods are here because parsing our binary nonterminal has introduced us to our first terminals — `AND` and `OR`. When we encounter terminals, we must `consume` the tokens that represent them to point our parser at the next current token, or throw an error indicating that we found something we did not expect. `check` checks that the passed token matches the current token — and that we're not at the end of our list of tokens, via `isAtEnd`. And `advance` moves us on one once we're ready.
 
-If these look familiar to the methods we wrote for our scanner in the previous post, that's a good spot! Our scanner was parsing a list of characters for a lexical grammar. Our parser parses a list of tokens for a context-free grammar. But both tasks involve inspecting a list of symbols, and consuming them until there aren't any more, or we encounter an error in the grammar.
+If these look familiar to the methods we wrote for our scanner in the previous post, that's a good spot! Our scanner was parsing a list of characters for a lexical grammar. Our parser parses a list of tokens for a context-free grammar. But both tasks involve inspecting a list of symbols, and consuming them until there aren't any more, or we encounter an error in the grammar. Which leads us to a slight digression, because ...
 
-Writing our `expr()` method for the next rule in our grammar, `str | group | chip`, will take us no time — a simple switch statement is enough to pick a method to call:
+## Good parsers love bad input
+
+A lot of the time, the query we're parsing is going to be incorrect — and not necessarily because its author has done something wrong. Most often, it will be because the statement is incomplete. For example, imagine typing `+tag:interactive (Greta OR Climate)`. We're going to see:
+
+- a chip with an empty key (`+`)
+- a chip with no value token at all (`+tag`)
+- a chip with an empty value (`+tag:`)
+- a group with open parenthesis (`+tag:interactive (`)
+- a binary expression with no right hand expression (`+tag:interactive (Greta OR`)
+
+If our parser will be spending most of its time failing to parse its input, it needs to provide errors that our users can understand. Many modern languages work hard to make their error messaging as comprehensible as possible — Rust^2 and Elm^3 are two great examples — because the effect on the user experience is so profound.
+
+Consider some error messages for the expressions above. I've written them in the first person, a bit like Elm might, because I think it's charming.
+
+-|Expression|Error
+--|--|--
+1| `+`| I expected a field name after the `+`, e.g. `+tag`
+2| `+tag`, `+tag:` | I expected a colon and a field value after `+tag`, e.g. `+tag:value`
+3| `+tag:interactive (`| I expected a closing bracket after `(`
+4| `+tag:interactive (Greta OR`| I expected an expression after `OR`
+
+We haven't written the code for chips and groups yet, but we can definitely improve the error handling for case #4 in our binary parser above. Let's add a check to see if we're at the end of our list of tokens, and throw an error if there's nothing after the operator:
 
 ```typescript
+    switch (tokenType) {
+      case TokenType.OR:
+      case TokenType.AND: {
+        this.consume(tokenType);
+
+        if (this.isAtEnd()) {
+          throw this.error(`I expected an expression after ${tokenType}`);
+        }
+
+        return new Binary(left, {
+          operator: tokenType,
+          binary: this.binary(isNested),
+        });
+      }
+      // ... etc
+    }
+```
+
+Now our binary method has had a spruce, `Expr` is next, implementing the rule `str | group | chip`:
+
+```typescript
+export class Expr {
+  public readonly type = "Expr";
+  constructor(
+    public readonly content: Str | Group | Chip
+  ) {}
+}
+
 class Parser {
     // ...
-  private queryContent(): CqlExpr {
+  private expr(): Expr {
     const tokenType = this.peek().tokenType
     switch (tokenType) {
       case TokenType.LEFT_BRACKET:
-        return createExpr(this.group());
+        return new Expr(this.group());
       case TokenType.STRING:
-        return createExpr(this.str());
+        return new Expr(this.str());
     case TokenType.CHIP_KEY:
-        return createExpr(this.chip());
+        return new Expr(this.chip());
     default:
         throw this.unexpectedTokenError();
     }
   }
+
+  private unexpectedTokenError = () => {
+    throw this.error(
+      `I didn't expect to find a '${this.peek().lexeme}' ${!this.previous() ? "here." : `after '${this.previous()?.lexeme}'`}`
+    );
+  };
 }
 ```
+
+A fairly straightforward switch statement, common in expressing `|` relations in rules, and an error if we don't find what we expect.
 
 We're almost there! In `group()`, expressing `'(' binary ')'` also fairly straightforward:
 
 ```typescript
+export class Group {
+  public readonly type = "Group";
+  constructor(public readonly content: Binary) {}
+}
+
 class Parser {
     // ...
-  private group(): CqlGroup {
+  private group(): Group {
     this.consume(
       TokenType.LEFT_BRACKET,
       "Groups should start with a left bracket"
@@ -245,22 +322,27 @@ class Parser {
       "Groups must end with a right bracket."
     );
 
-    return createGroup(binary);
+    return new Group(binary);
   }
 }
 ```
 
-This also marks the first recursion in our recursive descent — the call to binary sends us back up our list of rules for us to descend again.
+This also marks the first recursion in our recursive descent — the call to binary sends us back up our list of rules, to descend again.
 
 `str()` is a terminal, so we can simply consume the token and move on:
 
 ```typescript
+export class CqlStr {
+  public readonly type = "CqlStr";
+  constructor(public readonly token: Token) {}
+}
+
 class Parser {
     // ...
-  private str(): CqlStr {
+  private str(): Str {
     const token = this.consume(TokenType.STRING, "Expected a string");
 
-    return createCqlStr(token);
+    return new Str(token);
   }
 }
 ```
@@ -268,54 +350,58 @@ class Parser {
 Finally, `chip()` consumes up to two terminals representing the chip key and value, completing our last rule, `chip -> chip_key chip_value?`:
 
 ```typescript
+export class Chip {
+  public readonly type = "Chip";
+  constructor(
+    public readonly key: Token,
+    public readonly value?: Token
+  ) {}
+}
+
 class Parser {
-    // ...
-  private field(): CqlField {
+  // ...
+  private chip(): Chip {
     const key = this.consume(
       TokenType.CHIP_KEY,
       "Expected a search key, e.g. +tag"
     );
 
-    const maybeValue = this.peek().tokenType === TokenType.CHIP_VALUE
-        ? this.consume(TokenType.CHIP_VALUE);
-        : undefined
+    const maybeValue = this.consume(TokenType.CHIP_VALUE, "");
 
-    return createCqlField(key, maybeValue);
+    return new Chip(key, maybeValue);
   }
 }
 ```
 
-That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse any valid CQL statement into an AST that represents its underlying structure. Nice work. But ...
+That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse any valid CQL statement into an AST that represents its underlying structure. Even better, it'll handle common errors gracefully in a way that — we hope! — our users will understand.
 
-## What if our input isn't valid?
-
-Good question! A lot of the time, the expression we're parsing is going to be incorrect — and not necessarily because its author has done something wrong. Most often, it will be because the statement is incomplete. For example, imagine typing `+type:interactive (Greta OR Climate)`. We're going to see:
-
-- a chip with an empty key (`+`)
-- a chip with no value token at all (`+type`)
-- a chip with an empty value (`+type:`)
-- a group with open parenthesis (`+type:interactive (`)
-- a binary expression with no right hand expression (`+type:interactive (Greta OR`)
-
-If our parser will be spending most of its time failing to parse its input, at a minimum, it needs to  errors in ways that we as programmers expect. But really, it should throw errors that our _users_ can understand.
-
-To demonstrate the difference, here are some example error messages for the above states, generated with the well-known parser generator, Bison:
-
-Todo:
-
-// Automated error messages: bad
-// Example of a few better messages
-// Go to code for proper examples
-// Missing from the above: code, or an explanation, for the constructor fns above
-
-
+The next step — a UI that uses this grammar to help implement the many features we came up with in part 1. Is it possible? Desirable, even? It's all to come in part 5.
 
 [^1]: https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A
 
+[^2]: Here's a [Rust blogpost](https://blog.rust-lang.org/2016/08/10/Shape-of-errors-to-come.html) that discusses their approach.
+
+[^3]: Similarly, here's a [post by the creator of Elm](https://elm-lang.org/news/compiler-errors-for-humans) on their approach to error handling. Note the importance of position and colour, too!
+
 Todo:
 
-- check grammar is correct in pt 2, it's changed a bit.
-- names: is expr right? What's the word for this?
+- Reread
+
+Field:
+
+Binaries:
+
+```typescript
+        if (this.isAtEnd()) {
+          throw this.error(
+            `There must be a query following '${tokenType}', e.g. this ${tokenType} that.`
+          );
+        }
+        ```
+
+chips: taken care of in program
+
+groups:
 
 <style>
 
