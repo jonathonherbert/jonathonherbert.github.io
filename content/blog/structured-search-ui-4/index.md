@@ -2,7 +2,7 @@
 title: "Structured search queries for web UIs, part 4: parsing"
 date: "2024-10-29T01:30:03.284Z"
 description: "Grammar (parsin') time"
-draft: true
+draft: false
 ---
 
 <div data-parser>why not (+edit:me AND see the tree change)</div>
@@ -11,7 +11,7 @@ In [part 3](./structured-search-part-3), we implemented a scanner that could tur
 
 "Syntax" is a word to describe the rules for correct arrangement of symbols (in our case, tokens) in a language. Of course, there are many ways for that arrangement to be incorrect, and so it's also the parser's job to give a sensible error message when our list of tokens doesn't make sense.
 
-A reasonable person might ask at this point: what's an AST? Our definition of "syntax" above gives us a clue — it's a tree structure that represents an expression that in a particular language's grammar.
+A reasonable person might ask at this point: what's an AST? Our definition of "syntax" above gives us a clue — it's a tree that represents the syntactic structure of some text that is well-formed according to a grammar.
 
 That covers the "Syntax Tree" part; the tree is "Abstract" because it will gloss over many details of the syntax in favour of representing its structure. This will become clearer as we examine the structure the parser creates, and the top of this post gives us a visualisation of what that tree looks like, so we have a sense of what we're building before we begin.
 
@@ -25,17 +25,17 @@ There are many ways to write a parser, but I'm only qualified to write one sort 
 
 In the context of this post, the latter point is important. If you're new to this subject and the idea of writing a parser is as daunting as spelunking into [an actual cave](https://en.wikipedia.org/wiki/The_Descent), don't worry. We'll spelunk together, and I suspect you'll be pleasantly surprised at how straightforward this part of the task is.
 
-Recursive descent parsers are easy to write because their different parts correspond to the structure of the grammar we've already written. Bob Nystrom has a neat summary of this mapping in Crafting Interpreters that I'll reproduce here:[^1]
+Recursive descent parsers are easy to write because their different parts correspond to the structure of the grammar we've already written. Bob Nystrom has a neat summary of this mapping in Crafting Interpreters that I'll reproduce with minor modifications here:[^1]
 
 | Grammar notation | Code representation               |
 | ---------------- | --------------------------------- |
 | Terminal         | Code to match and consume a token |
 | Nonterminal      | Call to that rule’s function      |
-| \|               | `if` or `switch` statement        |
-| \* or +          | `while` or `for` loop             |
-| ?                | `if` statement                    |
+| \|               | Conditional or pattern match (in Typescript, an `if` or `switch` statement)        |
+| \* or +          | Loop (e.g. `while`, `for`, or recursion)             |
+| ?                | Conditional (`if` statement)                    |
 
-As we parse a given CQL expression, we're going to use these rules as we _descend_ through the grammar, _recursing_ through our rules until we've consumed all our tokens (or thrown an error in the process.) And that's why it's called recursive descent! As a reminder, our grammar looks like:
+As we parse a given CQL expression, we're going to use these rules as we _descend_ through the grammar, working through our rules _recursively_ until we've consumed all our tokens (or thrown an error trying to do it.) And that's why it's called recursive descent! As a reminder, our grammar looks like:
 
 ```
 query             -> binary?
@@ -60,7 +60,7 @@ class Parser {
 }
 ```
 
-You can see that we've a constructor that gives us our list of tokens, and a `parse` method that returns a `Query` to its caller: the first nonterminal in our grammar. Our `Query` can be a plain type here, for simplicity. Its first property will be a discriminator field, `type`, to allow us to identify it. Another field will hold its optional content, `Binary`, which we'll come to define shortly:
+You can see that we've a constructor that gives us our list of tokens, and a `parse` method that returns a `Query` to its caller: the first nonterminal in our grammar. `Query`'s first property will be a discriminator field, `type`, to allow us to identify it. Another field will hold its optional content, `Binary`, which we'll come to define shortly:
 
 ```typescript
 export class Query {
@@ -91,7 +91,7 @@ A `query` nonterminal is nice and simple: it can contain a single `Binary` — o
 query             -> binary?
 ```
 
-If our statement is completely empty, the next token we parse will be an `EOF`. We'll check to see if we should stop parsing and return an empty `Query` object, or continue recursing through our grammar by descending into our next nonterminal. We know that will be a `Binary`, so our next method will be `binary()`.
+If our statement is completely empty, the next token we parse will be an `EOF`. We'll check to see if we should stop parsing and return an empty `Query` object, or continue working through our grammar by descending into our next nonterminal. We know that will be a `Binary`, so our next method will be `binary()`.
 
 ```typescript
 class Parser {
@@ -131,7 +131,7 @@ export class Binary {
 }
 ```
 
-Writing `binary()`, we can express `expr (('AND' | 'OR')? binary)` clearly in the code, too.
+Writing our `binary()` method in the `Parser` class, we can express `expr (('AND' | 'OR')? binary)` clearly in the code, too.
 
 ```typescript
 class Parser {
@@ -168,7 +168,7 @@ class Parser {
 
 Hopefully the logic here is clear enough — we acquire our binary's left hand side with the yet-to-be-defined `this.expr()`. We then optionally fill out its right hand side with either an explicit binary operator (`AND|OR`) or another expression — unless we've come to the end of our list of tokens.
 
-But woah! We've also introduced four important methods here: `consume`, `check`, `isAtEnd` and `advance`. Here's what they look like:
+But woah! We're also calling four important methods here, `consume`, `check`, `isAtEnd` and `advance`, that we've yet to introduce. Here's what they look like:
 
 ```typescript
 class Parser {
@@ -215,32 +215,32 @@ class ParseError extends Error {
 }
 ```
 
-These methods are here because parsing our binary nonterminal has introduced us to our first terminals — `AND` and `OR`. When we encounter terminals, we must `consume` the tokens that represent them to move our parser to the next token, or throw an error indicating that we found something we did not expect. When reporting an error, we can use the start position of the token we were due to consume to indicate where something went wrong, and `ParseError` extends a standard JavaScript `Error` to store both.
+These methods are here because parsing our binary nonterminal has introduced us to our first terminals — `AND` and `OR`. When we encounter terminals, we must `consume` the tokens that represent them to move our parser to the next token, or throw an error indicating that we found something we did not expect. When reporting an error, we can use the start position of the token we were due to consume to indicate where something went wrong, and `ParseError` extends the JavaScript `Error` class to store both.
 
 Finally, `check` checks that the passed token matches the current token — and that we're not at the end of our list of tokens, via `isAtEnd`. And `advance` moves us on one once we're ready.
 
-If these look familiar to the methods we wrote for our scanner in the previous post, that's a good spot! Our scanner was parsing a list of characters for a lexical grammar. Our parser parses a list of tokens for a context-free grammar. Both tasks involve inspecting a list of symbols, and consuming them until there aren't any more, or we encounter an error in the grammar. Which leads us to a slight digression, because …
+If these look familiar to the methods we wrote for our scanner in the previous post, that's a good spot! Our scanner was parsing a list of characters into a lexical grammar. Our parser parses a list of tokens into a context-free grammar. Both tasks involve inspecting a list of symbols, and parsing them until there aren't any more, or we encounter an error in the grammar. Which leads us to a slight digression, because …
 
 ## Good parsers love bad input
 
-A lot of the time, the query we're parsing is going to be incorrect — and not necessarily because its author has done something wrong. Most often, it will be because the statement is incomplete. For example, imagine typing `+tag:interactive (Greta OR Climate)`. We're going to see:
+A lot of the time, the query we're parsing is going to be incorrect — and not necessarily because its author has done something wrong. Most often, it will be because the statement is incomplete. For example, imagine typing `+tag:type/interactive (Greta OR Climate)`. We're going to see:
 
-- a chip with an empty key (`+`)
-- a chip with no value token at all (`+tag`)
-- a chip with an empty value (`+tag:`)
-- a group with open parenthesis (`+tag:interactive (`)
-- a binary expression with no right hand expression (`+tag:interactive (Greta OR`)
+- `+` — a chip with an empty key
+- `+tag` — a chip with no value token at all
+- `+tag:` — a chip with an empty value
+- `+tag:type/interactive (` — a group missing a closing bracket
+- `+tag:type/interactive (Greta OR` — a binary expression with an operator, but no right-hand expression
 
-If our parser will be spending most of its time failing to parse its input, it needs to provide error messages that our users can understand. Many modern languages work hard to make their error messaging as comprehensible as possible — Rust[^2] and Elm[^3] are two great examples — because the effect on the user experience is so profound.
+If our parser will be spending most of its time failing to parse its input, it will need to provide error messages that our users can understand. Many modern languages work hard to make their error messaging as comprehensible as possible — Rust[^2] and Elm[^3] are two great examples — because the effect on the user experience is so profound.
 
-Consider some error messages for the expressions above. I've written them in the first person, a bit like Elm might, because I think it's charming.
+Consider some error messages for the expressions above. I've written them in the first person, a bit like Elm might, because I think it's _charming._
 
-| -   | Expression                   | Error                                                                |
+| #   | Expression                   | Error                                                                |
 | --- | ---------------------------- | -------------------------------------------------------------------- |
 | 1   | `+`                          | I expected a field name after the `+`, e.g. `+tag`                   |
 | 2   | `+tag`, `+tag:`              | I expected a colon and a field value after `+tag`, e.g. `+tag:value` |
-| 3   | `+tag:interactive (`         | Groups can't be empty. Add an expression after `(`                   |
-| 4   | `+tag:interactive (Greta OR` | I expected an expression after `OR`                                  |
+| 3   | `+tag:type/interactive (`         | Groups can't be empty. Add an expression after `(`                   |
+| 4   | `+tag:type/interactive (Greta OR` | I expected an expression after `OR`                                  |
 
 We haven't written the code for chips and groups yet, but we can definitely improve the error handling for case #4 in our binary parser above. Let's add a check to see if we're at the end of our list of tokens, and throw an error if there's nothing after the operator:
 
@@ -264,9 +264,9 @@ switch (tokenType) {
 }
 ```
 
-<div data-parser>+tag:interactive (Greta OR</div>
+<div data-parser>+tag:type/interactive (Greta OR</div>
 
-Nice. Now that our binary method has had a spruce, `Expr` is next, implementing the rule `str | group | chip`:
+Nice. Now that our `binary()` method has had a spruce, `Expr` is next, implementing the rule `str | group | chip`:
 
 ```typescript
 export class Expr {
@@ -302,7 +302,7 @@ A fairly straightforward switch statement, common in expressing `|` relations in
 
 <div data-parser>) whoops!</div>
 
-We're almost there! In `group()`, expressing `'(' binary ')'` also fairly straightforward:
+We're almost there! In `group()`, writing the rule `'(' binary ')'` is also straightforward:
 
 ```typescript
 export class Group {
@@ -335,13 +335,17 @@ This also marks the first recursion in our recursive descent — the call to bin
 To ensure that we're handling case #3 in our list of error messages above, we can check to make sure there's a right bracket after we're done consuming the content of our group, throwing an error if we encounter something unexpected:
 
 ```typescript
-// In group() ...
-this.consume(TokenType.LEFT_BRACKET, "Groups must start with a left bracket")
+class Parser {
+  // …
+  private group(): Group {
+    this.consume(TokenType.LEFT_BRACKET, "Groups must start with a left bracket")
 
-if (this.isAtEnd() || this.peek().tokenType === TokenType.RIGHT_BRACKET) {
-  throw this.error("Groups can't be empty. Add an expression after `(`")
+    if (this.isAtEnd() || this.peek().tokenType === TokenType.RIGHT_BRACKET) {
+      throw this.error("Groups can't be empty. Add an expression after `(`")
+    }
+    // …etc
+  }
 }
-// ...etc
 ```
 
 `str()` is a terminal, so we can simply consume the token and move on:
@@ -402,7 +406,7 @@ class Parser {
 
 That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse any valid CQL statement into an AST that represents its underlying structure. Even better, it'll handle common errors gracefully in a way that — we hope! — our users will understand.
 
-The next step — creating a UI powered by this parser to help implement the many features we came up with in part 1.
+The next step will be creating a UI powered by this parser to help implement the many features we came up with in [Part 1](/structured-search-ui-1/). We'll cover that in Part 5.
 
 [^1]: [Crafting interpreters — parsing expressions.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A)
 
@@ -685,7 +689,7 @@ class Parser {
             case TokenType.AND: {
                 this.consume(tokenType);
                 if (this.isAtEnd()) {
-                    throw this.error(`I expected an expression after ${tokenType}`);
+                    throw this.error(`I expected an expression after \`${tokenType}\``);
                 }
                 return new Binary(left, {
                     operator: tokenType,

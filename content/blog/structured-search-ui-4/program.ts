@@ -119,7 +119,7 @@ class Parser {
         this.consume(tokenType)
 
         if (this.isAtEnd()) {
-          throw this.error(`I expected an expression after ${tokenType}`)
+          throw this.error(`I expected an expression after \`${tokenType}\``)
         }
         return new Binary(left, {
           operator: tokenType,
