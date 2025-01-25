@@ -122,7 +122,7 @@ export class Scanner {
   };
 ```
 
-... or, in plain English, "scan forward until we hit a `:` character, whitespace, or the end of the string. Then add a `CHIP_KEY` token, optionally adding its literal value if it exists."
+… or, in plain English, "scan forward until we hit a `:` character, whitespace, or the end of the string. Then add a `CHIP_KEY` token, optionally adding its literal value if it exists."
 
 This is largely straightforward, so we won't go through every token here, but there are a few wrinkles worth mentioning. The first is that, in some cases, we do not know what token we have until we are  mid-way through a scan. This is the case when we are dealing with unquoted strings and boolean operators – if our token starts with `OR`, we've no way of knowing whether we're looking at the keyword `OR` or the unquoted string `ORTHOGONAL` until we encounter whitespace. In this case, we're after a [maximal munch](https://en.wiktionary.org/wiki/maximal_munch), matching the longest possible section of our input before declaring the token type:
 
@@ -179,7 +179,7 @@ Here's the [code](https://github.com/guardian/cql/blob/f89645f4d8079198e0a8d648f
 And that's the scanner done! From a string input, we've now got a tool that can produce an ordered list of tokens. This is enough to power some of the features of our yet-to-be-implemented UI — syntax highlighting, for one — but to ensure our query is correctly formed, report errors, and power our typeahead, we'll need to transform these tokens into a data structure that represents our CQL grammar. In the next post, we'll write a parser that does just that.
 
 [^1]: Strictly, a regular expression that does not include [non-regular features](https://en.wikipedia.org/wiki/Regular_expression#Patterns_for_non-regular_languages), like backreferences.
-[^2]: I originally wrote the language server for CQL in Scala ([code](https://github.com/guardian/cql/tree/scala/src/main/scala)), and rewrote it in Typescript once it became clear that introducing a network call for language features ... didn't serve the product well!  More on that in a future post.
+[^2]: I originally wrote the language server for CQL in Scala ([code](https://github.com/guardian/cql/tree/scala/src/main/scala)), and rewrote it in Typescript once it became clear that introducing a network call for language features … didn't serve the product well!  More on that in a future post.
 [^3]: There are lots of ways to write a scanner, including leaning more heavily on regular expressions, and consuming the input in a more functional style, but I thought writing straightforward, imperative code would be best for a wide audience to read.
 
 <style>

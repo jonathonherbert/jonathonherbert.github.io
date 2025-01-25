@@ -15,11 +15,11 @@ But then I experienced the effect powerfully, a few days ago, in an environment 
 
 [_The Outer Wilds_](https://www.mobiusdigitalgames.com/outer-wilds.html) is a videogame, and it's an ideal place for a demonstration of the fear-is-the-mindkiller effect because it is, quite literally, a small solar system of problems to solve. In a craft that's part NASA, part National Park chic, the player veers from planet to planet in a groundhog-day timeloop, piecing together its secrets before the sun goes supernova. Then, they do it all again, armed only with the knowledge of what came before. It's superb.
 
-Anyhow, _The Outer Wilds_ came out in 2019, and three days ago I made some time to play its recently released expansion, Echoes of the Eye. I raced through problem after problem, building up my understanding of a new world and its inhabitants. And then, the lights went out, there was a creaking, I saw a silhouette against a distant light, and ...
+Anyhow, _The Outer Wilds_ came out in 2019, and three days ago I made some time to play its recently released expansion, Echoes of the Eye. I raced through problem after problem, building up my understanding of a new world and its inhabitants. And then, the lights went out, there was a creaking, I saw a silhouette against a distant light, and …
 
 Oh no. Oh _no_.
 
-![Oh ... no!](scary-owl.jpg)
+![Oh … no!](scary-owl.jpg)
 
 ### The scary owl folk made me dumb
 
@@ -37,7 +37,7 @@ Fear is rubbish. It stops us from thinking clearly. Peter Matthiessian gives us 
 
 And, importantly, it doesn't matter whether the mountain you are clutching is virtual, or corporeal. The consequences are real regardless. I've seen fear force promising young developers out of entry-level positions, and watched it prevent entire companies from making the changes necessary to adapt and survive. You, gentle reader, will no doubt have your own examples.
 
-### Don't be afraid ... of using these powerful fear-management techniques
+### Don't be afraid … of using these powerful fear-management techniques
 
 In life as in the Outer Wilds, there are things we can do to manage our fear.
 
@@ -49,6 +49,6 @@ At the end of _The Outer Wilds_, we discover a beautiful piece of thematic symme
 
 Hey! Let's not be doomed. It's reasonable for individuals and teams to feel a few tremors when the stakes are high, or the outcome is unknown. But we can recognise this fear, and cultivate strategies to manage it. Because it's only without fear that we're best placed to solve our problems.
 
-[^1]: <sub>Well, not _that_ universe. ... I've said too much.</sub>
+[^1]: <sub>Well, not _that_ universe. … I've said too much.</sub>
 
 [^2]: <sub>Peter Matthiessen, _The Snow Leopard_ (1987), p125.</sub>

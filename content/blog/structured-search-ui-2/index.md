@@ -9,7 +9,7 @@ This is what we promised to do in part 1:
 
 > A query language that lets us express key value pairs, binary expressions, grouping, etc., with discoverability in mind.
 
-But ... how does one write a query language? Where do we even _begin?_
+But … how does one write a query language? Where do we even _begin?_
 
 Well, a while back I had the good fortune to stumble across _[Crafting Interpreters](https://craftinginterpreters.com/)_ by Bob Nystrom, which is a brilliant introduction to the world of grammars, parsers and winterpreters.[^1] It gave me a good enough understanding of the moving parts to hack out something that worked.
 

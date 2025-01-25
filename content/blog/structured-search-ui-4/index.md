@@ -73,14 +73,14 @@ Back in our class, our nonterminal `Query` maps to a call to that rule's functio
 
 ```typescript
 class Parser {
-  // …
+  // ...
 
   public parse(): Query {
     return this.query()
   }
 
   private query(): Query {
-    // …
+    // ...
   }
 }
 ```
@@ -95,7 +95,7 @@ If our statement is completely empty, the next token we parse will be an `EOF`. 
 
 ```typescript
 class Parser {
-  // …
+  // ...
 
   private query(): Query {
     const content =
@@ -135,7 +135,7 @@ Writing our `binary()` method in the `Parser` class, we can express `expr (('AND
 
 ```typescript
 class Parser {
-  // …
+  // ...
   private binary(isNested: boolean = false): Binary {
     const left = this.expr()
 
@@ -154,7 +154,7 @@ class Parser {
       case TokenType.EOF: {
         return new Binary(left)
       }
-      // … or default to OR.
+      // ... or default to OR.
       default: {
         return new Binary(left, {
           operator: TokenType.OR,
@@ -172,7 +172,7 @@ But woah! We're also calling four important methods here, `consume`, `check`, `i
 
 ```typescript
 class Parser {
-  // …
+  // ...
   private consume = (tokenType: TokenType): Token => {
     if (this.check(tokenType)) {
       return this.advance()
@@ -260,7 +260,7 @@ switch (tokenType) {
       binary: this.binary(isNested),
     })
   }
-  // … etc
+  // ... etc
 }
 ```
 
@@ -275,7 +275,7 @@ export class Expr {
 }
 
 class Parser {
-  // …
+  // ...
   private expr(): Expr {
     const tokenType = this.peek().tokenType
     switch (tokenType) {
@@ -311,7 +311,7 @@ export class Group {
 }
 
 class Parser {
-  // …
+  // ...
   private group(): Group {
     this.consume(
       TokenType.LEFT_BRACKET,
@@ -336,14 +336,14 @@ To ensure that we're handling case #3 in our list of error messages above, we ca
 
 ```typescript
 class Parser {
-  // …
+  // ...
   private group(): Group {
     this.consume(TokenType.LEFT_BRACKET, "Groups must start with a left bracket")
 
     if (this.isAtEnd() || this.peek().tokenType === TokenType.RIGHT_BRACKET) {
       throw this.error("Groups can't be empty. Add an expression after `(`")
     }
-    // …etc
+    // ...etc
   }
 }
 ```
@@ -357,7 +357,7 @@ export class CqlStr {
 }
 
 class Parser {
-  // …
+  // ...
   private str(): Str {
     const token = this.consume(TokenType.STRING, "I expected a string here")
 
@@ -378,7 +378,7 @@ export class Chip {
 }
 
 class Parser {
-  // …
+  // ...
   private chip(): Chip {
     // We check to see if there's a literal after we consume this token,
     // so there's no need for an error message here
@@ -404,15 +404,15 @@ class Parser {
 <div data-parser>+tag</div>
 <div data-parser>+tag:type/interactive</div>
 
-That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse any valid CQL statement into an AST that represents its underlying structure. Even better, it'll handle common errors gracefully in a way that — we hope! — our users will understand.
+That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse a valid CQL statement into an AST that represents its underlying structure, and handle common errors by emitting messages that — hopefully! — our users will understand. The parser running in this post uses the code above, and I've left a few rough edges for the sake of brevity that you'll see with a bit of playing. Take a look at the code in the [CQL project](https://github.com/guardian/cql/blob/main/client/src/lang/parser.ts) to see what a (slightly) more complete implementation might look like.
 
-The next step will be creating a UI powered by this parser to help implement the many features we came up with in [Part 1](/structured-search-ui-1/). We'll cover that in Part 5.
+The next step will be creating a UI powered by this parser to help implement our big list of features in [Part 1](/structured-search-ui-1/). We'll cover that in Part 5.
 
 [^1]: [Crafting interpreters — parsing expressions.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A)
 
 [^2]: Here's a [Rust blogpost](https://blog.rust-lang.org/2016/08/10/Shape-of-errors-to-come.html) that discusses their approach.
 
-[^3]: ... and a [post by the creator of Elm](https://elm-lang.org/news/compiler-errors-for-humans) on Elm's approach to error handling.
+[^3]: … and a [post by the creator of Elm](https://elm-lang.org/news/compiler-errors-for-humans) on Elm's approach to error handling.
 
 <style>
   .parser-container {
