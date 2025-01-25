@@ -404,7 +404,9 @@ class Parser {
 <div data-parser>+tag</div>
 <div data-parser>+tag:type/interactive</div>
 
-That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse a valid CQL statement into an AST that represents its underlying structure, and handle common errors by emitting messages that — hopefully! — our users will understand. The parser running in this post uses the code above, and I've left a few rough edges for the sake of brevity that you'll see with a bit of playing. Take a look at the code in the [CQL project](https://github.com/guardian/cql/blob/main/client/src/lang/parser.ts) to see what a (slightly) more complete implementation might look like.
+That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse a valid CQL statement into an AST that represents its underlying structure, and handle common errors by emitting messages that — hopefully! — our users will understand.
+
+The parser running in this post uses the code above, and I've left a few rough edges for the sake of brevity that you'll find with a bit of playing. Take a look at the code in the [CQL project](https://github.com/guardian/cql/blob/main/client/src/lang/parser.ts) to see what a (slightly) more complete implementation might look like.
 
 The next step will be creating a UI powered by this parser to help implement our big list of features in [Part 1](/structured-search-ui-1/). We'll cover that in Part 5.
 
