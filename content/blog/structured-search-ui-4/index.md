@@ -5,7 +5,7 @@ description: "Grammar (parsin') time"
 draft: true
 ---
 
-<div data-parser>why not +edit:me? OR not</div>
+<div data-parser>why not (+edit:me AND see the tree change)</div>
 
 In [part 3](./structured-search-part-3), we implemented a scanner that could turn a CQL query string into a list of tokens — the alphabet that is used by the CQL grammar. In this post, we'll write a parser that accepts a list of tokens, and outputs an Abstract Syntax Tree (AST) that represents the query as it's structured by the syntax of our grammar.
 
@@ -27,13 +27,13 @@ In the context of this post, the latter point is important. If you're new to thi
 
 Recursive descent parsers are easy to write because their different parts correspond to the structure of the grammar we've already written. Bob Nystrom has a neat summary of this mapping in Crafting Interpreters that I'll reproduce here:[^1]
 
-|Grammar notation|Code representation|
-|-|-|
-| Terminal	| Code to match and consume a token |
-| Nonterminal	 | Call to that rule’s function |
-| \|	| `if` or `switch` statement |
-| * or +	| `while` or `for` loop |
-| ?	| `if` statement |
+| Grammar notation | Code representation               |
+| ---------------- | --------------------------------- |
+| Terminal         | Code to match and consume a token |
+| Nonterminal      | Call to that rule’s function      |
+| \|               | `if` or `switch` statement        |
+| \* or +          | `while` or `for` loop             |
+| ?                | `if` statement                    |
 
 As we parse a given CQL expression, we're going to use these rules as we _descend_ through the grammar, _recursing_ through our rules until we've consumed all our tokens (or thrown an error in the process.) And that's why it's called recursive descent! As a reminder, our grammar looks like:
 
@@ -49,14 +49,14 @@ We'll start with the scaffolding — writing a class (again, in Typescript) to h
 
 ```typescript
 class Parser {
-    // Keep track of the current token.
-    private current: number = 0;
+  // Keep track of the current token.
+  private current: number = 0
 
-    constructor(private tokens: Token[]) {}
+  constructor(private tokens: Token[]) {}
 
-    public parse(): Query {
-        // ???
-    }
+  public parse(): Query {
+    // ???
+  }
 }
 ```
 
@@ -64,7 +64,7 @@ You can see that we've a constructor that gives us our list of tokens, and a `pa
 
 ```typescript
 export class Query {
-  public readonly type = "Query";
+  public readonly type = "Query"
   constructor(public readonly content?: Binary) {}
 }
 ```
@@ -73,15 +73,15 @@ Back in our class, our nonterminal `Query` maps to a call to that rule's functio
 
 ```typescript
 class Parser {
-    // ...
+  // …
 
-    public parse(): Query {
-        return this.query();
-    }
+  public parse(): Query {
+    return this.query()
+  }
 
-    private query(): Query {
-        // ...
-    }
+  private query(): Query {
+    // …
+  }
 }
 ```
 
@@ -94,21 +94,19 @@ query             -> binary?
 If our statement is completely empty, the next token we parse will be an `EOF`. We'll check to see if we should stop parsing and return an empty `Query` object, or continue recursing through our grammar by descending into our next nonterminal. We know that will be a `Binary`, so our next method will be `binary()`.
 
 ```typescript
-
 class Parser {
-    // ...
+  // …
 
-    private query(): Query {
-        const content = this.peek().tokenType === TokenType.EOF
-            ? undefined
-            : this.binary();
+  private query(): Query {
+    const content =
+      this.peek().tokenType === TokenType.EOF ? undefined : this.binary()
 
-        return new Query(content);
-    }
+    return new Query(content)
+  }
 
-    private peek(): Token {
-        return this.tokens[this.current];
-    }
+  private peek(): Token {
+    return this.tokens[this.current]
+  }
 }
 ```
 
@@ -122,12 +120,12 @@ We'll need to store the left hand side of the binary expression, and, optionally
 
 ```typescript
 export class Binary {
-  public readonly type = "Binary";
+  public readonly type = "Binary"
   constructor(
     public readonly left: Expr,
     public readonly right?: {
-      operator: "OR" | "AND";
-      binary: Binary;
+      operator: "OR" | "AND"
+      binary: Binary
     }
   ) {}
 }
@@ -137,31 +135,31 @@ Writing `binary()`, we can express `expr (('AND' | 'OR')? binary)` clearly in th
 
 ```typescript
 class Parser {
-    // ...
+  // …
   private binary(isNested: boolean = false): Binary {
-    const left = this.expr();
+    const left = this.expr()
 
-    const tokenType = this.peek().tokenType;
+    const tokenType = this.peek().tokenType
 
     switch (tokenType) {
-      // If we have an explicit binary operator, use it ...
+      // If we have an explicit binary operator, use it …
       case TokenType.OR:
       case TokenType.AND: {
-        this.consume(tokenType);
+        this.consume(tokenType)
         return new Binary(left, {
           operator: tokenType,
           binary: this.binary(isNested),
-        });
+        })
       }
       case TokenType.EOF: {
-        return new Binary(left);
+        return new Binary(left)
       }
-      // ... or default to OR.
+      // … or default to OR.
       default: {
         return new Binary(left, {
           operator: TokenType.OR,
           binary: this.binary(isNested),
-        });
+        })
       }
     }
   }
@@ -174,37 +172,37 @@ But woah! We've also introduced four important methods here: `consume`, `check`,
 
 ```typescript
 class Parser {
-    // ...
+  // …
   private consume = (tokenType: TokenType): Token => {
     if (this.check(tokenType)) {
-      return this.advance();
+      return this.advance()
     } else {
-      this.error(`Unexpected token of type ${tokenType}`);
+      this.error(`Unexpected token of type ${tokenType}`)
     }
-  };
+  }
 
   private check = (tokenType: TokenType) => {
     if (this.isAtEnd()) {
-      return false;
+      return false
     } else {
-      return this.peek().tokenType === tokenType;
+      return this.peek().tokenType === tokenType
     }
-  };
+  }
 
   private advance = () => {
     if (!this.isAtEnd()) {
-      const currentToken = this.tokens[this.current];
-      this.current = this.current + 1;
-      return currentToken;
+      const currentToken = this.tokens[this.current]
+      this.current = this.current + 1
+      return currentToken
     } else {
-      return this.previous();
+      return this.previous()
     }
-  };
+  }
 
-  private isAtEnd = () => this.peek()?.tokenType === TokenType.EOF;
+  private isAtEnd = () => this.peek()?.tokenType === TokenType.EOF
 
   private error = (message: string) =>
-    new ParseError(this.peek().start, message);
+    new ParseError(this.peek().start, message)
 }
 
 class ParseError extends Error {
@@ -212,14 +210,16 @@ class ParseError extends Error {
     public position: number,
     public message: string
   ) {
-    super(message);
+    super(message)
   }
 }
 ```
 
-These methods are here because parsing our binary nonterminal has introduced us to our first terminals — `AND` and `OR`. When we encounter terminals, we must `consume` the tokens that represent them to point our parser at the next current token, or throw an error indicating that we found something we did not expect. `check` checks that the passed token matches the current token — and that we're not at the end of our list of tokens, via `isAtEnd`. And `advance` moves us on one once we're ready.
+These methods are here because parsing our binary nonterminal has introduced us to our first terminals — `AND` and `OR`. When we encounter terminals, we must `consume` the tokens that represent them to move our parser to the next token, or throw an error indicating that we found something we did not expect. When reporting an error, we can use the start position of the token we were due to consume to indicate where something went wrong, and `ParseError` extends a standard JavaScript `Error` to store both.
 
-If these look familiar to the methods we wrote for our scanner in the previous post, that's a good spot! Our scanner was parsing a list of characters for a lexical grammar. Our parser parses a list of tokens for a context-free grammar. But both tasks involve inspecting a list of symbols, and consuming them until there aren't any more, or we encounter an error in the grammar. Which leads us to a slight digression, because ...
+Finally, `check` checks that the passed token matches the current token — and that we're not at the end of our list of tokens, via `isAtEnd`. And `advance` moves us on one once we're ready.
+
+If these look familiar to the methods we wrote for our scanner in the previous post, that's a good spot! Our scanner was parsing a list of characters for a lexical grammar. Our parser parses a list of tokens for a context-free grammar. Both tasks involve inspecting a list of symbols, and consuming them until there aren't any more, or we encounter an error in the grammar. Which leads us to a slight digression, because …
 
 ## Good parsers love bad input
 
@@ -231,127 +231,142 @@ A lot of the time, the query we're parsing is going to be incorrect — and not 
 - a group with open parenthesis (`+tag:interactive (`)
 - a binary expression with no right hand expression (`+tag:interactive (Greta OR`)
 
-If our parser will be spending most of its time failing to parse its input, it needs to provide errors that our users can understand. Many modern languages work hard to make their error messaging as comprehensible as possible — Rust^2 and Elm^3 are two great examples — because the effect on the user experience is so profound.
+If our parser will be spending most of its time failing to parse its input, it needs to provide error messages that our users can understand. Many modern languages work hard to make their error messaging as comprehensible as possible — Rust[^2] and Elm[^3] are two great examples — because the effect on the user experience is so profound.
 
 Consider some error messages for the expressions above. I've written them in the first person, a bit like Elm might, because I think it's charming.
 
--|Expression|Error
---|--|--
-1| `+`| I expected a field name after the `+`, e.g. `+tag`
-2| `+tag`, `+tag:` | I expected a colon and a field value after `+tag`, e.g. `+tag:value`
-3| `+tag:interactive (`| I expected a closing bracket after `(`
-4| `+tag:interactive (Greta OR`| I expected an expression after `OR`
+| -   | Expression                   | Error                                                                |
+| --- | ---------------------------- | -------------------------------------------------------------------- |
+| 1   | `+`                          | I expected a field name after the `+`, e.g. `+tag`                   |
+| 2   | `+tag`, `+tag:`              | I expected a colon and a field value after `+tag`, e.g. `+tag:value` |
+| 3   | `+tag:interactive (`         | Groups can't be empty. Add an expression after `(`                   |
+| 4   | `+tag:interactive (Greta OR` | I expected an expression after `OR`                                  |
 
 We haven't written the code for chips and groups yet, but we can definitely improve the error handling for case #4 in our binary parser above. Let's add a check to see if we're at the end of our list of tokens, and throw an error if there's nothing after the operator:
 
 ```typescript
-    switch (tokenType) {
-      case TokenType.OR:
-      case TokenType.AND: {
-        this.consume(tokenType);
+// within binary() …
+switch (tokenType) {
+  case TokenType.OR:
+  case TokenType.AND: {
+    this.consume(tokenType)
 
-        if (this.isAtEnd()) {
-          throw this.error(`I expected an expression after ${tokenType}`);
-        }
-
-        return new Binary(left, {
-          operator: tokenType,
-          binary: this.binary(isNested),
-        });
-      }
-      // ... etc
+    if (this.isAtEnd()) {
+      throw this.error(`I expected an expression after \`${tokenType}\``)
     }
+
+    return new Binary(left, {
+      operator: tokenType,
+      binary: this.binary(isNested),
+    })
+  }
+  // … etc
+}
 ```
 
-Now our binary method has had a spruce, `Expr` is next, implementing the rule `str | group | chip`:
+<div data-parser>+tag:interactive (Greta OR</div>
+
+Nice. Now that our binary method has had a spruce, `Expr` is next, implementing the rule `str | group | chip`:
 
 ```typescript
 export class Expr {
-  public readonly type = "Expr";
-  constructor(
-    public readonly content: Str | Group | Chip
-  ) {}
+  public readonly type = "Expr"
+  constructor(public readonly content: Str | Group | Chip) {}
 }
 
 class Parser {
-    // ...
+  // …
   private expr(): Expr {
     const tokenType = this.peek().tokenType
     switch (tokenType) {
       case TokenType.LEFT_BRACKET:
-        return new Expr(this.group());
+        return new Expr(this.group())
       case TokenType.STRING:
-        return new Expr(this.str());
-    case TokenType.CHIP_KEY:
-        return new Expr(this.chip());
-    default:
-        throw this.unexpectedTokenError();
+        return new Expr(this.str())
+      case TokenType.CHIP_KEY:
+        return new Expr(this.chip())
+      default:
+        throw this.unexpectedTokenError()
     }
   }
 
   private unexpectedTokenError = () => {
     throw this.error(
       `I didn't expect to find a '${this.peek().lexeme}' ${!this.previous() ? "here." : `after '${this.previous()?.lexeme}'`}`
-    );
-  };
+    )
+  }
 }
 ```
 
-A fairly straightforward switch statement, common in expressing `|` relations in rules, and an error if we don't find what we expect.
+A fairly straightforward switch statement, common in expressing `|` relations in rules, and an error if we don't find what we expect. That error message can appear when we encounter a binary operator or right parenthesis instead of an expression: we take care to ensure the message makes sense for start tokens, too.
+
+<div data-parser>) whoops!</div>
 
 We're almost there! In `group()`, expressing `'(' binary ')'` also fairly straightforward:
 
 ```typescript
 export class Group {
-  public readonly type = "Group";
+  public readonly type = "Group"
   constructor(public readonly content: Binary) {}
 }
 
 class Parser {
-    // ...
+  // …
   private group(): Group {
     this.consume(
       TokenType.LEFT_BRACKET,
-      "Groups should start with a left bracket"
-    );
+      "Groups must start with a left bracket"
+    )
 
-    const binary = this.binary(true);
+    const binary = this.binary(true)
 
     this.consume(
       TokenType.RIGHT_BRACKET,
-      "Groups must end with a right bracket."
-    );
+      "Groups must end with a right bracket"
+    )
 
-    return new Group(binary);
+    return new Group(binary)
   }
 }
 ```
 
 This also marks the first recursion in our recursive descent — the call to binary sends us back up our list of rules, to descend again.
 
+To ensure that we're handling case #3 in our list of error messages above, we can check to make sure there's a right bracket after we're done consuming the content of our group, throwing an error if we encounter something unexpected:
+
+```typescript
+// In group() ...
+this.consume(TokenType.LEFT_BRACKET, "Groups must start with a left bracket")
+
+if (this.isAtEnd() || this.peek().tokenType === TokenType.RIGHT_BRACKET) {
+  throw this.error("Groups can't be empty. Add an expression after `(`")
+}
+// ...etc
+```
+
 `str()` is a terminal, so we can simply consume the token and move on:
 
 ```typescript
 export class CqlStr {
-  public readonly type = "CqlStr";
+  public readonly type = "CqlStr"
   constructor(public readonly token: Token) {}
 }
 
 class Parser {
-    // ...
+  // …
   private str(): Str {
-    const token = this.consume(TokenType.STRING, "Expected a string");
+    const token = this.consume(TokenType.STRING, "I expected a string here")
 
-    return new Str(token);
+    return new Str(token)
   }
 }
 ```
 
-Finally, `chip()` consumes up to two terminals representing the chip key and value, completing our last rule, `chip -> chip_key chip_value?`:
+Finally, `chip()` consumes up to two terminals representing the chip key and value, completing our last rule, `chip -> chip_key chip_value?`. We can add checks to handle errors #1 and #2 above:
 
 ```typescript
 export class Chip {
-  public readonly type = "Chip";
+  public readonly type = "Chip"
   constructor(
     public readonly key: Token,
     public readonly value?: Token
@@ -359,66 +374,77 @@ export class Chip {
 }
 
 class Parser {
-  // ...
+  // …
   private chip(): Chip {
-    const key = this.consume(
-      TokenType.CHIP_KEY,
-      "Expected a search key, e.g. +tag"
-    );
+    // We check to see if there's a literal after we consume this token,
+    // so there's no need for an error message here
+    const key = this.consume(TokenType.CHIP_KEY)
 
-    const maybeValue = this.consume(TokenType.CHIP_VALUE, "");
+    if (!key.literal || key.literal === "") {
+      throw this.error(
+        "I expected the name of a field to search with after the `+`, e.g. `+tag`"
+      )
+    }
 
-    return new Chip(key, maybeValue);
+    const maybeValue = this.consume(
+      TokenType.CHIP_VALUE,
+      `I expected a colon and a field value after \`+${key.literal}\`, e.g. \`+${key.literal}:value\``
+    )
+
+    return new Chip(key, maybeValue)
   }
 }
 ```
 
+<div data-parser>+</div>
+<div data-parser>+tag</div>
+<div data-parser>+tag:type/interactive</div>
+
 That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse any valid CQL statement into an AST that represents its underlying structure. Even better, it'll handle common errors gracefully in a way that — we hope! — our users will understand.
 
-The next step — a UI that uses this grammar to help implement the many features we came up with in part 1. Is it possible? Desirable, even? It's all to come in part 5.
+The next step — creating a UI powered by this parser to help implement the many features we came up with in part 1.
 
-[^1]: https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A
+[^1]: [Crafting interpreters — parsing expressions.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A)
 
 [^2]: Here's a [Rust blogpost](https://blog.rust-lang.org/2016/08/10/Shape-of-errors-to-come.html) that discusses their approach.
 
-[^3]: Similarly, here's a [post by the creator of Elm](https://elm-lang.org/news/compiler-errors-for-humans) on their approach to error handling. Note the importance of position and colour, too!
-
-Todo:
-
-- Reread
-
-Field:
-
-Binaries:
-
-```typescript
-        if (this.isAtEnd()) {
-          throw this.error(
-            `There must be a query following '${tokenType}', e.g. this ${tokenType} that.`
-          );
-        }
-        ```
-
-chips: taken care of in program
-
-groups:
+[^3]: ... and a [post by the creator of Elm](https://elm-lang.org/news/compiler-errors-for-humans) on Elm's approach to error handling.
 
 <style>
+  .parser-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
 
+  .parser-container input {
+    width: 400px;
+    max-width: 100vw;
+    margin-bottom: 10px;
+  }
 
-.tree--container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  width: 100%;
-}
+  .parser-container input,
+  .error-container {
+    margin-bottom: 10px;
+  }
 
-.tree {
-  display: block;
-  max-width: 100%;
-  margin-top: 5px;
-  overflow-y: scroll;
-}
+  .error-container {
+    color: red;
+  }
+
+  .tree--container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .tree {
+    display: block;
+    max-width: 100%;
+    margin-top: 5px;
+    overflow-y: scroll;
+  }
 
   /*https://www.cssscript.com/clean-tree-diagram/*/
   .tree,
@@ -448,7 +474,7 @@ groups:
 
   .tree li {
     display: table-cell;
-    padding: .5rem 0;
+    padding-top: .5rem;
     vertical-align: top;
   }
 
@@ -523,151 +549,8 @@ groups:
 
 <script id="page-script" type="module">
  "use strict";
-    // ----- Imports ----- //
-// ----- Types ----- //
 var _a;
-var OptionKind;
-(function (OptionKind) {
-    OptionKind[OptionKind["Some"] = 0] = "Some";
-    OptionKind[OptionKind["None"] = 1] = "None";
-})(OptionKind || (OptionKind = {}));
-// ----- Constructors ----- //
-const some = (a) => ({ kind: OptionKind.Some, value: a });
-const none = { kind: OptionKind.None };
-/**
- * Turns a value that may be `null` or `undefined` into an `Option`.
- * If it's `null` or `undefined` the `Option` will be a `None`. If it's
- * some other value the `Option` will be a `Some` "wrapping" that value.
- * @param a The value that may be `null` or `undefined`
- * @returns {Option<A>} An `Option`
- */
-const fromNullable = (a) => a === null || a === undefined ? none : some(a);
-// ----- Functions ----- //
-/**
- * Returns the value if `Some`, otherwise returns `a`. You can think of it
- * as "unwrapping" the `Option`, getting you back a plain value
- * @param a The value to fall back to if the `Option` is `None`
- * @param optA The Option
- * @returns {A} The value for a `Some`, `a` for a `None`
- * @example
- * const bylineOne = some('CP Scott');
- * withDefault('Jane Smith')(bylineOne); // Returns 'CP Scott'
- *
- * const bylineTwo = none;
- * withDefault('Jane Smith')(bylineTwo); // Returns 'Jane Smith'
- */
-const withDefault = (a) => (optA) => optA.kind === OptionKind.Some ? optA.value : a;
-/**
- * Applies a function to a `Some`, does nothing to a `None`.
- * @param f The function to apply
- * @param optA The Option
- * @returns {Option<B>} A new `Option`
- * @example
- * const creditOne = some('Nicéphore Niépce');
- * // Returns Some('Photograph: Nicéphore Niépce')
- * map(name => `Photograph: ${name}`)(creditOne);
- *
- * const creditTwo = none;
- * map(name => `Photograph: ${name}`)(creditTwo); // Returns None
- *
- * // All together
- * compose(withDefault(''), map(name => `Photograph: ${name}`))(credit);
- */
-/**
- * Takes two Options and applies a function if both are `Some`,
- * does nothing if either are a `None`.
- * @param f The function to apply
- * @param optA The first Option
- * @param optB The second Option
- * @returns {Option<C>} A new `Option`
- */
-const map2 = (f) => (optA) => (optB) => optA.kind === OptionKind.Some && optB.kind === OptionKind.Some
-    ? some(f(optA.value, optB.value))
-    : none;
-/**
- * Like `map` but applies a function that *also* returns an `Option`.
- * Then "unwraps" the result for you so you don't end up with
- * `Option<Option<A>>`
- * @param f The function to apply
- * @param optA The Option
- * @returns {Option<B>} A new `Option`
- * @example
- * type GetUser = number => Option<User>;
- * type GetUserName = User => Option<string>;
- *
- * const userId = 1;
- * const username: Option<string> = compose(andThen(getUserName), getUser)(userId);
- */
-// ----- Exports ----- //
-// ----- Types ----- //
-var ResultKind;
-(function (ResultKind) {
-    ResultKind[ResultKind["Ok"] = 0] = "Ok";
-    ResultKind[ResultKind["Err"] = 1] = "Err";
-})(ResultKind || (ResultKind = {}));
-// ----- Constructors ----- //
-const ok = (a) => ({ kind: ResultKind.Ok, value: a });
-const err = (e) => ({ kind: ResultKind.Err, err: e });
-// ----- Functions ----- //
-/**
- * The method for turning a `Result<E, A>` into a plain value.
- * If this is an `Err`, apply the first function to the error value and
- * return the result. If this is an `Ok`, apply the second function to
- * the value and return the result.
- * @param f The function to apply if this is an `Err`
- * @param g The function to apply if this is an `Ok`
- * @param result The Result
- * @example
- * const flakyTaskResult: Result<string, number> = flakyTask(options);
- *
- * either(
- *     data => `We got the data! Here it is: ${data}`,
- *     error => `Uh oh, an error: ${error}`,
- * )(flakyTaskResult)
- */
-const either = (result) => (f, g) => result.kind === ResultKind.Ok ? g(result.value) : f(result.err);
-/**
- * The companion to `map`.
- * Applies a function to the error in `Err`, does nothing to an `Ok`.
- * @param f The function to apply if this is an `Err`
- * @param result The Result
- */
-const mapError = (f) => (result) => result.kind === ResultKind.Err ? f(result.err) : result;
-/**
- * Converts a `Result<E, A>` into an `Option<A>`. If the result is an
- * `Ok` this will be a `Some`, if the result is an `Err` this will be
- * a `None`.
- * @param result The Result
- */
-const toOption = (result) => result.kind === ResultKind.Ok ? some(result.value) : none;
-/**
- * Similar to `Option.map`.
- * Applies a function to the value in an `Ok`, does nothing to an `Err`.
- * @param f The function to apply if this is an `Ok`
- * @param result The Result
- */
-const map = (f) => (result) => result.kind === ResultKind.Ok ? ok(f(result.value)) : result;
-/**
- * Similar to `Option.andThen`. Applies to a `Result` a function that
- * *also* returns a `Result`, and unwraps them to avoid nested `Result`s.
- * Can be useful for stringing together operations that might fail.
- * @example
- * type RequestUser = number => Result<string, User>;
- * type GetEmail = User => Result<string, string>;
- *
- * // Request fails: Err('Network failure')
- * // Request succeeds, problem accessing email: Err('Email field missing')
- * // Both succeed: Ok('email_address')
- * andThen(getEmail)(requestUser(id))
- */
-const andThen = (f) => (result) => result.kind === ResultKind.Ok ? f(result.value) : result;
-/**
- * Takes a list of `Result`s and separates out the `Ok`s from the `Err`s.
- * @param results A list of `Result`s
- * @return {Partitioned} An object with two fields, one for the list of `Err`s
- * and one for the list of `Ok`s
- */
-const partition = (results) => results.reduce(({ errs, oks }, result) => either(result)((err) => ({ errs: [...errs, err], oks }), (ok) => ({ errs, oks: [...oks, ok] })), { errs: [], oks: [] });
+const debug = false;
 const TokenType = {
     // Single-character tokens.
     LEFT_BRACKET: "LEFT_BRACKET",
@@ -699,158 +582,6 @@ Token.reservedWordMap = {
     OR: TokenType.OR,
 };
 Token.reservedWordStrs = Object.keys(_a.reservedWordMap);
-
- const whitespaceR = /\s/;
-    const isWhitespace = (str) => whitespaceR.test(str);
-    const letterOrDigitR = /[0-9A-z]/;
-    const isLetterOrDigit = (str) => letterOrDigitR.test(str);
-    class Scanner {
-        constructor(program) {
-            this.program = program;
-            this.tokens = [];
-            this.start = 0;
-            this.current = 0;
-            this.line = 1;
-            this.scanTokens = () => {
-                while (!this.isAtEnd()) {
-                    // We are at the beginning of the next lexeme.
-                    this.start = this.current;
-                    this.scanToken();
-                }
-                return this.tokens.concat(new Token(TokenType.EOF, "", undefined, this.current, this.current));
-            };
-            this.isAtEnd = (offset = 0) => this.current + offset === this.program.length;
-            this.scanToken = () => {
-                switch (this.advance()) {
-                    case "+":
-                        this.addKey(TokenType.CHIP_KEY);
-                        return;
-                    case ":":
-                        this.addValue();
-                        return;
-                    case "(":
-                        this.addToken(TokenType.LEFT_BRACKET);
-                        return;
-                    case ")":
-                        this.addToken(TokenType.RIGHT_BRACKET);
-                        return;
-                    case " ":
-                        return;
-                    case "\r":
-                    case "\t":
-                    case '"':
-                        this.addString();
-                        return;
-                    default:
-                        this.addIdentifierOrUnquotedString();
-                        return;
-                }
-            };
-            this.addKey = (tokenType) => {
-                while (this.peek() != ":" && !isWhitespace(this.peek()) && !this.isAtEnd())
-                    this.advance();
-                if (this.current - this.start == 1)
-                    this.addToken(tokenType);
-                else {
-                    const key = this.program.substring(this.start + 1, this.current);
-                    this.addToken(tokenType, key);
-                }
-            };
-            this.addValue = () => {
-                while (!isWhitespace(this.peek()) && !this.isAtEnd())
-                    this.advance();
-                if (this.current - this.start == 1) {
-                    this.addToken(TokenType.CHIP_VALUE);
-                }
-                else {
-                    const value = this.program.substring(this.start + 1, this.current);
-                    this.addToken(TokenType.CHIP_VALUE, value);
-                }
-            };
-            this.addIdentifierOrUnquotedString = () => {
-                while (isLetterOrDigit(this.peek())) {
-                    this.advance();
-                }
-                const text = this.program.substring(this.start, this.current);
-                const maybeReservedWord = Token.reservedWordMap[text];
-                return maybeReservedWord
-                    ? this.addToken(maybeReservedWord)
-                    : this.addUnquotedString();
-            };
-            this.addUnquotedString = () => {
-                while (
-                // Consume whitespace up until the last whitespace char
-                (!isWhitespace(this.peek()) ||
-                    isWhitespace(this.peek(1)) ||
-                    this.isAtEnd(1)) &&
-                    this.peek() != ")" &&
-                    !this.isAtEnd()) {
-                    this.advance();
-                }
-                this.addToken(TokenType.STRING, this.program.substring(this.start, this.current));
-            };
-            this.addString = () => {
-                while (this.peek() != '"' && !this.isAtEnd()) {
-                    this.advance();
-                }
-                if (this.isAtEnd()) {
-                    this.error(this.line, "Unterminated string at end of file");
-                }
-                else {
-                    this.advance();
-                }
-                this.addToken(TokenType.STRING, this.program.substring(this.start + 1, this.current - 1));
-            };
-            this.addToken = (tokenType, literal) => {
-                const text = this.program.substring(this.start, this.current);
-                this.tokens = this.tokens.concat(new Token(tokenType, text, literal, this.start, this.current - 1));
-            };
-            this.advance = () => {
-                const previous = this.current;
-                this.current = this.current + 1;
-                return this.program[previous];
-            };
-            this.peek = (offset = 0) => this.program[this.current + offset] === undefined
-                ? "\u0000"
-                : this.program[this.current + offset];
-            this.error = (line, message) => this.report(line, "", message);
-            this.report = (line, where, message) => {
-                console.log(`[line ${line}] Error${where}: ${message}`);
-            };
-        }
-    }
-
-const createQuery = (content) => ({
-  type: "Query",
-  content,
-});
-
-const createQueryBinary = (left, right) => ({
-    type: "QueryBinary",
-    left,
-    right,
-});
-const createQueryContent = (content) => ({
-    type: "QueryContent",
-    content,
-});
-const createQueryGroup = (content) => ({
-    type: "QueryGroup",
-    content,
-});
-const createQueryStr = (token) => {
-    var _b;
-    return ({
-        type: "QueryStr",
-        searchExpr: (_b = token.literal) !== null && _b !== void 0 ? _b : "",
-        token,
-    });
-};
-const createQueryField = (key, value) => ({
-    type: "QueryField",
-    key,
-    value,
-});
 class ParseError extends Error {
     constructor(position, message) {
         super(message);
@@ -858,23 +589,61 @@ class ParseError extends Error {
         this.message = message;
     }
 }
-
+class Query {
+    constructor(content) {
+        this.content = content;
+        this.type = "Query";
+    }
+}
+class Binary {
+    constructor(left, right) {
+        this.left = left;
+        this.right = right;
+        this.type = "Binary";
+    }
+}
+class Expr {
+    constructor(content) {
+        this.content = content;
+        this.type = "Expr";
+    }
+}
+class Group {
+    constructor(content) {
+        this.content = content;
+        this.type = "Group";
+    }
+}
+class Str {
+    constructor(token) {
+        var _b;
+        this.token = token;
+        this.type = "Str";
+        this.searchExpr = (_b = token.literal) !== null && _b !== void 0 ? _b : "";
+    }
+}
+class Chip {
+    constructor(key, value) {
+        this.key = key;
+        this.value = value;
+        this.type = "Chip";
+    }
+}
 class Parser {
     constructor(tokens) {
         this.tokens = tokens;
+        // Keep track of the current token.
         this.current = 0;
-        /**
-         * Throw a sensible parse error when a query field or output modifier is
-         * found in the wrong place.
-         */
-        this.guardAgainstQueryField = (errorLocation) => {
-            switch (this.peek().tokenType) {
-                case TokenType.CHIP_KEY: {
-                    const queryFieldNode = this.queryField();
-                    throw this.error(`You cannot query for the field “${queryFieldNode.key.literal}” ${errorLocation}`);
-                }
-                default:
-                    return;
+        this.unexpectedTokenError = () => {
+            var _b;
+            throw this.error(`I didn't expect to find a '${this.peek().lexeme}' ${!this.previous() ? "here." : `after '${(_b = this.previous()) === null || _b === void 0 ? void 0 : _b.lexeme}'`}`);
+        };
+        this.consume = (tokenType, message = "") => {
+            if (this.check(tokenType)) {
+                return this.advance();
+            }
+            else {
+                throw this.error(message);
             }
         };
         this.check = (tokenType) => {
@@ -882,11 +651,9 @@ class Parser {
                 return false;
             }
             else {
-                return this.peek().tokenType == tokenType;
+                return this.peek().tokenType === tokenType;
             }
         };
-        this.isAtEnd = () => { var _a; return ((_a = this.peek()) === null || _a === void 0 ? void 0 : _a.tokenType) === TokenType.EOF; };
-        this.peek = () => this.tokens[this.current];
         this.advance = () => {
             if (!this.isAtEnd()) {
                 const currentToken = this.tokens[this.current];
@@ -897,126 +664,211 @@ class Parser {
                 return this.previous();
             }
         };
-        this.consume = (tokenType, message = "") => {
-            if (this.check(tokenType)) {
-                return this.advance();
-            }
-            else {
-                throw this.error(message);
-            }
-        };
-        this.safeConsume = (tokenType, message = "") => {
-            try {
-                return ok(this.consume(tokenType, message));
-            }
-            catch (e) {
-                if (e instanceof ParseError) {
-                    return err(e);
-                }
-                throw e;
-            }
-        };
         this.previous = () => this.tokens[this.current - 1];
+        this.isAtEnd = () => { var _b; return ((_b = this.peek()) === null || _b === void 0 ? void 0 : _b.tokenType) === TokenType.EOF; };
         this.error = (message) => new ParseError(this.peek().start, message);
-        this.unexpectedTokenError = () => {
-            var _a;
-            throw this.error(`I didn't expect to find a '${this.peek().lexeme}' ${!this.previous() ? "here." : `after '${(_a = this.previous()) === null || _a === void 0 ? void 0 : _a.lexeme}'`}`);
-        };
     }
     parse() {
-        try {
-            return ok(this.query());
-        }
-        catch (e) {
-            if (e instanceof ParseError) {
-                return err(e);
-            }
-            throw e;
-        }
+        return this.query();
     }
     query() {
-        const content = this.peek().tokenType === TokenType.EOF ? undefined : this.queryBinary();
-        if (this.peek().tokenType !== TokenType.EOF) {
-            throw this.unexpectedTokenError();
-        }
-        return createQuery(content);
+        const content = this.peek().tokenType === TokenType.EOF ? undefined : this.binary();
+        return new Query(content);
     }
-    queryBinary(isNested = false) {
-        if (this.peek().tokenType === TokenType.CHIP_VALUE)
-            throw new ParseError(this.peek().start, "I found an unexpected ':'. Did you intend to search for a tag, section or similar, e.g. tag:news? If you would like to add a search phrase containing a ':' character, please surround it in double quotes.");
-        const left = this.queryContent();
-        if (isNested) {
-            this.guardAgainstQueryField("within a group");
-        }
-        switch (this.peek().tokenType) {
+    binary() {
+        this.debug("binary");
+        const left = this.expr();
+        const tokenType = this.peek().tokenType;
+        switch (tokenType) {
+            // If we have an explicit binary operator, use it ...
+            case TokenType.OR:
             case TokenType.AND: {
-                const andToken = this.consume(TokenType.AND);
-                this.guardAgainstQueryField("after 'AND'.");
+                this.consume(tokenType);
                 if (this.isAtEnd()) {
-                    throw this.error("There must be a query following 'AND', e.g. this AND that.");
+                    throw this.error(`I expected an expression after ${tokenType}`);
                 }
-                return createQueryBinary(left, [andToken, this.queryBinary(isNested)]);
-            }
-            case TokenType.OR: {
-                const orToken = this.consume(TokenType.OR);
-                this.guardAgainstQueryField("after 'OR'.");
-                if (this.isAtEnd()) {
-                    throw this.error("There must be a query following 'OR', e.g. this OR that.");
-                }
-                return createQueryBinary(left, [orToken, this.queryBinary(isNested)]);
+                return new Binary(left, {
+                    operator: tokenType,
+                    binary: this.binary(),
+                });
             }
             case TokenType.RIGHT_BRACKET:
             case TokenType.EOF: {
-                return createQueryBinary(left);
+                return new Binary(left);
             }
+            // ... or default to OR.
             default: {
-                return createQueryBinary(left, [
-                    new Token(TokenType.OR, "", undefined, 0, 0),
-                    this.queryBinary(isNested),
-                ]);
+                return new Binary(left, {
+                    operator: TokenType.OR,
+                    binary: this.binary(),
+                });
             }
         }
     }
-    queryContent() {
-        switch (this.peek().tokenType) {
+    expr() {
+        this.debug("expr");
+        const tokenType = this.peek().tokenType;
+        switch (tokenType) {
             case TokenType.LEFT_BRACKET:
-                return createQueryContent(this.queryGroup());
+                return new Expr(this.group());
             case TokenType.STRING:
-                return createQueryContent(this.queryStr());
-            default: {
-                const { tokenType } = this.peek();
-                if ([TokenType.AND, TokenType.OR].some((i) => i === tokenType)) {
-                    throw this.error(`An ${tokenType.toString()} keyword must have a search term before and after it, e.g. this ${tokenType.toString()} that.`);
-                }
-                switch (this.peek().tokenType) {
-                    case TokenType.CHIP_KEY: {
-                        return createQueryContent(this.queryField());
-                    }
-                    default: {
-                        throw this.unexpectedTokenError();
-                    }
-                }
-            }
+                return new Expr(this.str());
+            case TokenType.CHIP_KEY:
+                return new Expr(this.chip());
+            default:
+                throw this.unexpectedTokenError();
         }
     }
-    queryGroup() {
-        this.consume(TokenType.LEFT_BRACKET, "Groups should start with a left bracket");
+    group() {
+        this.debug("group");
+        this.consume(TokenType.LEFT_BRACKET, "Groups must start with a left bracket");
         if (this.isAtEnd() || this.peek().tokenType === TokenType.RIGHT_BRACKET) {
             throw this.error("Groups can't be empty. Put a search term between the brackets!");
         }
-        this.guardAgainstQueryField("within a group. Try putting this search term outside of the brackets!");
-        const binary = this.queryBinary(true);
-        this.consume(TokenType.RIGHT_BRACKET, "Groups must end with a right bracket.");
-        return createQueryGroup(binary);
+        const binary = this.binary();
+        this.consume(TokenType.RIGHT_BRACKET, "Groups must end with a right bracket");
+        return new Group(binary);
     }
-    queryStr() {
+    str() {
+        this.debug("str");
         const token = this.consume(TokenType.STRING, "Expected a string");
-        return createQueryStr(token);
+        return new Str(token);
     }
-    queryField() {
-        const key = this.consume(TokenType.CHIP_KEY, "Expected a search key, e.g. +tag");
-        const maybeValue = this.safeConsume(TokenType.CHIP_VALUE, "Expected a search value, e.g. +tag:new");
-        return either(maybeValue)(() => createQueryField(key, undefined), (value) => createQueryField(key, value));
+    chip() {
+        this.debug("chip");
+        const key = this.consume(TokenType.CHIP_KEY, "I expected a field name after the `+`, e.g. `+tag`");
+        if (!key.literal || key.literal === "") {
+            throw this.error("I expected the name of a field to search with after the `+`, e.g. `+tag`");
+        }
+        const maybeValue = this.consume(TokenType.CHIP_VALUE,  `I expected a colon and a field value after \`+${key.literal}\`, e.g. \`+${key.literal}:value\``);
+        return new Chip(key, maybeValue);
+    }
+    peek() {
+        return this.tokens[this.current];
+    }
+    debug(location) {
+        if (debug) {
+            console.log(location, this.peek().tokenType);
+        }
+    }
+}
+const whitespaceR = /\s/;
+const isWhitespace = (str) => whitespaceR.test(str);
+const letterOrDigitR = /[0-9A-z]/;
+const isLetterOrDigit = (str) => letterOrDigitR.test(str);
+class Scanner {
+    constructor(program) {
+        this.program = program;
+        this.tokens = [];
+        this.start = 0;
+        this.current = 0;
+        this.line = 1;
+        this.scanTokens = () => {
+            while (!this.isAtEnd()) {
+                // We are at the beginning of the next lexeme.
+                this.start = this.current;
+                this.scanToken();
+            }
+            return this.tokens.concat(new Token(TokenType.EOF, "", undefined, this.current, this.current));
+        };
+        this.scanToken = () => {
+            switch (this.advance()) {
+                case "+":
+                    this.addKey(TokenType.CHIP_KEY);
+                    return;
+                case ":":
+                    this.addValue();
+                    return;
+                case "(":
+                    this.addToken(TokenType.LEFT_BRACKET);
+                    return;
+                case ")":
+                    this.addToken(TokenType.RIGHT_BRACKET);
+                    return;
+                case " ":
+                    return;
+                case "\r":
+                case "\t":
+                case '"':
+                    this.addString();
+                    return;
+                default:
+                    this.addIdentifierOrUnquotedString();
+                    return;
+            }
+        };
+        this.addKey = (tokenType) => {
+            while (this.peek() != ":" && !isWhitespace(this.peek()) && !this.isAtEnd())
+                this.advance();
+            if (this.current - this.start === 1)
+                this.addToken(tokenType);
+            else {
+                const key = this.program.substring(this.start + 1, this.current);
+                this.addToken(tokenType, key);
+            }
+        };
+        this.addValue = () => {
+            while (!isWhitespace(this.peek()) && !this.isAtEnd())
+                this.advance();
+            if (this.current - this.start == 1) {
+                this.addToken(TokenType.CHIP_VALUE);
+            }
+            else {
+                const value = this.program.substring(this.start + 1, this.current);
+                this.addToken(TokenType.CHIP_VALUE, value);
+            }
+        };
+        this.addIdentifierOrUnquotedString = () => {
+            while (isLetterOrDigit(this.peek())) {
+                this.advance();
+            }
+            const text = this.program.substring(this.start, this.current);
+            const maybeReservedWord = Token.reservedWordMap[text];
+            return maybeReservedWord
+                ? this.addToken(maybeReservedWord)
+                : this.addUnquotedString();
+        };
+        this.addUnquotedString = () => {
+            while (
+            // Consume whitespace up until the last whitespace char
+            (!isWhitespace(this.peek()) ||
+                isWhitespace(this.peek(1)) ||
+                this.isAtEnd(1)) &&
+                this.peek() != ")" &&
+                !this.isAtEnd()) {
+                this.advance();
+            }
+            this.addToken(TokenType.STRING, this.program.substring(this.start, this.current));
+        };
+        this.addString = () => {
+            while (this.peek() != '"' && !this.isAtEnd()) {
+                this.advance();
+            }
+            if (this.isAtEnd()) {
+                this.error(this.line, "Unterminated string at end of file");
+            }
+            else {
+                this.advance();
+            }
+            this.addToken(TokenType.STRING, this.program.substring(this.start + 1, this.current - 1));
+        };
+        this.addToken = (tokenType, literal) => {
+            const text = this.program.substring(this.start, this.current);
+            this.tokens = this.tokens.concat(new Token(tokenType, text, literal, this.start, this.current - 1));
+        };
+        this.advance = () => {
+            const previous = this.current;
+            this.current = this.current + 1;
+            return this.program[previous];
+        };
+        this.peek = (offset = 0) => this.program[this.current + offset] === undefined
+            ? "\u0000"
+            : this.program[this.current + offset];
+        this.isAtEnd = (offset = 0) => this.current + offset === this.program.length;
+        this.error = (line, message) => this.report(line, "", message);
+        this.report = (line, where, message) => {
+            console.log(`[line ${line}] Error${where}: ${message}`);
+        };
     }
 }
 
@@ -1077,17 +929,20 @@ const getQueryHTML = (query) => {
     </li>
   </ul>`;
 };
-const getContentHTML = (query) => {
+const getExprHTML = (query) => {
+    const { content }  = query;
     const html = (() => {
-        switch (query.content.type) {
-            case "QueryBinary":
-                return getBinaryHTML(query.content);
-            case "QueryField":
-                return getFieldHTML(query.content);
-            case "QueryGroup":
-                return getGroupHTML(query.content);
-            case "QueryStr":
-                return getStrHTML(query.content);
+        switch (content.type) {
+            case "Binary":
+                return getBinaryHTML(content);
+            case "Chip":
+                return getChipHTML(content);
+            case "Group":
+                return getGroupHTML(content);
+            case "Str":
+                return getStrHTML(content);
+            default:
+                console.error(`No HTML representation for ${content.type}`)
         }
     })();
     return `
@@ -1099,30 +954,34 @@ const getContentHTML = (query) => {
     </ul>`;
 };
 const getBinaryHTML = (query) => {
-    const maybeRight = query.right?.[1];
+    const maybeRight = query.right;
+    const leftHTML = getExprHTML(query.left)
     const binaryContent = maybeRight ? `
      <ul>
-        <li>${getContentHTML(query.left)}</li>
-        <li>${getBinaryHTML(maybeRight)}</li>
+        <li>${leftHTML}</li>
+        <li>${getBinaryHTML(maybeRight.binary)}</li>
       </ul>
-  ` : getContentHTML(query.left);
+  ` : leftHTML;
     return `
     <ul>
       <li>
-        <span>${getNodeHTML(query)}</span>
+        <span>
+          ${getNodeHTML(query)}
+          ${maybeRight ? `<span class="node-content">${maybeRight.operator}</span>` : ``}
+        </span>
         ${binaryContent}
       </li>
     </ul>
   `;
 };
-const getFieldHTML = (field) => {
+const getChipHTML = (chip) => {
     return `
     <ul>
       <li>
-        <span>${getNodeHTML(field)}</span>
+        <span>${getNodeHTML(chip)}</span>
         <ul>
-          <li>${getTokenHTML(field.key)}</li>
-          ${field.value ? `<li>${getTokenHTML(field.value)}</li>` : ""}
+          <li>${getTokenHTML(chip.key)}</li>
+          ${chip.value ? `<li>${getTokenHTML(chip.value)}</li>` : ""}
         </ul>
     </ul>
   `;
@@ -1140,13 +999,13 @@ const getGroupHTML = (group) => {
     <ul>
       <li>
         ${getNodeHTML(group)}
-        ${getQueryHTML(group.content)}
+        ${getBinaryHTML(group.content)}
       </li>
     </ul>
   `;
 };
 const getStrHTML = (str) => {
-    return `
+  return `
     <ul>
       <li>
         <span>
@@ -1165,7 +1024,7 @@ const getNodeHTML = (node) => `<span class="node-description">${node.type}</span
 
     const createParser = (el, initialQuery) => {
         el.innerHTML = "";
-        el.classList.add("scanner-container")
+        el.classList.add("parser-container")
         const input = document.createElement("input");
         input.value = initialQuery;
         el.appendChild(input);
@@ -1177,15 +1036,13 @@ const getNodeHTML = (node) => `<span class="node-description">${node.type}</span
             const scanner = new Scanner(value);
             const tokens = scanner.scanTokens();
             const parser = new Parser(tokens);
-            const ast = parser.parse();
-
-            if (ast.value) {
- resultContainer.innerHTML = getDebugASTHTML(ast.value);
-            } else {
-                resultContainer.innerHTML = ast.err.message
+            try {
+              const ast = parser.parse();
+              console.log(ast)
+              resultContainer.innerHTML = getDebugASTHTML(ast);
+            } catch(e) {
+              resultContainer.innerHTML = `<div class="error-container">Error at position ${e.position}: ${e.message}</div>`
             }
-            console.log(ast)
-
         }
 
         input.addEventListener("input", e => {

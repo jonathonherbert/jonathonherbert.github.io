@@ -1,3 +1,5 @@
+const debug = false
+
 type TokenType = keyof typeof TokenType
 
 const TokenType = {
@@ -104,7 +106,8 @@ class Parser {
     return new Query(content)
   }
 
-  private binary(isNested: boolean = false): Binary {
+  private binary(): Binary {
+    this.debug("binary")
     const left = this.expr()
 
     const tokenType = this.peek().tokenType
@@ -113,18 +116,17 @@ class Parser {
       // If we have an explicit binary operator, use it ...
       case TokenType.OR:
       case TokenType.AND: {
-        this.consume(tokenType);
+        this.consume(tokenType)
 
-        // if (this.isAtEnd()) {
-        //     throw this.error(
-        //       `There must be a query following '${tokenType}', e.g. this ${tokenType} that.`
-        //     );
-        //   }
+        if (this.isAtEnd()) {
+          throw this.error(`I expected an expression after ${tokenType}`)
+        }
         return new Binary(left, {
           operator: tokenType,
-          binary: this.binary(isNested),
+          binary: this.binary(),
         })
       }
+      case TokenType.RIGHT_BRACKET:
       case TokenType.EOF: {
         return new Binary(left)
       }
@@ -132,12 +134,13 @@ class Parser {
       default: {
         return new Binary(left, {
           operator: TokenType.OR,
-          binary: this.binary(isNested),
+          binary: this.binary(),
         })
       }
     }
   }
   private expr(): Expr {
+    this.debug("expr")
     const tokenType = this.peek().tokenType
     switch (tokenType) {
       case TokenType.LEFT_BRACKET:
@@ -152,38 +155,51 @@ class Parser {
   }
 
   private group(): Group {
+    this.debug("group")
     this.consume(
       TokenType.LEFT_BRACKET,
-      "Groups should start with a left bracket"
+      "Groups must start with a left bracket"
     )
 
-    const binary = this.binary(true)
+    if (this.isAtEnd() || this.peek().tokenType === TokenType.RIGHT_BRACKET) {
+      throw this.error(
+        "Groups can't be empty. Put a search term between the brackets!"
+      )
+    }
+    const binary = this.binary()
 
     this.consume(
       TokenType.RIGHT_BRACKET,
-      "Groups must end with a right bracket."
+      "Groups must end with a right bracket"
     )
 
     return new Group(binary)
   }
 
   private str(): Str {
+    this.debug("str")
     const token = this.consume(TokenType.STRING, "Expected a string")
 
     return new Str(token)
   }
 
   private chip(): Chip {
+    this.debug("chip")
     const key = this.consume(
       TokenType.CHIP_KEY,
-      "I expected the name of a field to search with after the `+`, e.g. `+tag`"
+      "I expected a field name after the `+`, e.g. `+tag`"
     )
 
     if (!key.literal || key.literal === "") {
-        throw this.error("I expected the name of a field to search with after the `+`, e.g. `+tag`")
+      throw this.error(
+        "I expected the name of a field to search with after the `+`, e.g. `+tag`"
+      )
     }
 
-    const maybeValue = this.consume(TokenType.CHIP_VALUE, `I expected a colon and a field value after +${key.literal}, e.g. +${key.literal}:value`)
+    const maybeValue = this.consume(
+      TokenType.CHIP_VALUE,
+      `I expected a colon and a field value after \`+${key.literal}\`, e.g. \`+${key.literal}:value\``
+    )
 
     return new Chip(key, maybeValue)
   }
@@ -230,6 +246,12 @@ class Parser {
 
   private error = (message: string) =>
     new ParseError(this.peek().start, message)
+
+  private debug(location: string) {
+    if (debug) {
+      console.log(location, this.peek().tokenType)
+    }
+  }
 }
 
 const whitespaceR = /\s/
@@ -396,7 +418,7 @@ const parseCqlStr = (queryStr: string) => {
 }
 
 try {
-  console.log(parseCqlStr("+a:b this OR"))
+  console.log(parseCqlStr("(asd)"))
 } catch (e) {
   if (e instanceof ParseError) {
     console.log(`Err: '${e.message}', ${e.position}`)
