@@ -7,25 +7,27 @@ draft: false
 
 <div data-parser>why not (+edit:me AND see the tree change)</div>
 
-In [part 3](./structured-search-part-3), we implemented a scanner that could turn a CQL query string into a list of tokens — the alphabet that is used by the CQL grammar. In this post, we'll write a parser that accepts a list of tokens, and outputs an Abstract Syntax Tree (AST) that represents the query as it's structured by the syntax of our grammar.
+In [part 3](./structured-search-part-3), we implemented a scanner that could turn a CQL query string into a list of tokens. In this post, we'll write a parser that accepts that list of tokens, and outputs an Abstract Syntax Tree (AST) that represents the query as it's structured by the syntax of our grammar.
 
-"Syntax" is a word to describe the rules for correct arrangement of symbols (in our case, tokens) in a language. Of course, there are many ways for that arrangement to be incorrect, and so it's also the parser's job to give a sensible error message when our list of tokens doesn't make sense.
+"Syntax" is a word to describe the rules for correct arrangement of symbols (represented in this case by tokens) in a language. Of course, there are many ways for that arrangement to be incorrect, and so it's also the parser's job to give a sensible error message when our list of tokens doesn't make sense.
 
 A reasonable person might ask at this point: what's an AST? Our definition of "syntax" above gives us a clue — it's a tree that represents the syntactic structure of some text that is well-formed according to a grammar.
 
 That covers the "Syntax Tree" part; the tree is "Abstract" because it will gloss over many details of the syntax in favour of representing its structure. This will become clearer as we examine the structure the parser creates, and the top of this post gives us a visualisation of what that tree looks like, so we have a sense of what we're building before we begin.
 
+It might be that parsing a grammar like CQL is old hat to you — in which case, you'd be forgiven for skipping this post, and moving straight on to part 5 (when it's written.)[^1] If not, let us begin …
+
 <h2>The (recursive) descent 🕳️</h2>
 
-There are many ways to write a parser, but I'm only qualified to write one sort at the time of writing — a recursive descent parser. Luckily, I'm reliably informed that recursive descent is [great.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=use%20recursive%20descent.-,It%20rocks.,-Recursive%20descent%20is) Specifically, recursive descent parsers tend to be:
+There are many ways to write a parser, but I'm only qualified to write one sort at the time of writing: a recursive descent parser. Luckily, I'm reliably informed that recursive descent is [great.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=use%20recursive%20descent.-,It%20rocks.,-Recursive%20descent%20is) Specifically, recursive descent parsers tend to be:
 
 - Fast.
-- Great at giving comprehensible error messages.
+- Great at giving comprehensible error messages, if they're written with that in mind.
 - Easy to write.
 
 In the context of this post, the latter point is important. If you're new to this subject and the idea of writing a parser is as daunting as spelunking into [an actual cave](https://en.wikipedia.org/wiki/The_Descent), don't worry. We'll spelunk together, and I suspect you'll be pleasantly surprised at how straightforward this part of the task is.
 
-Recursive descent parsers are easy to write because their different parts correspond to the structure of the grammar we've already written. Bob Nystrom has a neat summary of this mapping in Crafting Interpreters that I'll reproduce with minor modifications here:[^1]
+Recursive descent parsers are easy to write because their different parts correspond to the structure of the grammar we've already written. Bob Nystrom has a neat summary of this mapping in Crafting Interpreters that I'll reproduce with minor modifications here:[^2]
 
 | Grammar notation | Code representation               |
 | ---------------- | --------------------------------- |
@@ -231,7 +233,7 @@ A lot of the time, the query we're parsing is going to be incorrect — and not 
 - `+tag:type/interactive (` — a group missing a closing bracket
 - `+tag:type/interactive (Greta OR` — a binary expression with an operator, but no right-hand expression
 
-If our parser will be spending most of its time failing to parse its input, it will need to provide error messages that our users can understand. Many modern languages work hard to make their error messaging as comprehensible as possible — Rust[^2] and Elm[^3] are two great examples — because the effect on the user experience is so profound.
+If our parser will be spending most of its time failing to parse its input, it will need to provide error messages that our users can understand. Many modern languages work hard to make their error messaging as comprehensible as possible — Rust[^3] and Elm[^4] are two great examples — because the effect on the user experience is so profound.
 
 Consider some error messages for the expressions above. I've written them in the first person, a bit like Elm might, because I think it's _charming._
 
@@ -410,11 +412,13 @@ The parser running in this post uses the code above, and I've left a few rough e
 
 The next step will be creating a UI powered by this parser to help implement our big list of features in [Part 1](/structured-search-ui-1/). We'll cover that in Part 5.
 
-[^1]: [Crafting interpreters — parsing expressions.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A)
+[^1]: But better still: read it anyway, and let me know what isn't right!
 
-[^2]: Here's a [Rust blogpost](https://blog.rust-lang.org/2016/08/10/Shape-of-errors-to-come.html) that discusses their approach.
+[^2]: [Crafting interpreters — parsing expressions.](https://craftinginterpreters.com/parsing-expressions.html#:~:text=The%20body%20of%20the%20rule%20translates%20to%20code%20roughly%20like%3A)
 
-[^3]: … and a [post by the creator of Elm](https://elm-lang.org/news/compiler-errors-for-humans) on Elm's approach to error handling.
+[^3]: Here's a [Rust blogpost](https://blog.rust-lang.org/2016/08/10/Shape-of-errors-to-come.html) that discusses their approach.
+
+[^4]: … and a [post by the creator of Elm](https://elm-lang.org/news/compiler-errors-for-humans) on Elm's approach to error handling.
 
 <style>
   .parser-container {
