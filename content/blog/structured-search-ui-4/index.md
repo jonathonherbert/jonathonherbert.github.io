@@ -1,6 +1,6 @@
 ---
 title: "Structured search queries for web UIs, part 4: parsing"
-date: "2024-10-29T01:30:03.284Z"
+date: "2025-01-25T01:30:03.284Z"
 description: "Grammar (parsin') time"
 draft: false
 ---
