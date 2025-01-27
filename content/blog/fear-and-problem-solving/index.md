@@ -45,7 +45,7 @@ In a software engineering context, having a [no-blame culture](https://devops.co
 
 There are lots of strategies we can use to reduce our fear factor — many more than would be worth listing here — but the important thing is to recognise fear where it exists, understand its negative impact on our ability to think clearly, and take steps to manage it.
 
-At the end of _The Outer Wilds_, we discover a beautiful piece of thematic symmetry — the mysterious strangers we have been cowering from were scared once, too. And their fear caused them to make a catastrophic error of judgement, a mistake that doomed their kind forever.
+At the end of _The Outer Wilds_, we discover a beautiful piece of thematic symmetry. The mysterious strangers we have been cowering from were scared once, too. And their fear caused them to make a catastrophic error of judgement, a mistake that dooms their kind forever.
 
 Hey! Let's not be doomed. It's reasonable for individuals and teams to feel a few tremors when the stakes are high, or the outcome is unknown. But we can recognise this fear, and cultivate strategies to manage it. Because it's only without fear that we're best placed to solve our problems.
 
