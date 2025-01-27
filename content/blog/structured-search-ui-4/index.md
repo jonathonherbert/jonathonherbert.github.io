@@ -5,15 +5,15 @@ description: "Grammar (parsin') time"
 draft: false
 ---
 
-<div data-parser>why not (+edit:me AND see the tree change)</div>
+In [part 3](./structured-search-part-3), we implemented a scanner that could turn a CQL query string into a list of tokens. In this post, we'll write a parser that accepts that list of tokens, and outputs a a data structure that represents the query as it's structured by the syntax of our grammar. Here's a visualisation of what that tree looks like, so we have a sense of what we're building before we begin:
 
-In [part 3](./structured-search-part-3), we implemented a scanner that could turn a CQL query string into a list of tokens. In this post, we'll write a parser that accepts that list of tokens, and outputs an Abstract Syntax Tree (AST) that represents the query as it's structured by the syntax of our grammar.
+<div data-parser>why not (+edit:me AND see)</div>
 
-"Syntax" is a word to describe the rules for correct arrangement of symbols (represented in this case by tokens) in a language. Of course, there are many ways for that arrangement to be incorrect, and so it's also the parser's job to give a sensible error message when our list of tokens doesn't make sense.
+Of course, there are many ways for a query to be incorrect, and so it's also the parser's job to give a sensible error message when our list of tokens doesn't make sense:
 
-A reasonable person might ask at this point: what's an AST? Our definition of "syntax" above gives us a clue — it's a tree that represents the syntactic structure of some text that is well-formed according to a grammar.
+<div data-parser>( whoops!</div>
 
-That covers the "Syntax Tree" part; the tree is "Abstract" because it will gloss over many details of the syntax in favour of representing its structure. This will become clearer as we examine the structure the parser creates, and the top of this post gives us a visualisation of what that tree looks like, so we have a sense of what we're building before we begin.
+The above data structure is called an _Abstract Syntax Tree_, or _AST_, and it's worth defining that term before we begin. "Syntax" is a word to describe the rules that describe the correct arrangement of symbols (represented in this case by tokens) in a language. So a syntax tree is a tree that represents the syntactic structure of some text according to a given grammar. In this case, the tree is "Abstract" because it will gloss over many details of the syntax in favour of representing its structure. This will become clearer as we examine the structure the parser creates.
 
 It might be that parsing a grammar like CQL is old hat to you — in which case, you'd be forgiven for skipping this post, and moving straight on to part 5 (when it's written.)[^1] If not, let us begin …
 
@@ -408,7 +408,7 @@ class Parser {
 
 That's the end of our grammar. We've just implemented a recursive descent parser for our query language, CQL! It'll parse a valid CQL statement into an AST that represents its underlying structure, and handle common errors by emitting messages that — hopefully! — our users will understand.
 
-The parser running in this post uses the code above, and I've left a few rough edges for the sake of brevity that you'll find with a bit of playing. Take a look at the code in the [CQL project](https://github.com/guardian/cql/blob/main/client/src/lang/parser.ts) to see what a (slightly) more complete implementation might look like.
+The parser running in this post uses the code above, and I've left a few rough edges for the sake of brevity that you might find as you're playing with queries. Take a look at the code in the [CQL project](https://github.com/guardian/cql/blob/main/client/src/lang/parser.ts) to see what a (slightly) more complete implementation might look like.
 
 The next step will be creating a UI powered by this parser to help implement our big list of features in [Part 1](/structured-search-ui-1/). We'll cover that in Part 5.
 
@@ -494,7 +494,7 @@ The next step will be creating a UI powered by this parser to help implement our
     left: 0;
     position: absolute;
     right: 0;
-    top: -1px;
+    top: 1px;
   }
 
   .tree li:first-child:before {
