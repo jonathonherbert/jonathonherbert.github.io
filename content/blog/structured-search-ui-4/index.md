@@ -37,7 +37,7 @@ Recursive descent parsers are easy to write because their different parts corres
 | \* or +          | Loop (e.g. `while`, `for`, or recursion)             |
 | ?                | Conditional (`if` statement)                    |
 
-As we parse a given CQL expression, we're going to use these rules as we _descend_ through the grammar, working through our rules _recursively_ until we've consumed all our tokens (or thrown an error trying to do it.) And that's why it's called recursive descent! As a reminder, our grammar looks like:
+As we parse a given CQL expression, we're going to _descend_ through our rules _recursively_ until we've consumed all our tokens, or thrown an error trying. And that's why it's called recursive descent! As a reminder, our grammar looks like:
 
 ```
 query             -> binary?
