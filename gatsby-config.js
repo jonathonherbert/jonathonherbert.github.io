@@ -42,6 +42,21 @@ module.exports = {
             },
           },
           {
+            resolve: `gatsby-remark-mermaid`,
+            options: /** @type {import('gatsby-remark-mermaid').Options} */ ({
+              mermaidConfig: {
+                theme: 'neutral',
+                css: 'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap',
+                themeCSS: `
+                .node rect { fill: #fff; }
+                * {
+                  font-family: 'Lora', sans-serif;
+                }
+                `
+              }
+            })
+          },
+          {
             resolve: `gatsby-remark-responsive-iframe`,
             options: {
               wrapperStyle: `

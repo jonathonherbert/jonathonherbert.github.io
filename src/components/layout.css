@@ -16,3 +16,13 @@ blockquote {
 .gatsby-highlight {
   margin-bottom: 1.5rem;
 }
+
+p:has(> svg[id^='mermaid-']) {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+#mermaid-0 {
+  font-size: 15px;
+}
