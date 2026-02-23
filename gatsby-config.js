@@ -48,7 +48,17 @@ module.exports = {
                 theme: 'neutral',
                 css: 'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap',
                 themeCSS: `
-                .node rect { fill: #fff; }
+                .node rect {
+                  fill: #fff;
+                  stroke: #ddd;
+                  stroke-width: 2px;
+                  stroke-linejoin: round;
+                }
+                path.edge-thickness-normal {
+                  stroke: #ddd;
+                  stroke-width: 2px;
+                }
+                .marker { stroke:#bbb !important; fill:#bbb !important; stroke-width:3px !important; }
                 * {
                   font-family: 'Lora', sans-serif;
                 }
