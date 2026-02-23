@@ -1,7 +1,7 @@
 ---
 title: "Structured search queries for web UIs, part 2: the grammar"
 date: "2024-10-06T01:30:03.284Z"
-description: "In which we write the grammar for the query language that will power our fancy UI"
+description: "In which we write the query language that will power our fancy UI"
 draft: false
 ---
 

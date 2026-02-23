@@ -1,6 +1,6 @@
 ---
-title: "Structured search queries for web UIs, part 5: the interface"
-date: "2025-01-27T01:30:03.284Z"
+title: "Structured search queries for web UIs, part 6: the interface, features"
+date: "2026-02-23T01:30:03.284Z"
 description: ""
 draft: true
 ---

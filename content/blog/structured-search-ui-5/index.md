@@ -1,7 +1,7 @@
 ---
-title: "Structured search queries for web UIs, part 5: the interface"
+title: "Structured search queries for web UIs, part 5: the interface, foundations"
 date: "2025-06-02T02:46:56.940Z"
-description: ""
+description: "In which contenteditable is dead, and also long live contenteditable"
 draft: false
 ---
 
@@ -15,7 +15,7 @@ With our parser for CQL complete in [part 4](/structured-search-ui-4), it's time
 - ✨ Syntax highlighting
 - 🚨 Real-time error reporting
 
-In this post, we'll hook up our tokeniser and parser with a UI component that will eventually be powerful enough to express all of them.
+In this post, we'll lay the foundations for a UI component that will eventually be powerful enough to express all of them.
 
 When I set out to build the view, I wanted something that wasn't tied to particular product. Although our search grammar seems quite specific, we can imagine serving a subset, or superset, of its features for different use cases. For example:
 
@@ -38,7 +38,9 @@ flowchart LR
 
 There are aspects of the view that are tricky. Let's start with syntax highlighting. On its own, this is fairly straightforward to implement — a common trick is to use a standard HTML `input` element, make its contents invisible, and then overlay that input with an element that renders its content identically, save for the additional styling. GitHub uses this trick to achieve its highlighting. The input content is grey in the animation below:
 
-![GitHub's approach to syntax highlighting in its query input, embiggened slightly for display purposes.](./github-input.gif)
+![GitHub's approach to syntax highlighting in its query input, embiggened and animated for demonstration purposes.](./github-input.gif)
+
+Even better, there's a new CSS feature, the [Custom Highlight API](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API), which is now widely available in modern browsers, and is probably a better solution if you don't need legacy browser support.
 
 Our query UI goes beyond coloured text, though. I'd like to add a visual representation of our chips that makes their role in queries clearer, a bit like the UX for Giant we've briefly seen in part 1. You can see below that key-value pairs have their own visual treatment, as well as a way to remove them with a click:
 
@@ -48,9 +50,9 @@ That sort of thing isn't possible with the above approach, because the additiona
 
 There are many ways we can implement this UI sugar. Giant does it by rendering each query element — search text, chip key, chip value — as its own input. The search component then manages cursor movement manually as users move the caret across those elements with the keyboard. This works well for collapsed selections (selections for which `from` and `to` are equal), where there's only a caret to represent, but it's trickier to represent selections that cut across multiple fields, or the entire document: the `📄 Query as single document` feature above. Giant simply doesn't implement that.
 
-Another way to do this might be to treat the entire query as a single, `contenteditable` interface, giving us copy and paste for free, and letting us insert arbitrary markup to style different parts of our query. Unfortuately, working with `contenteditable` is [widely acknowledged](https://www.youtube.com/watch?v=EEF2DlOUkag) to be [an awful experience](https://medium.engineering/why-contenteditable-is-terrible-122d8a40e480#.mqvm5uq1o).
+Another way to do this might be to treat the entire query as a single, `contenteditable` interface, giving us copy and paste for free, and letting us insert arbitrary markup to style different parts of our query. Unfortuately, working with `contenteditable` is [widely acknowledged](https://www.youtube.com/watch?v=EEF2DlOUkag) to be [a terrible time](https://medium.engineering/why-contenteditable-is-terrible-122d8a40e480#.mqvm5uq1o).
 
-Happily, this is where I can activate a trap card! For some number of years now, I've worked on-and-off on the Guardian's rich text editor, Composer, which has been using the open-source text editor library [ProseMirror](https://prosemirror.net) since 2018. ProseMirror does a good enough job of abstracting the gnarly parts of contenteditable behind a clean, stable interface that some non-trivial subset of the publishing world use it for their tooling, too.[^1] Which makes implementing the final part of the CQL project a neat intersection of two fun things:
+Happily, this is where I can activate a trap card! For some number of years now, I've worked on-and-off on the Guardian's CMS, Composer, which is powered by the open-source text editor library [ProseMirror](https://prosemirror.net) since 2018. ProseMirror does a good enough job of abstracting the gnarly parts of contenteditable behind a clean, stable interface that some non-trivial subset of the publishing world use it for their tooling, too.[^1] Which makes implementing the final part of the CQL project a neat intersection of two fun things:
 
 ![With apologies to Edith Pritchett.](venn.jpg)
 
