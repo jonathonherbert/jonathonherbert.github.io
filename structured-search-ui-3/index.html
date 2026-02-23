@@ -1,0 +1,534 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><style id="typography.js">html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,details,figcaption,figure,footer,header,main,menu,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block}audio:not([controls]){display:none;height:0}progress{vertical-align:baseline}[hidden],template{display:none}a{background-color:transparent;-webkit-text-decoration-skip:objects}a:active,a:hover{outline-width:0}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit;font-weight:bolder}dfn{font-style:italic}h1{font-size:2em;margin:.67em 0}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}svg:not(:root){overflow:hidden}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}button,input,optgroup,select,textarea{font:inherit;margin:0}optgroup{font-weight:700}button,input{overflow:visible}button,select{text-transform:none}[type=reset],[type=submit],button,html [type=button]{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-input-placeholder{color:inherit;opacity:.54}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}html{font:100%/1.5 'Lora',serif;box-sizing:border-box;overflow-y:scroll;}*{box-sizing:inherit;}*:before{box-sizing:inherit;}*:after{box-sizing:inherit;}body{color:hsla(0,0%,0%,0.8);font-family:'Lora',serif;font-weight:normal;word-wrap:break-word;font-kerning:normal;-moz-font-feature-settings:"kern", "liga", "clig", "calt";-ms-font-feature-settings:"kern", "liga", "clig", "calt";-webkit-font-feature-settings:"kern", "liga", "clig", "calt";font-feature-settings:"kern", "liga", "clig", "calt";}img{max-width:100%;margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}h1{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;color:inherit;font-family:'Lora',serif;font-weight:bold;text-rendering:optimizeLegibility;font-size:2rem;line-height:1.1;}h2{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;color:inherit;font-family:'Lora',serif;font-weight:bold;text-rendering:optimizeLegibility;font-size:1.51572rem;line-height:1.1;}h3{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;color:inherit;font-family:'Lora',serif;font-weight:bold;text-rendering:optimizeLegibility;font-size:1.31951rem;line-height:1.1;}h4{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;color:inherit;font-family:'Lora',serif;font-weight:bold;text-rendering:optimizeLegibility;font-size:1rem;line-height:1.1;}h5{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;color:inherit;font-family:'Lora',serif;font-weight:bold;text-rendering:optimizeLegibility;font-size:0.87055rem;line-height:1.1;}h6{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;color:inherit;font-family:'Lora',serif;font-weight:bold;text-rendering:optimizeLegibility;font-size:0.81225rem;line-height:1.1;}hgroup{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}ul{margin-left:1.5rem;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;list-style-position:outside;list-style-image:none;}ol{margin-left:1.5rem;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;list-style-position:outside;list-style-image:none;}dl{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}dd{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}p{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}figure{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}pre{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;font-size:0.85rem;line-height:1.5rem;}table{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;font-size:1rem;line-height:1.5rem;border-collapse:collapse;width:100%;}fieldset{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}blockquote{margin-left:1.5rem;margin-right:1.5rem;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}form{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}noscript{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}iframe{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}hr{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:calc(1.5rem - 1px);background:hsla(0,0%,0%,0.2);border:none;height:1px;}address{margin-left:0;margin-right:0;margin-top:0;padding-bottom:0;padding-left:0;padding-right:0;padding-top:0;margin-bottom:1.5rem;}b{font-weight:bold;}strong{font-weight:bold;}dt{font-weight:bold;}th{font-weight:bold;}li{margin-bottom:calc(1.5rem / 2);}ol li{padding-left:0;}ul li{padding-left:0;}li > ol{margin-left:1.5rem;margin-bottom:calc(1.5rem / 2);margin-top:calc(1.5rem / 2);}li > ul{margin-left:1.5rem;margin-bottom:calc(1.5rem / 2);margin-top:calc(1.5rem / 2);}blockquote *:last-child{margin-bottom:0;}li *:last-child{margin-bottom:0;}p *:last-child{margin-bottom:0;}li > p{margin-bottom:calc(1.5rem / 2);}code{font-size:0.85rem;line-height:1.5rem;}kbd{font-size:0.85rem;line-height:1.5rem;}samp{font-size:0.85rem;line-height:1.5rem;}abbr{border-bottom:1px dotted hsla(0,0%,0%,0.5);cursor:help;}acronym{border-bottom:1px dotted hsla(0,0%,0%,0.5);cursor:help;}abbr[title]{border-bottom:1px dotted hsla(0,0%,0%,0.5);cursor:help;text-decoration:none;}thead{text-align:left;}td,th{text-align:left;border-bottom:1px solid hsla(0,0%,0%,0.12);font-feature-settings:"tnum";-moz-font-feature-settings:"tnum";-ms-font-feature-settings:"tnum";-webkit-font-feature-settings:"tnum";padding-left:1rem;padding-right:1rem;padding-top:0.75rem;padding-bottom:calc(0.75rem - 1px);}th:first-child,td:first-child{padding-left:0;}th:last-child,td:last-child{padding-right:0;}</style><meta name="generator" content="Gatsby 5.14.1"/><meta name="theme-color" content="#663399"/><meta data-react-helmet="true" name="description" content="Let&#x27;s teach our computer to CQL"/><meta data-react-helmet="true" property="og:title" content="Structured search queries for web UIs, part 3: scanning"/><meta data-react-helmet="true" property="og:description" content="Let&#x27;s teach our computer to CQL"/><meta data-react-helmet="true" property="og:type" content="website"/><meta data-react-helmet="true" name="twitter:card" content="summary"/><meta data-react-helmet="true" name="twitter:creator" content="Jonathon Herbert"/><meta data-react-helmet="true" name="twitter:title" content="Structured search queries for web UIs, part 3: scanning"/><meta data-react-helmet="true" name="twitter:description" content="Let&#x27;s teach our computer to CQL"/><style data-href="/styles.500f0c80309ab4209ed5.css" data-identity="gatsby-global-css">@font-face{font-display:swap;font-family:Patua One;font-style:normal;font-weight:400;src:local("Patua One Regular "),local("Patua One-Regular"),url(/static/patua-one-latin-400-04538b4949ee084d70b5a5f22c16097b.woff2) format("woff2"),url(/static/patua-one-latin-400-944b1f7fff7ece8f6d5f84414536a6a3.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:normal;font-weight:300;src:local("Open Sans Light "),local("Open Sans-Light"),url(/static/open-sans-latin-300-b871ad6e5cbe2a1c8c7362c81a234f93.woff2) format("woff2"),url(/static/open-sans-latin-300-38bcfba2c37aac23453faf21d14511fb.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:italic;font-weight:300;src:local("Open Sans Light italic"),local("Open Sans-Lightitalic"),url(/static/open-sans-latin-300italic-b45d9997b704ab3daad1b5624eec1ad1.woff2) format("woff2"),url(/static/open-sans-latin-300italic-3ab0502d6136886180cdae3e714e30a3.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:normal;font-weight:400;src:local("Open Sans Regular "),local("Open Sans-Regular"),url(/static/open-sans-latin-400-f57a62e9efddf6ace18b15572f81905b.woff2) format("woff2"),url(/static/open-sans-latin-400-347639ec49f4b2884a9657afded83ace.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:italic;font-weight:400;src:local("Open Sans Regular italic"),local("Open Sans-Regularitalic"),url(/static/open-sans-latin-400italic-bb915319f59c02c348a615ad483772e7.woff2) format("woff2"),url(/static/open-sans-latin-400italic-56bdf84751634e8deaff10d1d68df316.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:normal;font-weight:600;src:local("Open Sans SemiBold "),local("Open Sans-SemiBold"),url(/static/open-sans-latin-600-9526470852428b4340ed994462821463.woff2) format("woff2"),url(/static/open-sans-latin-600-7e06644bbdc83069cec8d396149da3ab.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:italic;font-weight:600;src:local("Open Sans SemiBold italic"),local("Open Sans-SemiBolditalic"),url(/static/open-sans-latin-600italic-cc4bf5b2955147801c024b2b118f4a5c.woff2) format("woff2"),url(/static/open-sans-latin-600italic-8d513ad94829ef391cd18d4a83bcfc4b.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:normal;font-weight:700;src:local("Open Sans Bold "),local("Open Sans-Bold"),url(/static/open-sans-latin-700-92425c623934facef057b0cfe2e13f95.woff2) format("woff2"),url(/static/open-sans-latin-700-f24f4bcef8a4a0eb6345d292b85dc7fe.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:italic;font-weight:700;src:local("Open Sans Bold italic"),local("Open Sans-Bolditalic"),url(/static/open-sans-latin-700italic-2a0783bd1c6c1469558bfa573cfa0c0c.woff2) format("woff2"),url(/static/open-sans-latin-700italic-e961bdb476db6860f20ff571a84a55b0.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:normal;font-weight:800;src:local("Open Sans ExtraBold "),local("Open Sans-ExtraBold"),url(/static/open-sans-latin-800-1666787ea3ff3941e7641817eb9edc94.woff2) format("woff2"),url(/static/open-sans-latin-800-8ab0bbdd48f276f4ba5652b27ae59210.woff) format("woff")}@font-face{font-display:swap;font-family:Open Sans;font-style:italic;font-weight:800;src:local("Open Sans ExtraBold italic"),local("Open Sans-ExtraBolditalic"),url(/static/open-sans-latin-800italic-b5bc26612cdf4d47affd6988bcdc8c0f.woff2) format("woff2"),url(/static/open-sans-latin-800italic-3d3bd0835c258f5bd0bce57bb1963a9c.woff) format("woff")}code[class*=language-],pre[class*=language-]{word-wrap:normal;background:none;color:#000;font-family:Consolas,Monaco,Andale Mono,Ubuntu Mono,monospace;font-size:1em;-webkit-hyphens:none;hyphens:none;line-height:1.5;tab-size:4;text-align:left;text-shadow:0 1px #fff;white-space:pre;word-break:normal;word-spacing:normal}code[class*=language-] ::selection,code[class*=language-]::selection,pre[class*=language-] ::selection,pre[class*=language-]::selection{background:#b3d4fc;text-shadow:none}@media print{code[class*=language-],pre[class*=language-]{text-shadow:none}}pre[class*=language-]{margin:.5em 0;overflow:auto;padding:1em}:not(pre)>code[class*=language-],pre[class*=language-]{background:#f5f2f0}:not(pre)>code[class*=language-]{border-radius:.3em;padding:.1em;white-space:normal}.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#708090}.token.punctuation{color:#999}.token.namespace{opacity:.7}.token.boolean,.token.constant,.token.deleted,.token.number,.token.property,.token.symbol,.token.tag{color:#905}.token.attr-name,.token.builtin,.token.char,.token.inserted,.token.selector,.token.string{color:#690}.language-css .token.string,.style .token.string,.token.entity,.token.operator,.token.url{background:hsla(0,0%,100%,.5);color:#9a6e3a}.token.atrule,.token.attr-value,.token.keyword{color:#07a}.token.class-name,.token.function{color:#dd4a68}.token.important,.token.regex,.token.variable{color:#e90}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}#___gatsby,#gatsby-focus-wrapper,body,html{height:100%}code[class*=language-],pre[class*=language-]{font-size:13px}blockquote{border-left:3px solid #ddd;font-style:italic;margin-left:0;padding-left:1rem}.gatsby-highlight{margin-bottom:1.5rem}p:has(>svg[id^=mermaid-]){align-items:center;display:flex;flex-direction:column}#mermaid-0{font-size:15px!important}</style><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper picture.object-fit-polyfill{position:static!important}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){const t=e.target;if(void 0===t.dataset.mainImage)return;if(void 0===t.dataset.gatsbyImageSsr)return;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script><link rel="icon" href="/favicon-32x32.png?v=f7bf0777384d9abebe3b16718e63334d" type="image/png"/><link rel="manifest" href="/manifest.webmanifest" crossorigin="anonymous"/><link rel="apple-touch-icon" sizes="48x48" href="/icons/icon-48x48.png?v=f7bf0777384d9abebe3b16718e63334d"/><link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png?v=f7bf0777384d9abebe3b16718e63334d"/><link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png?v=f7bf0777384d9abebe3b16718e63334d"/><link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png?v=f7bf0777384d9abebe3b16718e63334d"/><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png?v=f7bf0777384d9abebe3b16718e63334d"/><link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png?v=f7bf0777384d9abebe3b16718e63334d"/><link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.png?v=f7bf0777384d9abebe3b16718e63334d"/><link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png?v=f7bf0777384d9abebe3b16718e63334d"/><title data-react-helmet="true">Structured search queries for web UIs, part 3: scanning | jsh</title><link data-react-helmet="true" rel="preconnect" href="https://fonts.googleapis.com"/><link data-react-helmet="true" rel="preconnect" href="https://fonts.gstatic.com"/><link data-react-helmet="true" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&amp;display=swap"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div style="display:flex;min-height:100%;flex-direction:column;margin-left:auto;margin-right:auto;max-width:54rem;padding:2.25rem 1.125rem"><header><h3 style="margin-top:0"><a style="box-shadow:none;text-decoration:none;color:inherit" href="/">jsh</a></h3></header><main><article><header><h1 style="margin-top:1.5rem;margin-bottom:0">Structured search queries for web UIs, part 3: scanning</h1><p style="font-size:0.87055rem;line-height:1.5rem;display:block;margin-bottom:1.5rem"><i>October 24, 2024</i></p></header><section><p>We finished <a href="./structured-search-part-2">part 2</a> by writing a grammar that described our query language, CQL. Now it’s time to write the code we need to parse it — to resolve CQL expressions into the structure and the symbols we described in our grammar, or throw an error trying.</p>
+<p>There are two parts to this process:</p>
+<ul>
+<li><strong>Scanning</strong> takes an input from a larger alphabet (in our case, the character set provided by utf-8), and produces a list of <em>tokens</em> comprised of the smaller alphabet of symbols specified in our grammar.</li>
+<li><strong>Parsing</strong> takes these tokens, and produces a abstract syntax tree — a tree that reflects the syntax of the statement, allowing us to reason about the input query’s validity, and eventually enabling us to interpret it into other query languages, should we wish.</li>
+</ul>
+<h2>Scanning</h2>
+<div data-scanner>why not +edit:me?</div>
+<p>Of the two, going from utf-8 to the CQL lexicon is the easier task. That’s because for most programming languages, and certainly for CQL, their lexical grammar is a <a href="https://en.wikipedia.org/wiki/Regular_language">regular grammar</a> — the sort of grammar that can be encoded by a regular expression.<sup id="fnref-1"><a href="#fn-1" class="footnote-ref">1</a></sup> This means the output of our scanner is a list of tokens created in the same order as they are consumed from our input — we don’t have to worry about the more complicated tree structure that’s necessary for <a href="https://en.wikipedia.org/wiki/Context-free_grammar">context-free grammars</a> like CQL.</p>
+<p>This means we can describe the scanning process as a loop that continually ingests our input, and a switch statement that inspects the next few characters, consumes them, and (optionally) outputs a token. What data should a <code class="language-text">Token</code> contain? Well, we’ll need:</p>
+<ul>
+<li>A pair of numbers to define where the token begins and ends.</li>
+<li>Something to represent the token’s type. Because we know all of these types upfront, this can be an enumeration.</li>
+<li>A string value to capture the token “lexeme” — the range of the string that maps to the token, in its entirety.</li>
+<li>Optionally, a string value to capture the token “literal” – the token value, if it’s needed. For example, tokens of type <code class="language-text">string</code> must have a literal value that contains their content, but tokens like <code class="language-text">OR</code> or <code class="language-text">AND</code> do not; they are entirely represented by their token types.</li>
+</ul>
+<p>Writing in Typescript, <sup id="fnref-2"><a href="#fn-2" class="footnote-ref">2</a></sup> here’s some code to enumerate our token types, and define our data type:</p>
+<div class="gatsby-highlight" data-language="typescript"><pre class="language-typescript"><code class="language-typescript"><span class="token keyword">const</span> TokenType <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token comment">// Single-character tokens.</span>
+  <span class="token constant">LEFT_BRACKET</span><span class="token operator">:</span> <span class="token string">"LEFT_BRACKET"</span><span class="token punctuation">,</span>
+  <span class="token constant">RIGHT_BRACKET</span><span class="token operator">:</span> <span class="token string">"RIGHT_BRACKET"</span><span class="token punctuation">,</span>
+
+  <span class="token comment">// Literals.</span>
+  <span class="token constant">STRING</span><span class="token operator">:</span> <span class="token string">"STRING"</span><span class="token punctuation">,</span>
+  <span class="token constant">CHIP_KEY</span><span class="token operator">:</span> <span class="token string">"CHIP_KEY"</span><span class="token punctuation">,</span>
+  <span class="token constant">CHIP_VALUE</span><span class="token operator">:</span> <span class="token string">"CHIP_VALUE"</span><span class="token punctuation">,</span>
+
+  <span class="token comment">// Keywords.</span>
+  <span class="token constant">AND</span><span class="token operator">:</span> <span class="token string">"AND"</span><span class="token punctuation">,</span>
+  <span class="token constant">OR</span><span class="token operator">:</span> <span class="token string">"OR"</span><span class="token punctuation">,</span>
+  <span class="token constant">EOF</span><span class="token operator">:</span> <span class="token string">"EOF"</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span> <span class="token keyword">as</span> <span class="token keyword">const</span><span class="token punctuation">;</span> <span class="token comment">// This tells Typescript to make this object read-only, and narrow its literal type.</span>
+
+<span class="token keyword">interface</span> <span class="token class-name">Token</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> start<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span>
+    <span class="token keyword">public</span> end<span class="token operator">:</span> <span class="token builtin">number</span>
+    <span class="token keyword">public</span> tokenType<span class="token operator">:</span> TokenType<span class="token punctuation">,</span>
+    <span class="token keyword">public</span> lexeme<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">,</span>
+    <span class="token keyword">public</span> literal<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>Writing a scanner is then fairly straightforward. First, we’ll introduce our <code class="language-text">Scanner</code> class, which encapsulates the mutable state we need to keep track of the beginning of the current lexeme, and how far we’ve scanned forward.<sup id="fnref-3"><a href="#fn-3" class="footnote-ref">3</a></sup></p>
+<div class="gatsby-highlight" data-language="typescript"><pre class="language-typescript"><code class="language-typescript"><span class="token keyword">export</span> <span class="token keyword">class</span> <span class="token class-name">Scanner</span> <span class="token punctuation">{</span>
+  <span class="token keyword">private</span> tokens<span class="token operator">:</span> Token<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">private</span> start <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">private</span> current <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+  <span class="token function">constructor</span> <span class="token punctuation">(</span><span class="token keyword">private</span> query<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+  <span class="token keyword">public</span> scanTokens <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> Token<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">isAtEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// We are at the beginning of the next lexeme.</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>start <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>current<span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">scanToken</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tokens<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">private</span> scanToken <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token keyword">void</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">advance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">case</span> <span class="token string">"+"</span><span class="token operator">:</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addKey</span><span class="token punctuation">(</span>TokenType<span class="token punctuation">.</span><span class="token constant">CHIP_KEY</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">case</span> <span class="token string">":"</span><span class="token operator">:</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">case</span> <span class="token string">"("</span><span class="token operator">:</span>
+        <span class="token comment">// etc.</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">private</span> <span class="token function-variable function">advance</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> previous <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>current<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>current <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>current <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>program<span class="token punctuation">[</span>previous<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p><code class="language-text">advance()</code> passes back the current character, which we can then inspect to decide which sort of token we’d like to construct. Because our query language is very small, there aren’t too many options! We can then continue to scan through the string until our token is complete, and add it to our array. Here’s an example for <code class="language-text">addKey()</code>:</p>
+<div class="gatsby-highlight" data-language="typescript"><pre class="language-typescript"><code class="language-typescript">  <span class="token keyword">private</span> <span class="token function-variable function">addKey</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">peek</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token string">":"</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token function">isWhitespace</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">peek</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">isAtEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">advance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>current <span class="token operator">-</span> <span class="token keyword">this</span><span class="token punctuation">.</span>start <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addToken</span><span class="token punctuation">(</span>tokenType<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> key <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>program<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>start <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>current<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addToken</span><span class="token punctuation">(</span>TokenType<span class="token punctuation">.</span><span class="token constant">CHIP_KEY</span><span class="token punctuation">,</span> key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">private</span> <span class="token function-variable function">peek</span> <span class="token operator">=</span> <span class="token punctuation">(</span>offset<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">=></span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>program<span class="token punctuation">[</span><span class="token keyword">this</span><span class="token punctuation">.</span>current <span class="token operator">+</span> offset<span class="token punctuation">]</span> <span class="token operator">===</span> <span class="token keyword">undefined</span>
+      <span class="token operator">?</span> <span class="token string">"\u0000"</span>
+      <span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>program<span class="token punctuation">[</span><span class="token keyword">this</span><span class="token punctuation">.</span>current <span class="token operator">+</span> offset<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">private</span> <span class="token function-variable function">isAtEnd</span> <span class="token operator">=</span> <span class="token punctuation">(</span>offset<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">=></span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>current <span class="token operator">+</span> offset <span class="token operator">===</span> <span class="token keyword">this</span><span class="token punctuation">.</span>program<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+
+  <span class="token keyword">private</span> <span class="token function-variable function">addToken</span> <span class="token operator">=</span> <span class="token punctuation">(</span>tokenType<span class="token operator">:</span> TokenType<span class="token punctuation">,</span> literal<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> text <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>program<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>start<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>current<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tokens <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tokens<span class="token punctuation">.</span><span class="token function">concat</span><span class="token punctuation">(</span>
+      <span class="token keyword">new</span> <span class="token class-name">Token</span><span class="token punctuation">(</span>tokenType<span class="token punctuation">,</span> text<span class="token punctuation">,</span> literal<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>start<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>current <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
+<p>… or, in plain English, “scan forward until we hit a <code class="language-text">:</code> character, whitespace, or the end of the string. Then add a <code class="language-text">CHIP_KEY</code> token, optionally adding its literal value if it exists.”</p>
+<p>This is largely straightforward, so we won’t go through every token here, but there are a few wrinkles worth mentioning. The first is that, in some cases, we do not know what token we have until we are  mid-way through a scan. This is the case when we are dealing with unquoted strings and boolean operators – if our token starts with <code class="language-text">OR</code>, we’ve no way of knowing whether we’re looking at the keyword <code class="language-text">OR</code> or the unquoted string <code class="language-text">ORTHOGONAL</code> until we encounter whitespace. In this case, we’re after a <a href="https://en.wiktionary.org/wiki/maximal_munch">maximal munch</a>, matching the longest possible section of our input before declaring the token type:</p>
+<div class="gatsby-highlight" data-language="typescript"><pre class="language-typescript"><code class="language-typescript">  <span class="token keyword">private</span> <span class="token function-variable function">addIdentifierOrUnquotedString</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token function">isLetterOrDigit</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">peek</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">advance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> text <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>program<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>start<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>current<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> maybeReservedWord <span class="token operator">=</span>
+      Token<span class="token punctuation">.</span>reservedWordMap<span class="token punctuation">[</span>text <span class="token keyword">as</span> <span class="token keyword">keyof</span> <span class="token keyword">typeof</span> Token<span class="token punctuation">.</span>reservedWordMap<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">return</span> maybeReservedWord
+      <span class="token operator">?</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addToken</span><span class="token punctuation">(</span>maybeReservedWord<span class="token punctuation">)</span>
+      <span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addUnquotedString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
+<p>The second thing to note: it’s possible for our input to contain lexical errors. For example, a quoted string must end in a closing double quote. If we run out of input before we encounter one, we should throw an error:</p>
+<div class="gatsby-highlight" data-language="typescript"><pre class="language-typescript"><code class="language-typescript">  <span class="token keyword">private</span> <span class="token function-variable function">addString</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">peek</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token string">'"'</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">isAtEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">advance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">isAtEnd</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span><span class="token string">"Unterminated string at end of file"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">advance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addToken</span><span class="token punctuation">(</span>
+      TokenType<span class="token punctuation">.</span><span class="token constant">STRING</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>program<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>start <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>current <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">private</span> <span class="token function-variable function">error</span> <span class="token operator">=</span> <span class="token punctuation">(</span>message<span class="token operator">:</span> String<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token comment">// For now, we'll just log errors. Production code would</span>
+    <span class="token comment">// care where this error occurred, and provide the caller</span>
+    <span class="token comment">// with a means of discovering what went wrong.</span>
+    <span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Error: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>message<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
+<p>Incidentally, quoted strings give us a good illustration of the difference between a lexeme and a literal. Note that the literal, which is the data that the token represents, does not include the quotes:</p>
+<div data-scanner>unquoted "quoted"</div>
+<p>Here’s the <a href="https://github.com/guardian/cql/blob/f89645f4d8079198e0a8d648f37c1d1810b71354/prosemirror-client/src/lang/scanner.ts">code</a> if you’d like to see the entire implementation as it stands in the CQL project.</p>
+<p>And that’s the scanner done! From a string input, we’ve now got a tool that can produce an ordered list of tokens. This is enough to power some of the features of our yet-to-be-implemented UI — syntax highlighting, for one — but to ensure our query is correctly formed, report errors, and power our typeahead, we’ll need to transform these tokens into a data structure that represents our CQL grammar. In the next post, we’ll write a parser that does just that.</p>
+<style>
+
+.scanner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.result-container {
+        display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.result-container > div {
+    max-width: 100%;
+    margin-top: 5px;
+    overflow-y: scroll;
+    margin-bottom: 0;
+    padding-bottom: 9rem;
+}
+
+.CqlDebug__json {
+  display: flex;
+}
+
+.CqlDebug__json > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.CqlDebug__mapping {
+  display: flex;
+  flex-direction: column;
+}
+
+.CqlDebug__queryDiagramToken,
+.CqlDebug__queryDiagramNode {
+  margin-bottom: 6rem;
+}
+
+.CqlDebug__queryDiagramNode > .CqlDebug__queryDiagramLabel {
+  padding-top: 0rem;
+}
+
+.CqlDebug__queryDiagramNode > .CqlDebug__queryDiagramLabel div + div {
+  padding-top: 1rem;
+}
+
+.Cql__Debug > div {
+  flex-grow: 1;
+}
+.CqlDebug__queryDiagram {
+  display: flex;
+  white-space: pre;
+  font-family: monospace;
+}
+
+.CqlDebug__queryDiagramLabel {
+  padding-top: 2rem;
+  padding-right: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.CqlDebug__queryDiagramContent {
+  display: flex;
+}
+
+.CqlDebug__queryBox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  width: 25px;
+  padding: 1rem 0;
+}
+
+.CqlDebug__queryBox--offset > .CqlDebug__originalChar {
+  position: relative;
+  left: 50%;
+  top: -2rem;
+}
+
+.CqlDebug__queryBox--offset > .CqlDebug__queryChar {
+  position: relative;
+  left: -50%;
+}
+
+.CqlDebug__queryBox > div {
+  width: 1em;
+  height: 1rem;
+}
+
+.CqlDebug__originalChar {
+  background-color: rgb(49, 78, 55);
+}
+
+.CqlDebug__queryChar {
+  background-color: #a8e6b5;
+}
+
+.CqlDebug__queryChar + .CqlDebug__queryChar {
+  margin-top: 3px;
+}
+
+.CqlDebug__queryCharAlt {
+  background-color: #f7bbff;
+}
+
+.CqlDebug__nodeChar {
+  background-color: rgb(130, 82, 82);
+  position: absolute;
+  bottom: 1rem;
+  left: -50%;
+}
+
+.CqlDebug__nodeLabel,
+.CqlDebug__tokenLabel {
+  position: absolute;
+  top: 5rem;
+  width: 1em;
+  transform: rotate(90deg);
+}
+
+.CqlDebug__nodeLabel {
+  left: 50%;
+}
+
+.CqlDebug__nodeDiagram {
+  display: flex;
+}
+
+.CqlSandbox {
+  margin-top: 30px;
+}
+
+.CqlSandbox__query-results {
+  display: flex;
+}
+
+.CqlSandbox__query-results > div {
+  flex-grow: 1;
+}
+</style>
+<script id="page-script" type="module">
+    "use strict";
+    var _a;
+    const TokenType = {
+        // Single-character tokens.
+        PLUS: "PLUS",
+        COLON: "COLON",
+        AT: "AT",
+        LEFT_BRACKET: "LEFT_BRACKET",
+        RIGHT_BRACKET: "RIGHT_BRACKET",
+        // Literals.
+        STRING: "STRING",
+        NUMBER: "NUMBER",
+        QUERY_OUTPUT_MODIFIER_KEY: "QUERY_OUTPUT_MODIFIER_KEY",
+        CHIP_KEY: "CHIP_KEY",
+        CHIP_VALUE: "CHIP_VALUE",
+        // Keywords.
+        AND: "AND",
+        OR: "OR",
+        EOF: "EOF",
+    };
+    class Token {
+        constructor(tokenType, lexeme, literal, start, end) {
+            this.tokenType = tokenType;
+            this.lexeme = lexeme;
+            this.literal = literal;
+            this.start = start;
+            this.end = end;
+        }
+        toString() {
+            return `${this.tokenType} ${this.lexeme} ${this.literal} ${this.start}-${this.end}`;
+        }
+    }
+    _a = Token;
+    Token.reservedWordMap = {
+        AND: TokenType.AND,
+        OR: TokenType.OR,
+    };
+    Token.reservedWordStrs = Object.keys(_a.reservedWordMap);
+    const whitespaceR = /\s/;
+    const isWhitespace = (str) => whitespaceR.test(str);
+    const letterOrDigitR = /[0-9A-z]/;
+    const isLetterOrDigit = (str) => letterOrDigitR.test(str);
+    class Scanner {
+        constructor(program) {
+            this.program = program;
+            this.tokens = [];
+            this.start = 0;
+            this.current = 0;
+            this.line = 1;
+            this.scanTokens = () => {
+                while (!this.isAtEnd()) {
+                    // We are at the beginning of the next lexeme.
+                    this.start = this.current;
+                    this.scanToken();
+                }
+                return this.tokens.concat(new Token(TokenType.EOF, "", undefined, this.current, this.current));
+            };
+            this.isAtEnd = (offset = 0) => this.current + offset === this.program.length;
+            this.scanToken = () => {
+                switch (this.advance()) {
+                    case "+":
+                        this.addKey(TokenType.CHIP_KEY);
+                        return;
+                    case ":":
+                        this.addValue();
+                        return;
+                    case "(":
+                        this.addToken(TokenType.LEFT_BRACKET);
+                        return;
+                    case ")":
+                        this.addToken(TokenType.RIGHT_BRACKET);
+                        return;
+                    case " ":
+                        return;
+                    case "\r":
+                    case "\t":
+                    case '"':
+                        this.addString();
+                        return;
+                    default:
+                        this.addIdentifierOrUnquotedString();
+                        return;
+                }
+            };
+            this.addKey = (tokenType) => {
+                while (this.peek() != ":" && !isWhitespace(this.peek()) && !this.isAtEnd())
+                    this.advance();
+                if (this.current - this.start == 1)
+                    this.addToken(tokenType);
+                else {
+                    const key = this.program.substring(this.start + 1, this.current);
+                    this.addToken(tokenType, key);
+                }
+            };
+            this.addValue = () => {
+                while (!isWhitespace(this.peek()) && !this.isAtEnd())
+                    this.advance();
+                if (this.current - this.start == 1) {
+                    this.addToken(TokenType.CHIP_VALUE);
+                }
+                else {
+                    const value = this.program.substring(this.start + 1, this.current);
+                    this.addToken(TokenType.CHIP_VALUE, value);
+                }
+            };
+            this.addIdentifierOrUnquotedString = () => {
+                while (isLetterOrDigit(this.peek())) {
+                    this.advance();
+                }
+                const text = this.program.substring(this.start, this.current);
+                const maybeReservedWord = Token.reservedWordMap[text];
+                return maybeReservedWord
+                    ? this.addToken(maybeReservedWord)
+                    : this.addUnquotedString();
+            };
+            this.addUnquotedString = () => {
+                while (
+                // Consume whitespace up until the last whitespace char
+                (!isWhitespace(this.peek()) ||
+                    isWhitespace(this.peek(1)) ||
+                    this.isAtEnd(1)) &&
+                    this.peek() != ")" &&
+                    !this.isAtEnd()) {
+                    this.advance();
+                }
+                this.addToken(TokenType.STRING, this.program.substring(this.start, this.current));
+            };
+            this.addString = () => {
+                while (this.peek() != '"' && !this.isAtEnd()) {
+                    this.advance();
+                }
+                if (this.isAtEnd()) {
+                    this.error(this.line, "Unterminated string at end of file");
+                }
+                else {
+                    this.advance();
+                }
+                this.addToken(TokenType.STRING, this.program.substring(this.start + 1, this.current - 1));
+            };
+            this.addToken = (tokenType, literal) => {
+                const text = this.program.substring(this.start, this.current);
+                this.tokens = this.tokens.concat(new Token(tokenType, text, literal, this.start, this.current - 1));
+            };
+            this.advance = () => {
+                const previous = this.current;
+                this.current = this.current + 1;
+                return this.program[previous];
+            };
+            this.peek = (offset = 0) => this.program[this.current + offset] === undefined
+                ? "\u0000"
+                : this.program[this.current + offset];
+            this.error = (line, message) => this.report(line, "", message);
+            this.report = (line, where, message) => {
+                console.log(`[line ${line}] Error${where}: ${message}`);
+            };
+        }
+    }
+
+    const getDebugTokenHTML = (tokens) => {
+        let html = `
+        <div class="CqlDebug__queryDiagram CqlDebug__queryDiagramToken">
+        <div class="CqlDebug__queryDiagramLabel">
+            <div>Lexeme</div>
+            <div>Literal</div>
+        </div>
+        <div class="CqlDebug__queryDiagramContent">`;
+        tokens.forEach((token, index) => {
+            var _b, _c;
+            html += `${Array(Math.max(1, token.lexeme.length))
+                .fill(undefined)
+                .map((_, index) => {
+                var _b, _c;
+                const lexemeChar = token.lexeme[index];
+                const literalOffset = ((_b = token.literal) === null || _b === void 0 ? void 0 : _b.length) === token.lexeme.length ? 0 : 1;
+                const literalChar = (_c = token.literal) === null || _c === void 0 ? void 0 : _c[index - literalOffset];
+                return `
+            <div class="CqlDebug__queryBox">
+            <div class="CqlDebug__queryIndex">${token.start + index}</div>
+            ${lexemeChar !== undefined
+                    ? `<div class="CqlDebug__queryChar">${lexemeChar}</div>`
+                    : ""}
+                ${literalChar !== undefined
+                    ? `<div class="CqlDebug__queryChar CqlDebug__queryCharAlt">${literalChar}</div>`
+                    : ""}
+            ${index === 0
+                    ? `<div class="CqlDebug__tokenLabel">${token.tokenType}</div>`
+                    : ""}
+            </div>`;
+            })
+                .join("")}
+        ${((_b = tokens[index + 1]) === null || _b === void 0 ? void 0 : _b.start) > token.end + 1 && ((_c = tokens[index + 1]) === null || _c === void 0 ? void 0 : _c.tokenType) !== "EOF" && token.tokenType !== "EOF"
+                ? `<div class="CqlDebug__queryBox"><div class="CqlDebug__queryIndex">${token.end + 1}</div></div>`
+                : ""}`;
+        });
+        html += "</div></div>";
+        return html;
+    }
+
+    // Userland
+
+    const createScanner = (el, initialQuery) => {
+        el.innerHTML = "";
+        el.classList.add("scanner-container")
+        const input = document.createElement("input");
+        input.value = initialQuery;
+        el.appendChild(input);
+        const resultContainer = document.createElement("div");
+        resultContainer.classList.add("result-container");
+        el.appendChild(resultContainer);
+
+        const applyScan = value => {
+            const scanner = new Scanner(value);
+            const tokens = scanner.scanTokens();
+            resultContainer.innerHTML = getDebugTokenHTML(tokens);
+        }
+
+        input.addEventListener("input", e => {
+            const value = e.target.value;
+            applyScan(value);
+        })
+
+        applyScan(initialQuery);
+    }
+
+    document.querySelectorAll("[data-scanner]").forEach(el => {
+        createScanner(el, el.innerText)
+    });
+</script>
+<div class="footnotes">
+<hr>
+<ol>
+<li id="fn-1">Strictly, a regular expression that does not include <a href="https://en.wikipedia.org/wiki/Regular_expression#Patterns_for_non-regular_languages">non-regular features</a>, like backreferences.<a href="#fnref-1" class="footnote-backref">↩</a></li>
+<li id="fn-2">I originally wrote the language server for CQL in Scala (<a href="https://github.com/guardian/cql/tree/scala/src/main/scala">code</a>), and rewrote it in Typescript once it became clear that introducing a network call for language features … didn’t serve the product well!  More on that in a future post.<a href="#fnref-2" class="footnote-backref">↩</a></li>
+<li id="fn-3">There are lots of ways to write a scanner, including leaning more heavily on regular expressions, and consuming the input in a more functional style, but I thought writing straightforward, imperative code would be best for a wide audience to read.<a href="#fnref-3" class="footnote-backref">↩</a></li>
+</ol>
+</div></section><hr style="margin-bottom:1.5rem"/></article><nav><ul style="display:flex;flex-wrap:wrap;justify-content:space-between;list-style:none;padding:0"><li><a rel="prev" href="/structured-search-ui-2/">← <!-- -->Structured search queries for web UIs, part 2: the grammar</a></li><li><a rel="next" href="/structured-search-ui-4/">Structured search queries for web UIs, part 4: parsing<!-- --> →</a></li></ul></nav></main><footer style="margin-top:auto"><div style="display:flex;align-items:center;margin-top:1.5rem"><div data-gatsby-image-wrapper="" style="margin-right:0.75rem;margin-bottom:0;min-width:50px;border-radius:100%" class="gatsby-image-wrapper gatsby-image-wrapper-constrained"><div style="max-width:50px;display:block"><img alt="" role="presentation" aria-hidden="true" src="data:image/svg+xml;charset=utf-8,%3Csvg%20height=&#x27;50&#x27;%20width=&#x27;50&#x27;%20xmlns=&#x27;http://www.w3.org/2000/svg&#x27;%20version=&#x27;1.1&#x27;%3E%3C/svg%3E" style="max-width:100%;display:block;position:static"/></div><div aria-hidden="true" data-placeholder-image="" style="opacity:1;transition:opacity 500ms linear;background-color:#282828;position:absolute;top:0;left:0;bottom:0;right:0"></div><picture><source type="image/webp" data-srcset="/static/8c486420c9f37beb177f816e3e972b25/68795/profile-pic.webp 13w,/static/8c486420c9f37beb177f816e3e972b25/2fa99/profile-pic.webp 25w,/static/8c486420c9f37beb177f816e3e972b25/dbc4a/profile-pic.webp 50w,/static/8c486420c9f37beb177f816e3e972b25/d8057/profile-pic.webp 100w" sizes="(min-width: 50px) 50px, 100vw"/><img data-gatsby-image-ssr="" data-main-image="" style="border-radius:50%;opacity:0" sizes="(min-width: 50px) 50px, 100vw" decoding="async" loading="lazy" data-src="/static/8c486420c9f37beb177f816e3e972b25/6ac16/profile-pic.jpg" data-srcset="/static/8c486420c9f37beb177f816e3e972b25/4b206/profile-pic.jpg 13w,/static/8c486420c9f37beb177f816e3e972b25/74ef0/profile-pic.jpg 25w,/static/8c486420c9f37beb177f816e3e972b25/6ac16/profile-pic.jpg 50w,/static/8c486420c9f37beb177f816e3e972b25/e07e1/profile-pic.jpg 100w" alt="Jonathon Herbert"/></picture><noscript><picture><source type="image/webp" srcSet="/static/8c486420c9f37beb177f816e3e972b25/68795/profile-pic.webp 13w,/static/8c486420c9f37beb177f816e3e972b25/2fa99/profile-pic.webp 25w,/static/8c486420c9f37beb177f816e3e972b25/dbc4a/profile-pic.webp 50w,/static/8c486420c9f37beb177f816e3e972b25/d8057/profile-pic.webp 100w" sizes="(min-width: 50px) 50px, 100vw"/><img data-gatsby-image-ssr="" data-main-image="" style="border-radius:50%;opacity:0" sizes="(min-width: 50px) 50px, 100vw" decoding="async" loading="lazy" src="/static/8c486420c9f37beb177f816e3e972b25/6ac16/profile-pic.jpg" srcSet="/static/8c486420c9f37beb177f816e3e972b25/4b206/profile-pic.jpg 13w,/static/8c486420c9f37beb177f816e3e972b25/74ef0/profile-pic.jpg 25w,/static/8c486420c9f37beb177f816e3e972b25/6ac16/profile-pic.jpg 50w,/static/8c486420c9f37beb177f816e3e972b25/e07e1/profile-pic.jpg 100w" alt="Jonathon Herbert"/></picture></noscript><script type="module">const t="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;if(t){const t=document.querySelectorAll("img[data-main-image]");for(let e of t){e.dataset.src&&(e.setAttribute("src",e.dataset.src),e.removeAttribute("data-src")),e.dataset.srcset&&(e.setAttribute("srcset",e.dataset.srcset),e.removeAttribute("data-srcset"));const t=e.parentNode.querySelectorAll("source[data-srcset]");for(let e of t)e.setAttribute("srcset",e.dataset.srcset),e.removeAttribute("data-srcset");e.complete&&(e.style.opacity=1,e.parentNode.parentNode.querySelector("[data-placeholder-image]").style.opacity=0)}}</script></div><p style="margin-bottom:0;font-size:0.8em">Written by <strong>Jonathon Herbert</strong>.<!-- --> <!-- -->Follow him on<!-- --> <a href="https://twitter.com/js_herbert">Twitter</a>, or look upon his works on<!-- --> <a href="https://github.com/jonathonherbert">Github</a>.</p></div></footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/structured-search-ui-3/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
+          <script
+            id="gatsby-chunk-mapping"
+          >
+            window.___chunkMapping="{\"app\":[\"/app-09402a4c01576a38cd5e.js\"],\"component---src-pages-404-js\":[\"/component---src-pages-404-js-fe2ed841316dca0cad80.js\"],\"component---src-pages-index-js\":[\"/component---src-pages-index-js-3954d1123bec1d58e166.js\"],\"component---src-templates-blog-post-js\":[\"/component---src-templates-blog-post-js-028ece1662cef2778d03.js\"]}";
+          </script>
+        <script>window.___webpackCompilationHash="d350b32360d747d5c43d";</script><script src="/webpack-runtime-4e396e3377d7325234c8.js" async></script><script src="/framework-e0e5fad7f961d61cb6c1.js" async></script><script src="/app-09402a4c01576a38cd5e.js" async></script><!-- slice-end id="_gatsby-scripts-1" --></body></html>
