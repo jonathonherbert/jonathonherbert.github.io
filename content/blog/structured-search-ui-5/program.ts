@@ -20,6 +20,7 @@ export const createEditorView = ({ mountEl }: { mountEl: HTMLElement }) => {
   const view = new EditorView(mountEl, {
     state: EditorState.create({
       schema: schema,
+      doc: schema.nodes.doc.create(null, schema.text("example")),
       plugins: [
         keymap({
           ...baseKeymap,

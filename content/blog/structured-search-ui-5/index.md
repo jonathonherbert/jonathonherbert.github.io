@@ -175,7 +175,9 @@ But hang on — what's `schema`? A ProseMirror editor requires a schema to enfor
 
 It's not much! But there is some important functionality here, even in this very simple input. Firstly, perhaps you can pop the devtools to note that the input is definitely a `div` element with `contenteditable` enabled, rather than an `input`, as it might appear. However, _unlike_ a standard contenteditable element, our ProseMirror element won't accept arbitrary HTML — if you copy and paste some **content** ~with~ _markup_ (like the preceding words) into it, you'll find that ProseMirror enforces the document schema, stripping any structure or styling to make sure that it only contains plain text.
 
-So far, so good — but that's about 60kb of library code we're sending across the wire to provide something that HTML gives us with `input`! In the next post, we'll connect the ProseMirror editor with our parser, to give us the tokens and AST we'll need to implement our feature set.
+So far, so good — but that's about 60kb of library code we're sending across the wire to provide something that HTML gives us with `input`! In the next post, we'll connect the ProseMirror editor with our parser, and start implementing our feature list.
+
+[^1]: Naming a few: [The New York Times](https://github.com/nytimes/react-prosemirror), the FT (I don't have a citation, mind), [YLE](https://yle.fi/a/7-10000522), and [The Guardian.](https://theguardian.engineering/blog/info-2019-jan-24-leaving-scribe)
 
 <style>
   div[data-pm-input] {
@@ -10999,6 +11001,7 @@ var createEditorView = ({ mountEl }) => {
   const view = new EditorView(mountEl, {
     state: EditorState.create({
       schema,
+      doc: schema.nodes.doc.create(null, schema.text("ta-da!")),
       plugins: [
         keymap({
           ...baseKeymap,
@@ -11009,12 +11012,12 @@ var createEditorView = ({ mountEl }) => {
       ]
     })
   });
+console.log(view.state.doc);
+
   return view;
 };
 
-console.log("wut")
 document.querySelectorAll("[data-pm-input]").forEach((el) => {
-  console.log("hai")
   createEditorView({ mountEl: el });
 });
 </script>
